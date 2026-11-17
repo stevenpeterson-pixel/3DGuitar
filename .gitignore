@@ -9,3 +9,6 @@ lyrics/
 
 # old name of the web build folder
 ipad-web/
+
+# Claude Code local settings
+.claude/
