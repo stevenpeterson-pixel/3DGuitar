@@ -57,19 +57,40 @@ sealed class MainForm : Form
             string builds = Path.Combine(root, "builds"), mine = Path.Combine(builds, build), site = Path.Combine(mine, "web");
             string settingsFile = Path.Combine(root, "settings.json");
             Directory.CreateDirectory(builds);
-            foreach (string old in Directory.GetDirectories(builds).Where(d => Path.GetFileName(d) != build)
+            // Remove other builds' folders, but only ones no open copy is using: a folder with open files cannot be
+            // renamed, so it is renamed aside first and deleted only if that worked (otherwise another version's page would vanish).
+            foreach (string old in Directory.GetDirectories(builds).Where(d => Path.GetFileName(d) != build && !Path.GetFileName(d).StartsWith("old-"))
                          .Concat(new[] { Path.Combine(root, "web"), Path.Combine(root, "profile") }))
             {
-                try { if (Directory.Exists(old)) Directory.Delete(old, true); } catch { /* still in use by another open copy */ }
+                try
+                {
+                    if (!Directory.Exists(old)) continue;
+                    string aside = Path.Combine(builds, "old-" + Guid.NewGuid().ToString("N")[..8]);
+                    Directory.Move(old, aside);
+                    Directory.Delete(aside, true);
+                }
+                catch { /* still in use by another open copy */ }
             }
+            foreach (string left in Directory.GetDirectories(builds, "old-*")) { try { Directory.Delete(left, true); } catch { } }
+
+            // Unpack the page, writing a file only when it differs: another open copy of this build may be reading these files,
+            // and rewriting them under it made pages fail with "access denied".
             foreach (string name in asm.GetManifestResourceNames())
             {
                 if (!name.EndsWith(".html") && !name.EndsWith(".js")) continue;
                 string target = Path.Combine(site, name.Replace('/', Path.DirectorySeparatorChar));
                 Directory.CreateDirectory(Path.GetDirectoryName(target)!);
                 using Stream res = asm.GetManifestResourceStream(name)!;
-                using FileStream file = File.Create(target);
-                await res.CopyToAsync(file);
+                using var mem = new MemoryStream(); await res.CopyToAsync(mem); byte[] bytes = mem.ToArray();
+                try { if (File.Exists(target) && File.ReadAllBytes(target).AsSpan().SequenceEqual(bytes)) continue; } catch { /* unreadable: write it */ }
+                string temp = target + "." + Environment.ProcessId + ".tmp";
+                await File.WriteAllBytesAsync(temp, bytes);
+                for (int attempt = 0; ; attempt++)
+                {
+                    try { File.Move(temp, target, true); break; }
+                    catch (IOException) when (attempt < 20) { await Task.Delay(100); }
+                    catch (UnauthorizedAccessException) when (attempt < 20) { await Task.Delay(100); }
+                }
             }
 
             // Let audio start without a click, since this is a dedicated instrument window.
@@ -169,6 +190,15 @@ sealed class MainForm : Form
 
             // Serve the page from a secure (https) origin, which the audio engine requires.
             web.CoreWebView2.SetVirtualHostNameToFolderMapping("guitar.example", site, CoreWebView2HostResourceAccessKind.Allow);
+            // If the page cannot be read at first (a file briefly locked, say by a virus scan), try again a few times.
+            int retries = 0;
+            web.CoreWebView2.NavigationCompleted += async (_, e) =>
+            {
+                if (e.IsSuccess || retries >= 8) return;
+                retries++;
+                await Task.Delay(400 * retries);
+                web.CoreWebView2.Navigate("https://guitar.example/index.html");
+            };
             web.CoreWebView2.Navigate("https://guitar.example/index.html");
 
             // Start-up switch used for checking a build: opens a song and the lyrics window without a click.

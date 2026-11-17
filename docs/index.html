@@ -343,6 +343,14 @@
         <li><b>Filters:</b> the buttons at the top of the library narrow the list by style (Classical, Folk, and so on) and by era.</li>
         <li><b>Labels:</b> each song says how much of it is arranged: <i>Full piece</i> (the whole published score, with its repeats where marked), <i>Full tune</i>, <i>Full chorus</i>, or a number of verses.</li>
         <li><b>Songs with verses</b> play the tune once for each verse, the way a singer would perform them, and the accompaniment changes between verses (picking in one, strumming in another) so the repeats don't sound the same. If you add the words in the lyrics window, separate the verses with a blank line and each verse follows its own pass of the tune.</li>
+        <li><b>Christmas songs:</b> click the <b>Holiday</b> filter to see the 27 Christmas and New Year songs together. Most are carols with three verses: the first is usually picked, and one verse is strummed or played in a bass-and-chord rhythm for variety. Some are different:
+          <ul>
+            <li><b>O Holy Night</b> is a complete guitar setting of Adam's song with its piano accompaniment.</li>
+            <li><b>Pastoral Symphony</b> is the instrumental piece from Handel's Messiah.</li>
+            <li><b>The Twelve Days of Christmas</b> plays all twelve verses, each one longer than the last.</li>
+            <li><b>Auld Lang Syne</b> is there for New Year's Eve.</li>
+          </ul>
+          Turn on the backing band in the Practice menu to play along with a bass and drums, or switch on Jam mode and strum the chords while the computer adds a lead part.</li>
         <li><b>Greyed-out songs</b> marked "Score needed" are listed but not yet arranged.</li>
         <li><b>Sources:</b> hover over a song to see where its score came from.</li>
       </ul>
@@ -572,7 +580,22 @@
       <p class="small">Song scores are credited in the library and in lib/SOURCES.txt. The 3D graphics use three.js (MIT licence).</p>
 
       <h2 id="m-versions">Version history</h2>
-      <p>This is version 7.1. Every version and what it added, newest first.</p>
+      <p>This is version 7.2. Every version and what it added, newest first.</p>
+      <h3>Version 7.2</h3>
+      <ul>
+        <li><b>23 more Christmas songs</b> (27 in all, under the Holiday filter):
+          <ul>
+            <li>O Holy Night, God Rest Ye Merry Gentlemen, Joy to the World, The First Noel, We Wish You a Merry Christmas, O Come All Ye Faithful, What Child Is This, Hark! The Herald Angels Sing, Angels We Have Heard on High, O Christmas Tree.</li>
+            <li>It Came Upon the Midnight Clear, We Three Kings, Good King Wenceslas, O Come O Come Emmanuel, Coventry Carol, Up on the Housetop, Jolly Old St. Nicholas, Here We Come A-Wassailing, Away in a Manger, O Little Town of Bethlehem.</li>
+            <li>The Twelve Days of Christmas (all twelve verses), Auld Lang Syne, and the Pastoral Symphony from Handel's Messiah.</li>
+          </ul></li>
+        <li><b>Windows app:</b> opening a second copy of the app while one is already running no longer shows a "can't reach this page" error. Opening one version also no longer breaks another version that is still open.</li>
+      </ul>
+      <h3>Version 7.1</h3>
+      <ul>
+        <li><b>Full-length songs:</b> Spanish Romance, the Bach Prelude, the Bourrée (with its repeats), Für Elise and The Entertainer now play the complete published scores; Canon in D plays the full three-voice canon over its bass.</li>
+        <li><b>Every verse:</b> House of the Rising Sun, Scarborough Fair, Man of Constant Sorrow and Frankie and Johnny play five verses, St. James Infirmary four; La Cucaracha and Take Me Out to the Ball Game now include their verses as well as the chorus; Carol of the Bells plays its theme three times. The accompaniment changes from verse to verse.</li>
+      </ul>
       <h3>Version 7</h3>
       <ul>
         <li><b>Jam with the computer:</b> play chords and the computer works out your key and improvises a lead solo over them, in Melodic, Blues or Country style, on a choice of five lead instruments.</li>
@@ -581,11 +604,6 @@
         <li><b>Progress:</b> plays, best score, stars and songs learned, shown in the library and totalled in the Practice menu.</li>
         <li><b>Stage mode:</b> just the guitar, full screen, with the menus hidden.</li>
         <li>The Effects section of this manual had lost its heading; it is back.</li>
-      </ul>
-      <h3>Version 7.1</h3>
-      <ul>
-        <li><b>Full-length songs:</b> Spanish Romance, the Bach Prelude, the Bourrée (with its repeats), Für Elise and The Entertainer now play the complete published scores; Canon in D plays the full three-voice canon over its bass.</li>
-        <li><b>Every verse:</b> House of the Rising Sun, Scarborough Fair, Man of Constant Sorrow and Frankie and Johnny play five verses, St. James Infirmary four; La Cucaracha and Take Me Out to the Ball Game now include their verses as well as the chorus; Carol of the Bells plays its theme three times. The accompaniment changes from verse to verse.</li>
       </ul>
       <h3>Version 6</h3>
       <ul>
@@ -1527,6 +1545,15 @@ const SONGS = [
   { t: 'La Cucaracha', by: 'Traditional Mexican', g: 'Latin', y: 1880, yl: '19th century', lvl: 'Refrain', bpm: 132, bar: 4, u: 0.5, pk: 1.5, st: 'strum', rep: 2,
     m: 'D4 D4 D4 | G4:3 B4:2 D4 D4 D4 | G4:3 B4:2 z:3 | G4 G4 F#4 F#4 E4 E4 D4:2 | z:5 D4 D4 D4 | F#4:3 A4:2 D4 D4 D4 | F#4:3 A4:2 z:3 | D5 E5 D5 C5 B4 A4 G4:2 | z:5',
     c: 'G G G:2 D:2 D D D D:2 G:2 G' },
+  // Christmas songs (version 7.2): the music for these comes from lib/scores.js
+  ...[['O Holy Night', 'Adolphe Adam', 1847, '1847'], ['God Rest Ye Merry, Gentlemen', 'Traditional English', 1760, '18th century'], ['Joy to the World', 'Lowell Mason, after Handel', 1839, '1839'],
+    ['The First Noel', 'Traditional English', 1823, '1823'], ['We Wish You a Merry Christmas', 'Traditional English', 1800, 'Traditional'], ['O Come, All Ye Faithful', 'John Francis Wade', 1751, '1751'],
+    ['What Child Is This', 'Greensleeves, words by W. C. Dix', 1865, '1865'], ['Hark! The Herald Angels Sing', 'Felix Mendelssohn', 1855, '1840 / 1855'], ['Angels We Have Heard on High', 'Traditional French', 1862, '1862'],
+    ['O Christmas Tree', 'Traditional German', 1824, '1824'], ['It Came Upon the Midnight Clear', 'Richard Storrs Willis', 1850, '1850'], ['We Three Kings', 'John Henry Hopkins Jr.', 1857, '1857'],
+    ['Good King Wenceslas', 'Piae Cantiones, words by J. M. Neale', 1853, '1582 / 1853'], ['O Come, O Come, Emmanuel', 'Traditional plainchant', 1851, '15th c. / 1851'], ['Coventry Carol', 'Traditional English', 1591, '16th century'],
+    ['Up on the Housetop', 'Benjamin Hanby', 1864, '1864'], ['Jolly Old St. Nicholas', 'attributed to James R. Murray', 1874, '1870s'], ['Here We Come A-Wassailing', 'Traditional English', 1850, '19th century'],
+    ['Auld Lang Syne', 'Traditional Scottish, words by Robert Burns', 1788, '1788'], ['Away in a Manger', 'James R. Murray', 1887, '1887'], ['O Little Town of Bethlehem', 'Lewis Redner', 1868, '1868'],
+    ['The Twelve Days of Christmas', 'Traditional English', 1909, '1780 / 1909'], ['Pastoral Symphony (Messiah)', 'G. F. Handel', 1742, '1742']].map(([t, by, y, yl]) => ({ t, by, g: 'Holiday', y, yl, locked: true })),
   // listed in the library but not yet arranged: these need a score to be transcribed accurately
   ...[['Lágrima', 'Francisco Tárrega', 'Classical', 1891], ['Adelita', 'Francisco Tárrega', 'Classical', 1899], ['Recuerdos de la Alhambra', 'Francisco Tárrega', 'Classical', 1896], ['Study in B minor', 'Fernando Sor', 'Classical', 1828],
     ['Wayfaring Stranger', 'Traditional American', 'Folk', 1858], ['Red River Valley', 'Traditional American', 'Folk', 1879], ['Wildwood Flower', 'J. P. Webster', 'Folk', 1860], ['Man of Constant Sorrow', 'Traditional American', 'Folk', 1913],
