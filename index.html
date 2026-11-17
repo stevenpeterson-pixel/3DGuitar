@@ -341,7 +341,8 @@
       <p>Click <b>Song library</b> to open the list. Click a song to load it and start playing. The guitar plays itself: glowing dots show each note on the fretboard and the strings shimmer as they ring.</p>
       <ul>
         <li><b>Filters:</b> the buttons at the top of the library narrow the list by style (Classical, Folk, and so on) and by era.</li>
-        <li><b>Labels:</b> each song says how much of it is arranged, such as Full tune, Full piece, Opening or One verse.</li>
+        <li><b>Labels:</b> each song says how much of it is arranged: <i>Full piece</i> (the whole published score, with its repeats where marked), <i>Full tune</i>, <i>Full chorus</i>, or a number of verses.</li>
+        <li><b>Songs with verses</b> play the tune once for each verse, the way a singer would perform them, and the accompaniment changes between verses (picking in one, strumming in another) so the repeats don't sound the same. If you add the words in the lyrics window, separate the verses with a blank line and each verse follows its own pass of the tune.</li>
         <li><b>Greyed-out songs</b> marked "Score needed" are listed but not yet arranged.</li>
         <li><b>Sources:</b> hover over a song to see where its score came from.</li>
       </ul>
@@ -571,7 +572,7 @@
       <p class="small">Song scores are credited in the library and in lib/SOURCES.txt. The 3D graphics use three.js (MIT licence).</p>
 
       <h2 id="m-versions">Version history</h2>
-      <p>This is version 7. Every version and what it added, newest first.</p>
+      <p>This is version 7.1. Every version and what it added, newest first.</p>
       <h3>Version 7</h3>
       <ul>
         <li><b>Jam with the computer:</b> play chords and the computer works out your key and improvises a lead solo over them, in Melodic, Blues or Country style, on a choice of five lead instruments.</li>
@@ -580,6 +581,11 @@
         <li><b>Progress:</b> plays, best score, stars and songs learned, shown in the library and totalled in the Practice menu.</li>
         <li><b>Stage mode:</b> just the guitar, full screen, with the menus hidden.</li>
         <li>The Effects section of this manual had lost its heading; it is back.</li>
+      </ul>
+      <h3>Version 7.1</h3>
+      <ul>
+        <li><b>Full-length songs:</b> Spanish Romance, the Bach Prelude, the Bourrée (with its repeats), Für Elise and The Entertainer now play the complete published scores; Canon in D plays the full three-voice canon over its bass.</li>
+        <li><b>Every verse:</b> House of the Rising Sun, Scarborough Fair, Man of Constant Sorrow and Frankie and Johnny play five verses, St. James Infirmary four; La Cucaracha and Take Me Out to the Ball Game now include their verses as well as the chorus; Carol of the Bells plays its theme three times. The accompaniment changes from verse to verse.</li>
       </ul>
       <h3>Version 6</h3>
       <ul>
@@ -1482,10 +1488,10 @@ const SONGS = [
   { t: 'Für Elise', by: 'Ludwig van Beethoven', g: 'Classical', y: 1810, yl: '1810', lvl: 'Main theme', bpm: 132, bar: 3, u: 0.5, pk: 1, st: 'none', rep: 2,
     m: 'E5 D#5 | E5 D#5 E5 B4 D5 C5 | A4:2 z C4 E4 A4 | B4:2 z E4 G#4 B4 | C5:2 z E4 E5 D#5 | E5 D#5 E5 B4 D5 C5 | A4:2 z C4 E4 A4 | B4:2 z E4 C5 B4 | A4:4',
     b: 'z:2 | z:6 | A2 E3 A3 z:3 | E2 E3 G#3 z:3 | A2 E3 A3 z:3 | z:6 | A2 E3 A3 z:3 | E2 E3 G#3 z:3 | A2 E3 A3 z' },
-  { t: 'House of the Rising Sun', by: 'Traditional American', g: 'Folk', y: 1890, yl: '19th century', lvl: 'One verse', bpm: 92, bar: 3, pk: 1, st: 'arp', rep: 2,
+  { t: 'House of the Rising Sun', by: 'Traditional American', g: 'Folk', y: 1890, yl: '19th century', lvl: 'Five verses', bpm: 92, bar: 3, pk: 1, st: 'arp', rep: 5, stp: ['arp', 'arp', 'strum', 'arp', 'arp'],
     m: 'E4 | E4:2 F#4 | G4:2 B4 | A4:2 E4 | E4:3 | z:2 B4 | E5:2 E5 | D5:2 B4 | B4:3 | z E5 E5 | E5:2 D5 | B4:2 B4 | A4 G4 E4 | G4:2 E4 | F#4:2 D#4 | E4:3 | z:2',
     c: 'Em G A C Em G B7 B7 Em G A C Em B7 Em B7' },
-  { t: 'Scarborough Fair', by: 'Traditional English', g: 'Folk', y: 1670, yl: '17th century', lvl: 'One verse', bpm: 116, bar: 3, st: 'arp', rep: 2,
+  { t: 'Scarborough Fair', by: 'Traditional English', g: 'Folk', y: 1670, yl: '17th century', lvl: 'Five verses', bpm: 116, bar: 3, st: 'arp', rep: 5, stp: ['arp', 'arp', 'strum', 'arp', 'arp'],
     m: 'E4:2 E4 | B4 B4 B4 | F#4:1.5 G4:.5 F#4 | E4:3 | z B4 D5 | E5:2 D5 | B4 C#5 A4 | B4:3 | z:2 E5 | E5:2 E5 | D5:2 B4 | B4 A4 G4 | F#4:2 D4 | E4:3 | B4:2 A4 | G4 F#4 E4 | D4:3 | E4:3 | z:3',
     c: 'Em D Em Em G Em A Em Em Em G G D Em G Em D Em Em' },
   { t: 'Amazing Grace', by: 'Traditional hymn', g: 'Folk', y: 1835, yl: '1779 / 1835', lvl: 'Full tune', bpm: 84, bar: 3, pk: 1, st: 'arp', rep: 2,
@@ -1515,7 +1521,7 @@ const SONGS = [
   { t: 'Deck the Halls', by: 'Traditional Welsh', g: 'Holiday', y: 1862, yl: '16th c. / 1862', lvl: 'Full tune', bpm: 150, bar: 4, st: 'strum',
     m: 'D5:1.5 C5:.5 B4 A4 | G4 A4 B4 G4 | A4:.5 B4:.5 C5:.5 A4:.5 B4:1.5 A4:.5 | G4 F#4 G4:2 | D5:1.5 C5:.5 B4 A4 | G4 A4 B4 G4 | A4:.5 B4:.5 C5:.5 A4:.5 B4:1.5 A4:.5 | G4 F#4 G4:2 | A4:1.5 B4:.5 C5 A4 | B4:1.5 C5:.5 D5 A4 | B4:.5 C#5:.5 D5 E5:.5 F#5:.5 G5 | F#5 E5 D5:2 | D5:1.5 C5:.5 B4 A4 | G4 A4 B4 G4 | E5:.5 E5:.5 E5:.5 E5:.5 D5:1.5 C5:.5 | B4 A4 G4:2',
     c: 'G G D G:1 D:1 G:2 G G D G:1 D:1 G:2 D G A7:2 D:2 D:1 A7:1 D:2 G G C G:1 D:1 G:2' },
-  { t: 'Carol of the Bells', by: 'Mykola Leontovych', g: 'Holiday', y: 1914, yl: '1914', lvl: 'Main theme', bpm: 168, bar: 3, st: 'bass',
+  { t: 'Carol of the Bells', by: 'Mykola Leontovych', g: 'Holiday', y: 1914, yl: '1914', lvl: 'Theme three times', bpm: 168, bar: 3, st: 'bass', rep: 3, stp: ['bass', 'arp', 'bass'],
     m: `${rep(MOTIF, 8)} B4 B4:.5 B4:.5 A4:.5 G4:.5 | F#4 F#4:.5 F#4:.5 E4:.5 D4:.5 | E4 E4:.5 E4:.5 F#4:.5 E4:.5 | B3 B3:.5 B3:.5 B3 | ${rep(MOTIF, 4)} E4:3`,
     c: 'Em Em Em Em Em D C B7 Em D Em Em Em D C B7 Em' },
   { t: 'La Cucaracha', by: 'Traditional Mexican', g: 'Latin', y: 1880, yl: '19th century', lvl: 'Refrain', bpm: 132, bar: 4, u: 0.5, pk: 1.5, st: 'strum', rep: 2,
@@ -1552,7 +1558,8 @@ function buildEvents(song) {
   for (const n of mel.notes) { const p = pickString(n.midi); if (!p) continue; melSeg.push({ b: n.b, s: p.s }); one.push({ b: n.b, d: n.d, s: p.s, fret: p.fret, vel: 0.84, pos: 0.15, mel: true }); }
   const melStrAt = b => { let s = 6; for (const m of melSeg) { if (m.b <= b + EPS) s = m.s; else break; } return s; };
   for (const n of bass.notes) { const p = pickString(n.midi, new Set([melStrAt(n.b)])); if (p) one.push({ b: n.b, d: n.d, s: p.s, fret: p.fret, vel: 0.7, pos: 0.2 }); }
-  if (song.c && song.st !== 'none') {
+  // the accompaniment for one pass, in a given style (a song can change style from verse to verse with `stp`)
+  const acc = {}, accFor = sty => { if (acc[sty]) return acc[sty]; const one = acc[sty] = []; if (song.c && sty !== 'none') {
     const barPos = b => (((b - pk) % bar) + bar) % bar;
     for (const ch of parseChords(song.c, bar, pk)) {
       const shape = shapeOf(ch.name); if (!shape) throw new Error('unknown chord ' + ch.name);
@@ -1561,11 +1568,11 @@ function buildEvents(song) {
       const add = (b, s, vel, off) => { if (s === undefined || shape[s] < 0 || s >= melStrAt(b)) return; one.push({ b, d: 1, s, fret: shape[s], vel, pos: 0.2, off: off || 0 }); };
       const upper = (b, from) => strs.filter(s => s > from && s < melStrAt(b)).slice(-3);
       const strumAt = (b, vel) => upper(b, alt).forEach((s, k) => add(b, s, vel, k * 0.012));
-      if (song.st === 'triplet') for (let b = ch.b; b < end; b++) { if (barPos(b) < EPS) add(b, rootS, 0.6); add(b + 1 / 3, 4, 0.42); add(b + 2 / 3, 3, 0.38); }
-      else if (song.st === 'bass') add(ch.b, rootS, 0.6);
-      else if (song.st === 'boom') for (let b = ch.b; b < end; b++) { add(b, Math.round(barPos(b)) % 2 ? alt : rootS, 0.58); strumAt(b + 0.5, 0.34); }
-      else if (song.st === 'strum') for (let b = ch.b; b < end; b++) { const p = barPos(b); if (b === ch.b || p < EPS) add(b, rootS, 0.6); else if (bar === 4 && Math.abs(p - 2) < EPS) add(b, alt, 0.52); else strumAt(b, 0.36); }
-      else if (song.st === 'arp') for (let b = ch.b; b < end; b += 0.5) {
+      if (sty === 'triplet') for (let b = ch.b; b < end; b++) { if (barPos(b) < EPS) add(b, rootS, 0.6); add(b + 1 / 3, 4, 0.42); add(b + 2 / 3, 3, 0.38); }
+      else if (sty === 'bass') add(ch.b, rootS, 0.6);
+      else if (sty === 'boom') for (let b = ch.b; b < end; b++) { add(b, Math.round(barPos(b)) % 2 ? alt : rootS, 0.58); strumAt(b + 0.5, 0.34); }
+      else if (sty === 'strum') for (let b = ch.b; b < end; b++) { const p = barPos(b); if (b === ch.b || p < EPS) add(b, rootS, 0.6); else if (bar === 4 && Math.abs(p - 2) < EPS) add(b, alt, 0.52); else strumAt(b, 0.36); }
+      else if (sty === 'arp') for (let b = ch.b; b < end; b += 0.5) {
         const k = Math.round(barPos(b) * 2), up = upper(b, rootS);
         if (b === ch.b || k === 0) add(b, rootS, 0.58);
         else if (bar === 4 && k === 4) add(b, alt, 0.5);
@@ -1573,8 +1580,9 @@ function buildEvents(song) {
       }
     }
   }
+  return one; };
   const ev = [], reps = song.rep || 1;
-  for (let r = 0; r < reps; r++) for (const e of one) ev.push({ ...e, b: e.b + r * len, vel: e.vel * (0.92 + rnd() * 0.14), off: (e.off || 0) + (rnd() - 0.5) * 0.008 });
+  for (let r = 0; r < reps; r++) for (const e of [...one, ...accFor(song.stp ? song.stp[r % song.stp.length] : song.st)]) ev.push({ ...e, b: e.b + r * len, vel: e.vel * (0.92 + rnd() * 0.14), off: (e.off || 0) + (rnd() - 0.5) * 0.008 });
   ev.sort((a, b) => a.b - b.b || a.s - b.s);
   return { ev: retuneEv(ev), total: reps * len + 2, len };
 }
