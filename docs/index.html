@@ -1,0 +1,1488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Concert Acoustic</title>
+<!-- installable web app (iPad "Add to Home Screen"); these files exist only in the web build and are ignored by the desktop app -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b0806">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Concert Acoustic">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<style>
+  :root { color-scheme: dark; --gold: #d6b26e; --gold2: #f3dfae; --ink: #efe6d6; --mute: #a3978a; --panel: rgba(20, 15, 11, 0.74); --line: rgba(214, 178, 110, 0.24);
+    --serif: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif; --sans: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; }
+  html, body { margin: 0; height: 100%; background: #0b0806; color: var(--ink); font-family: var(--sans); overflow: hidden; user-select: none; -webkit-user-select: none; }
+  #stage { position: fixed; inset: 0; }
+  #gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  #labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .lb { position: absolute; left: 0; top: 0; font-size: 11px; letter-spacing: 0.08em; color: rgba(239, 230, 214, 0.6); text-shadow: 0 1px 3px #000; white-space: nowrap; will-change: transform; }
+  .lb.s { font-family: var(--serif); font-size: 14px; color: rgba(243, 223, 174, 0.9); }
+  .lb.z { font-size: 10px; letter-spacing: 0.3em; color: rgba(60, 36, 14, 0.7); text-shadow: none; font-weight: 600; transition: color 0.15s; }
+  .lb.z.on { color: #b3421a; }
+
+  header { position: fixed; left: 0; right: 0; top: 0; height: 66px; display: flex; align-items: center; gap: 14px; padding: 0 20px; z-index: 3;
+    background: linear-gradient(rgba(11, 8, 6, 0.94), rgba(11, 8, 6, 0.62) 70%, rgba(11, 8, 6, 0)); }
+  .brand { display: flex; align-items: center; gap: 12px; margin-right: 4px; flex: none; }
+  .brand svg { width: 36px; height: 36px; flex: none; }
+  .brand b { display: block; font-family: var(--serif); font-weight: 400; font-size: 20px; letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.05;
+    background: linear-gradient(180deg, var(--gold2), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .brand i { display: block; font-style: normal; font-size: 9.5px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--mute); margin-top: 3px; }
+  .seg { display: flex; padding: 3px; gap: 1px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); backdrop-filter: blur(12px); flex: none; }
+  .seg button { all: unset; cursor: pointer; font-size: 12.5px; padding: 6px 11px; border-radius: 999px; color: #d9cdb9; text-align: center; min-width: 20px; transition: background 0.15s, color 0.15s; }
+  .seg button kbd { font: inherit; font-size: 9px; opacity: 0.45; margin-left: 3px; }
+  .seg button:hover { background: rgba(214, 178, 110, 0.12); }
+  .seg button.on { background: linear-gradient(180deg, #f0d9a4, #c99a4c); color: #20160c; font-weight: 600; box-shadow: 0 1px 6px rgba(214, 178, 110, 0.35); }
+  .sp { flex: 1; }
+  .btn { all: unset; cursor: pointer; font-size: 12.5px; letter-spacing: 0.04em; padding: 8px 15px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); backdrop-filter: blur(12px); color: #e6dac6; flex: none; transition: border-color 0.15s, color 0.15s; }
+  .btn:hover { border-color: rgba(214, 178, 110, 0.6); color: var(--gold2); }
+  .btn.on { border-color: var(--gold); color: var(--gold2); box-shadow: inset 0 0 0 1px rgba(214, 178, 110, 0.25); }
+  .btn.gold { background: linear-gradient(180deg, #f0d9a4, #c99a4c); color: #20160c; font-weight: 600; border-color: transparent; }
+
+  .pop { position: fixed; top: 70px; right: 20px; width: 268px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 14px; background: rgba(18, 13, 10, 0.92); backdrop-filter: blur(18px); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55); z-index: 6; }
+  .pop h3 { margin: 0 0 12px; font-family: var(--serif); font-weight: 400; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold2); }
+  .pop label { display: grid; grid-template-columns: 62px 1fr; align-items: center; gap: 10px; font-size: 12px; color: #cbbda8; margin: 9px 0; }
+  .pop .row { display: flex; gap: 8px; margin: 8px 0; } .pop .row .btn { flex: 1; text-align: center; padding: 8px 6px; }
+  .pop select { width: 100%; font: 12.5px var(--sans); color: #efe6d6; background: #1d1611; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; outline: none; }
+  .pop p { font-size: 11.5px; line-height: 1.55; color: #b5a793; margin: 8px 0 0; }
+  input[type=range] { -webkit-appearance: none; appearance: none; height: 3px; border-radius: 3px; background: rgba(214, 178, 110, 0.28); outline: none; width: 100%; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff1cf, #c99a4c); box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6); cursor: pointer; }
+
+  #lib { position: fixed; top: 0; right: 0; bottom: 0; width: min(410px, 92vw); z-index: 7; display: flex; flex-direction: column; background: rgba(15, 11, 8, 0.95); backdrop-filter: blur(22px); border-left: 1px solid var(--line);
+    box-shadow: -24px 0 60px rgba(0, 0, 0, 0.55); transform: translateX(105%); transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  #lib.open { transform: none; }
+  #lib .top { padding: 20px 22px 10px; display: flex; align-items: baseline; gap: 10px; }
+  #lib h2 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 22px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold2); flex: 1; }
+  #lib .count { font-size: 11px; color: var(--mute); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 22px 6px; }
+  .chip { all: unset; cursor: pointer; font-size: 11px; letter-spacing: 0.04em; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(214, 178, 110, 0.2); color: #c9bca7; }
+  .chip.on { background: rgba(214, 178, 110, 0.18); border-color: var(--gold); color: var(--gold2); }
+  #songs { flex: 1; overflow-y: auto; padding: 8px 14px 20px; scrollbar-width: thin; scrollbar-color: #4a3a26 transparent; }
+  .song { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 11px 10px; border-radius: 12px; cursor: pointer; border: 1px solid transparent; }
+  .song:hover { background: rgba(214, 178, 110, 0.07); border-color: rgba(214, 178, 110, 0.16); }
+  .song.cur { background: rgba(214, 178, 110, 0.12); border-color: rgba(214, 178, 110, 0.4); }
+  .song .ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; color: #20160c; background: linear-gradient(180deg, #f0d9a4, #c99a4c); }
+  .song b { display: block; font-family: var(--serif); font-weight: 400; font-size: 15.5px; color: #f1e8d8; }
+  .song span { display: block; font-size: 11px; color: var(--mute); margin-top: 2px; }
+  .song em { font-style: normal; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(214, 178, 110, 0.3); border-radius: 999px; padding: 3px 8px; white-space: nowrap; }
+  .srcnote { font-size: 10.5px; line-height: 1.5; color: #8d8172; margin: 14px 10px 0; }
+  .song.locked { cursor: default; opacity: 0.42; } .song.locked:hover { background: none; border-color: transparent; }
+  .song.locked .ic { background: #3a2f22; color: #9c8c77; } .song.locked em { color: #9c8c77; border-color: rgba(156, 140, 119, 0.3); }
+
+  #tp { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(820px, calc(100vw - 36px)); box-sizing: border-box; display: grid; grid-template-columns: auto auto 1fr auto; align-items: center; gap: 14px;
+    padding: 11px 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(18, 13, 10, 0.84); backdrop-filter: blur(18px); box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5); z-index: 4; }
+  .round { all: unset; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; color: #20160c; background: linear-gradient(180deg, #f3dfae, #c99a4c); box-shadow: 0 2px 10px rgba(214, 178, 110, 0.35); }
+  .round.sm { width: 30px; height: 30px; font-size: 11px; background: none; border: 1px solid var(--line); color: #d9cdb9; box-shadow: none; } .round.sm.on { border-color: var(--gold); color: var(--gold2); }
+  #now { min-width: 0; }
+  #now b { display: block; font-family: var(--serif); font-weight: 400; font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #now span { display: block; font-size: 11px; color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #prog { height: 3px; border-radius: 3px; background: rgba(214, 178, 110, 0.2); margin-top: 8px; cursor: pointer; position: relative; }
+  #prog i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 3px; background: linear-gradient(90deg, #c99a4c, #f3dfae); }
+  #tempoBox { display: grid; grid-template-columns: auto 92px 34px auto; gap: 8px; align-items: center; font-size: 11px; color: var(--mute); font-variant-numeric: tabular-nums; }
+  #tempoReset { all: unset; cursor: pointer; font-size: 10.5px; letter-spacing: 0.04em; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line); color: #d9cdb9; visibility: hidden; }
+  #tempoReset.show { visibility: visible; } #tempoReset:hover { border-color: var(--gold); color: var(--gold2); }
+  .ctl { display: flex; gap: 8px; align-items: center; }
+
+  #start { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(8, 6, 4, 0.82); backdrop-filter: blur(6px); z-index: 9; cursor: pointer; text-align: center; padding: 20px; }
+  #start b { font-family: var(--serif); font-weight: 400; font-size: 26px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold2); }
+  #start span { font-size: 13px; color: #b9a88f; max-width: 520px; line-height: 1.5; }
+  .hidden { display: none !important; }
+  #manual { position: fixed; inset: 0; z-index: 11; background: rgba(9, 7, 5, 0.96); backdrop-filter: blur(14px); }
+  #manual, #manual * { touch-action: pan-y; }
+  .mwrap { display: grid; grid-template-columns: 230px minmax(0, 760px); gap: 40px; justify-content: center; height: 100%; box-sizing: border-box; padding: 0 24px; }
+  #mnav { padding-top: 92px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+  #mnav a { font-size: 13px; color: #b9ab96; padding: 8px 12px; border-radius: 8px; cursor: pointer; border-left: 2px solid transparent; }
+  #mnav a:hover { color: var(--gold2); background: rgba(214, 178, 110, 0.08); } #mnav a.on { color: var(--gold2); border-left-color: var(--gold); }
+  #mbody { overflow-y: auto; padding: 44px 8px 120px 0; scrollbar-width: thin; scrollbar-color: #4a3a26 transparent; user-select: text; -webkit-user-select: text; position: relative; }
+  #mbody h1 { font-family: var(--serif); font-weight: 400; font-size: 34px; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 10px; color: var(--gold2); }
+  #mbody h2 { font-family: var(--serif); font-weight: 400; font-size: 23px; letter-spacing: 0.06em; color: var(--gold2); margin: 40px 0 10px; padding-top: 14px; border-top: 1px solid var(--line); }
+  #mbody h3 { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin: 22px 0 6px; font-weight: 600; }
+  #mbody p, #mbody li, #mbody td { font-size: 15px; line-height: 1.65; color: #ddd2c0; } #mbody p.lead { font-size: 17px; color: #efe6d6; } #mbody p.small { font-size: 12.5px; color: #9c8f7d; }
+  #mbody ul { margin: 6px 0 0; padding-left: 20px; } #mbody li { margin: 5px 0; } #mbody b { color: #f3e8d2; font-weight: 600; }
+  #mbody kbd { font: 12px "Segoe UI", sans-serif; padding: 2px 7px; border-radius: 5px; border: 1px solid rgba(214, 178, 110, 0.4); background: rgba(214, 178, 110, 0.1); color: var(--gold2); white-space: nowrap; }
+  #mbody table { border-collapse: collapse; width: 100%; margin-top: 6px; } #mbody td { padding: 8px 10px 8px 0; border-bottom: 1px solid rgba(214, 178, 110, 0.14); vertical-align: top; } #mbody td:first-child { white-space: nowrap; width: 38%; }
+  #mClose { position: sticky; top: 0; float: right; z-index: 2; }
+  @media (max-width: 860px) { .mwrap { grid-template-columns: minmax(0, 1fr); } #mnav { display: none; } }
+  /* touch devices: keep clear of rounded corners and the home bar, and stop the browser's own gestures */
+  html, body { -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; touch-action: none; }
+  header { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); padding-top: env(safe-area-inset-top); }
+  #tp { bottom: max(18px, env(safe-area-inset-bottom)); }
+  #lib, .pop, #lyrPanel { touch-action: pan-y; }
+  #lyrPanel { position: fixed; top: 0; right: 0; height: 100%; width: min(42vw, 480px); border: 0; border-left: 1px solid var(--line); box-shadow: -24px 0 60px rgba(0, 0, 0, 0.55); z-index: 8; background: #0d0a08; }
+  #rotate { position: fixed; inset: 0; z-index: 12; display: none; align-items: center; justify-content: center; text-align: center; padding: 30px; background: #0b0806; color: var(--gold2); font-family: var(--serif); font-size: 22px; letter-spacing: 0.08em; }
+  @media (orientation: portrait) and (pointer: coarse) { #rotate { display: flex; } }
+  @media (max-width: 1480px) { .seg button kbd { display: none; } .brand i { display: none; } }
+  .pop input:disabled { opacity: 0.35; }
+  @media (max-width: 1180px) { .seg button kbd { display: none; } .seg button { padding: 6px 7px; font-size: 12px; } .brand i { display: none; } .brand b { font-size: 15px; letter-spacing: 0.08em; } .brand svg { width: 30px; height: 30px; }
+    header { gap: 8px; padding: 0 14px; } .btn { padding: 8px 11px; font-size: 12px; } }
+  @media (max-width: 1280px) { .brand > div { display: none; } .seg button { padding: 6px 6px; font-size: 11.5px; min-width: 16px; } .btn { padding: 7px 9px; font-size: 11.5px; } header { gap: 6px; } }
+  @media (max-width: 900px) { .brand b { display: none; } }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="gl"></canvas><div id="labels"></div></div>
+
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 40 40" fill="none"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3dfae"/><stop offset="1" stop-color="#c99a4c"/></linearGradient></defs>
+      <circle cx="20" cy="20" r="18" stroke="url(#gg)" stroke-width="1.2"/><circle cx="20" cy="20" r="13.5" stroke="url(#gg)" stroke-width="2.6"/><circle cx="20" cy="20" r="9.5" fill="#0b0806" stroke="url(#gg)" stroke-width="0.8"/>
+      <g stroke="url(#gg)" stroke-width="0.7"><path d="M2 14h36M2 16.4h36M2 18.8h36M2 21.2h36M2 23.6h36M2 26h36" opacity="0.85"/></g></svg>
+    <div><b>Concert Acoustic</b><i>Spruce &amp; rosewood · Karplus-Strong</i></div>
+  </div>
+  <div class="seg" id="chords"></div>
+  <div class="sp"></div>
+  <button class="btn on" id="tap" title="When on, touching a fret also sounds the note">Tap plays</button>
+  <button class="btn" id="bView">View</button>
+  <button class="btn" id="bSound">Sound</button>
+  <button class="btn" id="bFx">Effects</button>
+  <button class="btn" id="bManual" title="User's manual (F1)">Manual</button>
+  <button class="btn gold" id="bLib">Song library</button>
+</header>
+
+<div class="pop hidden" id="pView">
+  <h3>View</h3>
+  <div class="row"><button class="btn" id="flipX">Sound hole on left</button></div>
+  <div class="row"><button class="btn" id="flipZ">Low E at bottom</button></div>
+  <h3 style="margin-top:16px">Zoom</h3>
+  <div class="row"><button class="btn" id="zIn" title="Zoom in (=)">+</button><button class="btn" id="zPlay">Playing</button><button class="btn" id="zFull">Whole guitar</button><button class="btn" id="zOut" title="Zoom out (-)">−</button></div>
+  <h3 style="margin-top:16px">Backdrop</h3>
+  <div class="row"><button class="btn" id="bgStudio">Dark studio</button><button class="btn" id="bgLiving">Living room</button></div>
+  <h3 style="margin-top:16px">Default view</h3>
+  <div class="row"><button class="btn gold" id="homeSet" title="Open with the current zoom, position, backdrop and flip next time">Set as default</button><button class="btn" id="homeGo" title="Return to the saved default view">Go to it</button><button class="btn" id="homeClear" title="Forget the saved view and use the playing view">Reset</button></div>
+  <p>Scroll the mouse wheel over the guitar to zoom: in for a close look, out to see the whole instrument and the room. You can play at any zoom level.</p>
+</div>
+<div class="pop hidden" id="pFx">
+  <h3>Effects</h3>
+  <div class="row"><button class="btn" id="fxAmp" title="Amplifier and speaker voicing">Amplifier</button><button class="btn" id="fxOff" title="Switch every effect off">All off</button></div>
+  <label title="How bright the amplifier is">Amp tone <input type="range" id="fxTone" min="0" max="1" step="0.01" value="0.6"></label>
+  <label title="Overdrive and distortion">Drive <input type="range" id="fxDrive" min="0" max="1" step="0.01" value="0"></label>
+  <label title="Evens out loud and soft notes and lengthens sustain">Compress <input type="range" id="fxComp" min="0" max="1" step="0.01" value="0"></label>
+  <label title="A sweeping filter that moves on its own">Wah <input type="range" id="fxWah" min="0" max="1" step="0.01" value="0"></label>
+  <label title="A shimmering doubled sound">Chorus <input type="range" id="fxChorus" min="0" max="1" step="0.01" value="0"></label>
+  <label title="A rhythmic pulsing of the volume">Tremolo <input type="range" id="fxTrem" min="0" max="1" step="0.01" value="0"></label>
+  <label title="Repeating echoes">Echo <input type="range" id="fxEcho" min="0" max="1" step="0.01" value="0"></label>
+  <label title="Time between echoes">Echo time <input type="range" id="fxEchoTime" min="0.06" max="0.8" step="0.01" value="0.32"></label>
+  <label>Reverb <select id="fxRev"><option value="room">Room</option><option value="hall">Hall</option><option value="plate">Plate</option><option value="spring">Spring</option></select></label>
+  <p>The amount of reverb is the Room slider under Sound. Choosing a guitar under Sound loads that guitar's own effects; change them here to taste.</p>
+</div>
+<div class="pop hidden" id="pSound">
+  <h3>Sound</h3>
+  <label>Guitar <select id="inst"></select></label>
+  <label>Volume <input type="range" id="vol" min="0" max="1" step="0.01" value="0.5"></label>
+  <label>Tone <input type="range" id="tone" min="0" max="1" step="0.01" value="0.6"></label>
+  <label>Body <input type="range" id="body" min="0" max="1" step="0.01" value="0.85"></label>
+  <label>Room <input type="range" id="room" min="0" max="1" step="0.01" value="0.3"></label>
+  <label title="Left-right spread of the strings: far left is mono, far right is wide">Separation <input type="range" id="sep" min="0" max="1" step="0.01" value="0.33"></label>
+  <p id="lat"></p>
+  <p>Fretboard: touch a fret, drag along the string to slide, drag across it to bend. Strum over the sound hole; nearer the bridge is brighter. Hold the strip by the bridge or Shift to palm-mute.<br>Keys: 1–0 chords · Space/↓ and ↑ strum · A S D F G H pick strings · Enter play/pause.</p>
+</div>
+
+<aside id="lib">
+  <div class="top"><h2>Library</h2><span class="count" id="libCount"></span><button class="btn" id="libClose">Close</button></div>
+  <div class="chips" id="genres"></div>
+  <div class="chips" id="eras"></div>
+  <div id="songs"></div>
+</aside>
+
+<div id="tp">
+  <div class="ctl"><button class="round" id="play" title="Play / pause (Enter)">▶</button><button class="round sm" id="stop" title="Stop">■</button><button class="round sm" id="loop" title="Loop">⟲</button></div>
+  <div><button class="btn" id="lyr" title="Open the lyrics in their own window (drag it to another screen)">Lyrics</button></div>
+  <div id="now"><b id="nTitle">Choose a song from the library</b><span id="nSub">or play the guitar yourself</span><div id="prog"><i></i></div></div>
+  <div id="tempoBox"><span>Tempo</span><input type="range" id="tempo" min="0.5" max="1.5" step="0.01" value="1"><span id="tempoV">100%</span><button id="tempoReset" title="Back to 100%">100%</button></div>
+</div>
+
+<div id="start"><b>Concert Acoustic</b><span id="startMsg">Click or tap to begin</span></div>
+<div id="rotate">Turn the screen sideways to play</div>
+
+<div id="manual" class="hidden">
+  <div class="mwrap">
+    <nav id="mnav"></nav>
+    <article id="mbody">
+      <button class="btn" id="mClose">Close</button>
+      <h1>User's Manual</h1>
+      <p class="lead">Concert Acoustic is a playable acoustic guitar. You can play it yourself with a mouse, keyboard or touch screen, or let it play songs from its library while you watch.</p>
+
+      <h2 id="m-start">Getting started</h2>
+      <p>The guitar lies across the screen with the neck on one side and the body on the other. The dark fretboard is where you choose notes; the area over the sound hole is where you strum or pick. Sound starts after your first click or tap.</p>
+      <ul>
+        <li><b>Quickest way to hear it:</b> press <kbd>Space</kbd> to strum, then press <kbd>2</kbd> to <kbd>0</kbd> to change chords and strum again.</li>
+        <li><b>To watch it play:</b> click <b>Song library</b>, then click any song.</li>
+      </ul>
+
+      <h2 id="m-play">Playing by hand</h2>
+      <h3>Choosing notes on the fretboard</h3>
+      <ul>
+        <li><b>Press a fret:</b> click or touch between two fret wires on a string. The note is the one a real guitar gives at that fret. Touching left of the first fret plays the open string.</li>
+        <li><b>Tap plays (top bar):</b> when on, pressing a fret also sounds the note, which suits picking out a melody with one finger or a mouse. When off, pressing a fret is silent, as on a real guitar, and you strum to hear it. Turn it off when holding chord shapes on a touch screen.</li>
+        <li><b>Releasing a fret</b> stops that note, leaving the open string ringing faintly.</li>
+        <li><b>Several fingers:</b> on a touch screen you can hold as many frets as you have fingers. On one string, the highest fret held is the one that sounds.</li>
+      </ul>
+      <h3>Strumming and picking</h3>
+      <ul>
+        <li><b>Strum:</b> drag across the strings over the sound hole. Each string sounds as you cross it. Faster drags are louder and brighter.</li>
+        <li><b>Pick one string:</b> click or tap directly on it in the strum area.</li>
+        <li><b>Where you strum changes the tone:</b> toward the neck is warm and round; toward the bridge is bright and thin.</li>
+        <li><b>Direction matters:</b> dragging from the low strings to the high ones is a down-stroke; the other way is an up-stroke.</li>
+      </ul>
+      <h3>Techniques</h3>
+      <ul>
+        <li><b>Palm mute:</b> hold the strip beside the bridge (marked PALM MUTE), or hold <kbd>Shift</kbd>. Notes become short and thuddy while it is held.</li>
+        <li><b>Hammer-on:</b> while a string is ringing, press a higher fret on it. The pitch jumps up without a new pluck.</li>
+        <li><b>Pull-off:</b> hold two frets on a ringing string and lift the higher one. The lower note sounds.</li>
+        <li><b>Slide:</b> press a fret and drag along the string to another fret.</li>
+        <li><b>Bend:</b> press a fret and drag across the string (up or down the screen). The pitch rises smoothly, up to about three frets' worth.</li>
+        <li><b>Muted strings:</b> in chords that skip a string, that string is marked ✕ and gives a dead click when strummed.</li>
+      </ul>
+
+      <h2 id="m-chords">Chord buttons</h2>
+      <p>The row at the top holds ten chords: Open, G, C, D, Em, Am, E, A, Dm and F. Clicking one sets the fretting hand for you; pale dots on the fretboard show the shape. It stays set until you choose another. <b>Open</b> clears it.</p>
+      <ul>
+        <li>Strum or pick as usual and you hear the chord.</li>
+        <li>You can still press frets yourself on top of a chord, for example to add a melody note.</li>
+        <li>Number keys <kbd>1</kbd> to <kbd>0</kbd> choose the chords from left to right.</li>
+      </ul>
+
+      <h2 id="m-songs">Song library and player</h2>
+      <p>Click <b>Song library</b> to open the list. Click a song to load it and start playing. The guitar plays itself: glowing dots show each note on the fretboard and the strings shimmer as they ring.</p>
+      <ul>
+        <li><b>Filters:</b> the buttons at the top of the library narrow the list by style (Classical, Folk, and so on) and by era.</li>
+        <li><b>Labels:</b> each song says how much of it is arranged, such as Full tune, Full piece, Opening or One verse.</li>
+        <li><b>Greyed-out songs</b> marked "Score needed" are listed but not yet arranged.</li>
+        <li><b>Sources:</b> hover over a song to see where its score came from.</li>
+      </ul>
+      <h3>The player bar</h3>
+      <ul>
+        <li><b>Play / pause</b> (round gold button, or <kbd>Enter</kbd>).</li>
+        <li><b>Stop</b> (■) returns to the start and silences the strings.</li>
+        <li><b>Loop</b> (⟲) repeats the song until you turn it off.</li>
+        <li><b>Progress line:</b> click anywhere along it to jump to that point.</li>
+        <li><b>Tempo:</b> the slider runs from half speed to one and a half times. The small <b>100%</b> button that appears beside it, or a double-click on the slider, returns to normal speed.</li>
+        <li><b>Playing along:</b> you can strum and pick while a song plays.</li>
+      </ul>
+
+      <h2 id="m-lyrics">Lyrics window</h2>
+      <p>The <b>Lyrics</b> button in the player bar opens the words for the current song in their own window, which you can drag to a second screen. On a tablet it opens as a panel on the right instead.</p>
+      <ul>
+        <li><b>Adding words:</b> the app does not come with lyrics. Click <b>Edit words</b>, paste or type them, and click <b>Save</b>. Put each sung line on its own line and leave a blank line between verses.</li>
+        <li><b>Following along:</b> the current line is highlighted and kept in view as the song plays. The timing is approximate, spread evenly across the song.</li>
+        <li><b>Text size:</b> the A− and A+ buttons.</li>
+        <li><b>Where words are kept:</b> in the Windows app, as a text file per song in a <i>lyrics</i> folder next to the program. In a browser or on a tablet, inside the browser's own storage.</li>
+      </ul>
+
+      <h2 id="m-view">View</h2>
+      <ul>
+        <li><b>Sound hole on left:</b> flips the guitar left-to-right, for left-handed players or preference.</li>
+        <li><b>Low E at bottom:</b> swaps which string is at the top of the screen.</li>
+        <li><b>Zoom:</b> scroll the mouse wheel over the guitar, press <kbd>=</kbd> and <kbd>−</kbd>, or use the buttons. Zoom in for a close look; zoom out to see the whole instrument with its headstock and tuning machines, and further out to see the room. <b>Playing</b> returns to the normal view and <b>Whole guitar</b> shows the full instrument.</li>
+        <li><b>Proportions:</b> the playing view is squeezed along the neck so frets and strings are both easy to hit. As you zoom out, the guitar stretches to its true shape.</li>
+        <li><b>Backdrop:</b> <b>Dark studio</b> or a <b>Living room</b> with a fireplace.</li>
+        <li>You can play at any zoom level. These choices are remembered.</li>
+        <li><b>Default view:</b> arrange the view the way you like it (zoom, position, backdrop, flip), then click <b>Set as default</b>. The app opens in that view from then on. <b>Go to it</b> returns to the saved view at any time, and <b>Reset</b> goes back to opening in the playing view.</li>
+      </ul>
+
+      <h2 id="m-sound">Sound</h2>
+      <ul>
+        <li><b>Volume:</b> overall loudness.</li>
+        <li><b>Tone:</b> how bright the pick attack and the ring of the strings are.</li>
+        <li><b>Body:</b> how much of the wooden body's resonance you hear. Low values give a bare, direct string sound.</li>
+        <li><b>Room:</b> the amount of room echo.</li>
+        <li><b>Separation:</b> the left-right spread of the strings. Far left is mono; further right spreads the low strings left and the high strings right.</li>
+        <li><b>Status line:</b> shows that audio is running and the delay the sound system reports.</li>
+      </ul>
+      <h3>Choosing a guitar</h3>
+      <p>The <b>Guitar</b> list at the top of the Sound menu changes the instrument you hear. The picture stays the same, and chords and songs work with every choice.</p>
+      <ul>
+        <li><b>Dreadnought (steel):</b> the standard full-bodied steel-string acoustic.</li>
+        <li><b>Classical (nylon):</b> soft attack, warm and mellow, shorter ring.</li>
+        <li><b>12-string:</b> every string doubled, the lower four an octave apart, for a wide shimmering sound.</li>
+        <li><b>Parlor:</b> a small body, boxier and more midrange.</li>
+        <li><b>Jumbo:</b> a large body with deeper bass and longer sustain.</li>
+        <li><b>Resonator:</b> a metal cone in place of a wooden top: loud, nasal and metallic.</li>
+        <li><b>Baritone:</b> the whole guitar tuned a fourth lower.</li>
+        <li><b>Bass:</b> an octave below the guitar, dark and long-ringing.</li>
+        <li><b>Ukulele:</b> a fourth higher with soft nylon strings and a tiny body.</li>
+        <li><b>Banjo:</b> very bright with a quick, dry decay.</li>
+        <li><b>Mandolin:</b> an octave higher with doubled strings.</li>
+      </ul>
+      <h3>Electric guitars</h3>
+      <p>The same list has seven electric guitars. An electric has no wooden body sound; it is heard through a pickup, an amplifier and effects, and it sustains much longer. Each one loads its own effects when you choose it.</p>
+      <ul>
+        <li><b>Clean electric:</b> glassy and bright with a little chorus and spring reverb.</li>
+        <li><b>Country twang:</b> a bright bridge pickup, compression and a short slap-back echo.</li>
+        <li><b>Jazz hollow-body:</b> dark, round and mellow.</li>
+        <li><b>Blues crunch:</b> breaks up when you strum hard and cleans up when you play softly.</li>
+        <li><b>Classic rock:</b> thick overdrive with plenty of sustain.</li>
+        <li><b>Hard rock / metal:</b> heavy distortion; hold palm mute for a tight chug.</li>
+        <li><b>Surf:</b> clean, drenched in spring reverb with pulsing tremolo.</li>
+      </ul>
+
+      <h2 id="m-fx">Effects</h2>
+      <p>The <b>Effects</b> menu works with any guitar, acoustic or electric. Anything set to zero is switched out completely.</p>
+      <ul>
+        <li><b>Amplifier:</b> gives the sound the voice of a guitar amplifier and speaker. Leave it on for electric guitars; distortion without it sounds harsh and buzzy.</li>
+        <li><b>Amp tone:</b> darker to the left, brighter to the right.</li>
+        <li><b>Drive:</b> from a slight edge to heavy distortion.</li>
+        <li><b>Compress:</b> evens out loud and soft notes and makes them ring longer.</li>
+        <li><b>Wah:</b> a filter that sweeps up and down on its own.</li>
+        <li><b>Chorus:</b> a shimmering, doubled sound.</li>
+        <li><b>Tremolo:</b> a steady pulsing of the volume.</li>
+        <li><b>Echo</b> and <b>Echo time:</b> repeats of what you play, and how far apart they are. A short time gives the country slap-back.</li>
+        <li><b>Reverb:</b> the kind of space: Room, Hall, Plate, or the Spring found in guitar amplifiers. The <b>Room</b> slider under Sound sets how much.</li>
+        <li><b>All off:</b> switches every effect off.</li>
+      </ul>
+      <p class="small">Your effect settings are remembered. Choosing a different guitar replaces them with that guitar's own starting settings.</p>
+      <p class="small">Bass, ukulele, banjo and mandolin normally have four or five strings. Here they keep the guitar's six-string layout, moved up or down as a whole, so the same chord shapes and songs play correctly. Songs sound higher or lower to match.</p>
+      <ul>
+      </ul>
+
+      <h2 id="m-keys">Keyboard shortcuts</h2>
+      <table>
+        <tr><td><kbd>Space</kbd> or <kbd>↓</kbd></td><td>Strum down</td></tr>
+        <tr><td><kbd>↑</kbd></td><td>Strum up</td></tr>
+        <tr><td><kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> <kbd>H</kbd></td><td>Pick single strings, lowest to highest</td></tr>
+        <tr><td><kbd>1</kbd> … <kbd>0</kbd></td><td>Chords: Open, G, C, D, Em, Am, E, A, Dm, F</td></tr>
+        <tr><td>Hold <kbd>Shift</kbd></td><td>Palm mute</td></tr>
+        <tr><td><kbd>Enter</kbd></td><td>Play or pause the song</td></tr>
+        <tr><td><kbd>=</kbd> / <kbd>−</kbd></td><td>Zoom in / out</td></tr>
+        <tr><td><kbd>F1</kbd></td><td>Open this manual</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Close menus, the library or this manual</td></tr>
+      </table>
+
+      <h2 id="m-touch">Touch screens and tablets</h2>
+      <ul>
+        <li><b>Two hands:</b> hold a chord shape with one hand and strum with the other. Turn <b>Tap plays</b> off first so placing fingers is silent.</li>
+        <li><b>Palm mute:</b> rest a finger on the strip by the bridge while you strum.</li>
+        <li><b>Zoom:</b> pinch with two fingers on the wood or the background, away from the strings. A double tap there switches between the playing view and the whole guitar.</li>
+        <li><b>Larger targets:</b> pinch in a little if the frets feel small.</li>
+        <li><b>Hold the tablet sideways.</b> In upright position a message asks you to turn it.</li>
+      </ul>
+      <h3>Installing on an iPad</h3>
+      <p>Open the guitar's web address in Safari, tap Share, then <b>Add to Home Screen</b>. Start it from the new icon. After the first visit it works without an internet connection.</p>
+
+      <h2 id="m-tips">Tips and troubleshooting</h2>
+      <ul>
+        <li><b>No sound:</b> click or tap once on the guitar, check Volume under Sound, and check the device's own volume and mute.</li>
+        <li><b>Notes feel late:</b> close other audio programs and other open copies of this app. Wired headphones or speakers respond faster than wireless ones.</li>
+        <li><b>Notes cut off when I let go:</b> that is how a fretted string behaves. Use the chord buttons, or keep holding, to let notes ring.</li>
+        <li><b>A chord sounds when I only want single notes:</b> choose <b>Open</b> in the chord row.</li>
+        <li><b>The view is stuck zoomed:</b> View, then <b>Playing</b>.</li>
+        <li><b>A song sounds wrong:</b> arrangements vary in how they were made; a few were read by eye from old sheet music and may contain mistakes.</li>
+      </ul>
+
+      <h2 id="m-about">About the sound</h2>
+      <p>Nothing here is a recording. Each string is simulated as it vibrates: a pluck sends a burst of energy around a loop that loses a little brightness on every pass, the way a real string does. The pick position, palm muting, hammer-ons and bends all act on that simulation, and a model of a spruce-topped body shapes the result.</p>
+      <p class="small">Song scores are credited in the library and in lib/SOURCES.txt. The 3D graphics use three.js (MIT licence).</p>
+    </article>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from './lib/three.module.min.js';
+import { SCORES } from './lib/scores.js';          // songs converted from published public-domain scores (see lib/SOURCES.txt)
+
+/* =====================================================================================
+   Sound engine. This function's source is also loaded into the audio thread (AudioWorklet),
+   so it must be self-contained.
+   Each string is an extended Karplus-Strong loop:
+     delay line (cubic Lagrange fractional read) -> one-pole damping filter -> 4 all-pass
+     stiffness filters -> loop gain -> back into the delay line.
+   ===================================================================================== */
+function engineModule() {
+  const NS = 6, BUF = 4096, MASK = BUF - 1, NAP = 4;
+  const OPEN = [40, 45, 50, 55, 59, 64];                  // E2 A2 D3 G3 B3 E4 (MIDI)
+  const T_DC = [6.5, 6.2, 5.8, 5.2, 4.6, 4.0];            // seconds to decay 60 dB (fundamental)
+  const T_HF = [0.85, 0.95, 1.05, 1.25, 1.3, 1.2];        // seconds to decay 60 dB at 2 kHz
+  const AP = [-0.5, -0.46, -0.42, -0.3, -0.25, -0.2];     // stiffness all-pass coefficient (wound strings stiffer)
+  const PAN = [-0.35, -0.2, -0.07, 0.07, 0.2, 0.35];
+  const COUPLING = 0.0003;                                // string-to-string leakage through the bridge
+
+  class GuitarEngine {
+    constructor(sr) {
+      this.sr = sr; this.mute = 0; this.tone = 0.6; this.frame = 0; this.pending = []; this.seed = 0x2F6E2B1; this.bridge = 0;
+      this.kFast = 1 - Math.exp(-1 / (sr * 0.003)); this.kBend = 1 - Math.exp(-1 / (sr * 0.012)); this.kSlide = 1 - Math.exp(-1 / (sr * 0.02));
+      // The instrument: shift = semitones from guitar tuning, tdc/thf = sustain and brightness of the ring, stiff = string
+      // stiffness, bright = pick attack, dbl = doubled courses ('oct' as on a 12-string, 'uni' as on a mandolin).
+      this.inst = { shift: 0, tdc: 1, thf: 1, stiff: 1, bright: 1, dbl: null, pickup: 0 }; this.cpl = COUPLING;
+      this.str = [];
+      for (let n = 0; n < NS * 2; n++) {                       // strings 6-11 are the second string of each course
+        const i = n % NS, a = (PAN[i] + (n >= NS ? 0.06 : 0) + 1) * Math.PI / 4;
+        const s = { i, mate: n >= NS, buf: new Float32Array(BUF), w: 0, L: 100, Lt: 100, kg: this.kFast, lp: 0, p: 0.3, g: 0.99, gDamp: 0.9, dampLeft: 0,
+          ap: new Float32Array(NAP), a: AP[i], exc: new Float32Array(BUF), excPos: 0, excLen: 0, env: 0, active: false,
+          fret: 0, bend: 0, dead: false, freq: 0, panL: Math.cos(a), panR: Math.sin(a) };
+        this.str.push(s); this.retune(s, true);
+      }
+    }
+    setInstrument(p) {
+      this.inst = Object.assign({ shift: 0, tdc: 1, thf: 1, stiff: 1, bright: 1, dbl: null, pickup: 0 }, p); this.pending.length = 0;
+      this.cpl = COUPLING / (this.inst.dbl ? 3 : 1) / Math.max(1, this.inst.tdc * this.inst.tdc);       // long-sustain instruments get less string-to-string leakage, to stay stable
+      for (const s of this.str) { s.active = false; s.buf.fill(0); s.ap.fill(0); s.lp = 0; s.env = 0; s.excLen = 0; s.excPos = 0; this.retune(s, true); }
+    }
+    rand() { let x = this.seed; x ^= x << 13; x ^= x >>> 17; x ^= x << 5; this.seed = x; return (x >>> 0) / 2147483648 - 1; }
+
+    // Recompute loop gain, damping and the delay length that puts the fundamental exactly in tune.
+    retune(s, snap) {
+      const sr = this.sr, I = this.inst, pair = s.mate ? (I.dbl === 'oct' && s.i < 4 ? 12 : 0) + 0.035 : 0;      // second string: an octave up, or a hair sharp
+      const f = 440 * Math.pow(2, (OPEN[s.i] + I.shift + pair + s.fret + s.bend - 69) / 12);
+      s.freq = f; s.a = AP[s.i] * I.stiff;
+      const m = s.dead ? 1 : this.mute, fretted = s.fret > 0 ? 0.8 : 1;
+      const tdc = T_DC[s.i] * I.tdc * fretted * (1 - m) + 0.32 * Math.min(1, I.tdc) * m;
+      const thf = Math.min(tdc, T_HF[s.i] * I.thf * fretted * (0.6 + 0.8 * this.tone)) * (1 - m) + 0.045 * m;
+      s.g = Math.exp(-6.9078 / (f * tdc));
+      s.gDamp = Math.exp(-6.9078 / (f * 0.07));
+      const loss = Math.max(0, 6.9078 / thf - 6.9078 / tdc) / f, wr = 2 * Math.PI * 2000 / sr, q = 2 * loss / (wr * wr);
+      s.p = q < 1e-9 ? 0 : Math.min(0.96, ((2 * q + 1) - Math.sqrt(4 * q + 1)) / (2 * q));
+      const w = 2 * Math.PI * f / sr;
+      const dLp = Math.atan2(s.p * Math.sin(w), 1 - s.p * Math.cos(w)) / w;                 // phase delay of the damping filter
+      const dAp = 1 - (2 / w) * Math.atan2(s.a * Math.sin(w), 1 + s.a * Math.cos(w));       // phase delay of one all-pass
+      s.Lt = Math.max(3, Math.min(BUF - 8, sr / f - dLp - NAP * dAp));
+      s.pp = I.pickup ? Math.max(1, Math.round(I.pickup * s.Lt)) : 0;      // electric pickup: how far along the string it listens
+      if (snap) s.L = s.Lt;
+    }
+
+    // Pluck: a filtered noise burst one period long, comb-filtered for the pick position.
+    excite(s, vel, pos, soft) {
+      const sr = this.sr, N = Math.min(2000, Math.max(8, Math.round(sr / s.freq)));
+      const M = Math.max(1, Math.round(pos * N)), len = N + M, e = s.exc, m = s.dead ? 1 : this.mute;
+      const fc = Math.min(sr * 0.45, (soft ? 900 : 1100 + 9000 * vel * (0.35 + 0.65 * this.tone)) * (1 - 0.6 * m) * this.inst.bright);
+      const al = 1 - Math.exp(-2 * Math.PI * fc / sr);
+      let a = 0, b = 0, mean = 0;
+      for (let n = 0; n < N; n++) { a += al * (this.rand() - a); b += al * (a - b); e[n] = b; mean += b; }
+      mean /= N;
+      for (let n = 0; n < N; n++) { const edge = Math.min(1, n / 8, (N - 1 - n) / 8); e[n] = (e[n] - mean) * edge; }
+      for (let n = N; n < len; n++) e[n] = 0;
+      for (let n = len - 1; n >= M; n--) e[n] -= e[n - M];                                   // pick-position comb
+      let rms = 0; for (let n = 0; n < len; n++) rms += e[n] * e[n];
+      const k = (soft ? 0.09 : 0.22) * (this.inst.dbl ? 0.72 : 1) * Math.pow(vel, 1.1) / (Math.sqrt(rms / len) + 1e-9);
+      for (let n = 0; n < len; n++) e[n] *= k;
+      if (!s.active) { s.L = s.Lt; s.active = true; }
+      else if (!soft) { for (let n = 0; n < BUF; n++) s.buf[n] *= 0.25; s.lp *= 0.25; for (let j = 0; j < NAP; j++) s.ap[j] *= 0.25; }   // the pick stops the string first
+      s.excPos = 0; s.excLen = len;
+    }
+
+    setFret(s, d) {
+      const old = s.fret, wasDead = s.dead, ringing = s.active && s.env > 0.004 && !s.dead;
+      s.dead = !!d.dead; s.fret = Math.max(0, d.fret); s.bend = 0;
+      s.kg = d.why === 'slide' ? this.kSlide : this.kFast;
+      this.retune(s, !ringing);
+      if (d.why === 'chord') { if (old !== s.fret || wasDead !== s.dead) s.dampLeft = 0.05 * this.sr; return; }
+      if (d.why === 'up') {
+        if (!ringing) return;
+        if (d.release) s.dampLeft = 0.028 * this.sr;          // finger lifted: the note mostly stops
+        else this.excite(s, 0.3, 0.2, true);                  // pull-off to a lower fret that is still held
+        return;
+      }
+      if (ringing) { if (d.why === 'down' && s.fret > old) this.excite(s, 0.35, 0.12, true); }   // hammer-on
+      else if (d.tap) this.excite(s, d.vel || 0.6, d.pos || 0.18, false);
+    }
+
+    msg(d) {
+      const course = d.s !== undefined ? (this.inst.dbl ? [this.str[d.s], this.str[d.s + NS]] : [this.str[d.s]]) : [];     // one string, or both of a doubled course
+      if (d.type === 'pluck' || d.type === 'note') {            // 'note' = set the fret, then pluck (used by the song player)
+        const ev = { at: this.frame + (d.delay || 0) * this.sr, s: d.s, vel: d.vel, pos: d.pos, fret: d.type === 'note' ? d.fret : -1 };
+        if (d.delay > 0) this.pending.push(ev); else this.fire(ev);
+      } else if (d.type === 'fret') { for (const s of course) this.setFret(s, d); }
+      else if (d.type === 'bend') { for (const s of course) { s.bend = d.semis; s.kg = this.kBend; this.retune(s, false); } }
+      else if (d.type === 'inst') this.setInstrument(d.p);
+      else if (d.type === 'mute') { this.mute = d.amount; for (const t of this.str) { t.kg = this.kFast; this.retune(t, false); } }
+      else if (d.type === 'tone') { this.tone = d.value; for (const t of this.str) this.retune(t, false); }
+      else if (d.type === 'flush') this.pending.length = 0;
+      else if (d.type === 'stop') { this.pending.length = 0; for (const t of this.str) t.dampLeft = 0.12 * this.sr; }
+    }
+    fire(ev) {
+      const s = this.str[ev.s];
+      if (ev.fret >= 0) { s.dead = false; s.fret = ev.fret; s.bend = 0; s.dampLeft = 0; this.retune(s, true); }
+      this.excite(s, ev.vel, ev.pos, false);
+      if (this.inst.dbl && ev.s < NS) this.pending.push({ at: this.frame + 0.006 * this.sr, s: ev.s + NS, vel: ev.vel * 0.95, pos: ev.pos, fret: ev.fret });   // the pick reaches the second string a moment later
+    }
+
+    process(outL, outR, n) {
+      const str = this.str, pend = this.pending;
+      for (let k = pend.length - 1; k >= 0; k--) if (pend[k].at <= this.frame) { const d = pend[k]; pend.splice(k, 1); this.fire(d); }
+      let bridge = this.bridge;
+      for (let i = 0; i < n; i++) {
+        let l = 0, r = 0, sum = 0;
+        const fb = bridge * this.cpl;
+        for (let k = 0; k < NS * 2; k++) {
+          const s = str[k]; if (!s.active) continue;
+          s.L += (s.Lt - s.L) * s.kg;
+          const L = s.L, li = L | 0, x = L - li, w = s.w, b = s.buf;
+          const y0 = b[(w - li + 1) & MASK], y1 = b[(w - li) & MASK], y2 = b[(w - li - 1) & MASK], y3 = b[(w - li - 2) & MASK];
+          const v = y0 * (-x * (x - 1) * (x - 2) / 6) + y1 * ((x + 1) * (x - 1) * (x - 2) / 2) + y2 * (-(x + 1) * x * (x - 2) / 2) + y3 * ((x + 1) * x * (x - 1) / 6);
+          let u = s.lp = (1 - s.p) * v + s.p * s.lp;
+          const a = s.a, ap = s.ap;
+          for (let j = 0; j < NAP; j++) { const y = a * u + ap[j]; ap[j] = u - a * y; u = y; }
+          let g = s.g; if (s.dampLeft > 0) { s.dampLeft--; g = s.gDamp; }
+          u = u * g + fb;
+          if (s.excPos < s.excLen) u += s.exc[s.excPos++];
+          b[w] = u; s.w = (w + 1) & MASK;
+          const av = v < 0 ? -v : v; s.env = av > s.env ? av : s.env * 0.99985;
+          const o = s.pp ? (v - b[(w - s.pp) & MASK]) * 0.85 : v;          // a pickup hears the string at one point, which hollows out some harmonics
+          sum += v; l += o * s.panL; r += o * s.panR;
+        }
+        bridge = sum; outL[i] = l; outR[i] = r;
+      }
+      this.bridge = bridge; this.frame += n;
+      for (let k = 0; k < NS * 2; k++) {
+        const s = str[k];
+        if (s.active && s.env < 2e-5 && s.excPos >= s.excLen) { s.active = false; s.buf.fill(0); s.ap.fill(0); s.lp = 0; s.env = 0; }
+      }
+    }
+  }
+
+  if (typeof registerProcessor === 'function') {
+    registerProcessor('ks-guitar', class extends AudioWorkletProcessor {
+      constructor() { super(); this.eng = new GuitarEngine(sampleRate); this.cnt = 0; this.port.onmessage = e => this.eng.msg(e.data); }
+      process(inputs, outputs) {
+        const o = outputs[0]; this.eng.process(o[0], o[1] || o[0], o[0].length);
+        if ((this.cnt += o[0].length) >= 2048) { this.cnt = 0; const st = this.eng.str, lv = []; for (let k = 0; k < 6; k++) lv.push(Math.max(st[k].active ? st[k].env : 0, st[k + 6].active ? st[k + 6].env : 0)); this.port.postMessage(lv); }
+        return true;
+      }
+    });
+  }
+  return GuitarEngine;
+}
+
+/* ===================================== helpers ===================================== */
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hash2(ix, iz) { let h = Math.imul(ix, 374761393) + Math.imul(iz, 668265263); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+function vnoise(x, z) { const ix = Math.floor(x), iz = Math.floor(z), fx = x - ix, fz = z - iz, sx = fx * fx * (3 - 2 * fx), sz = fz * fz * (3 - 2 * fz);
+  return lerp(lerp(hash2(ix, iz), hash2(ix + 1, iz), sx), lerp(hash2(ix, iz + 1), hash2(ix + 1, iz + 1), sx), sz); }
+function fbm(x, z) { let s = 0, a = 0.5, f = 1; for (let o = 0; o < 4; o++) { s += a * vnoise(x * f, z * f); a *= 0.5; f *= 2; } return s; }
+
+/* ===================================== audio graph ===================================== */
+// Procedural body response for a spruce-top dreadnought: a direct path, a set of damped
+// resonances (air cavity, main top-plate mode, higher plate modes), and a short diffuse tail.
+// The body can be varied per instrument: size scales every resonance (smaller body = higher), q their ring time,
+// gain their strength, noise the diffuse tail, direct the unresonated string sound; kind swaps in a different resonator.
+const WOOD_MODES = [[98, 20, 2.4], [192, 26, 2.6], [226, 18, 1.1], [278, 24, 1.4], [348, 26, 1.0], [412, 30, 1.2], [498, 30, 0.9], [583, 34, 0.9], [689, 34, 0.75],
+  [812, 38, 0.7], [978, 40, 0.6], [1175, 40, 0.55], [1410, 42, 0.5], [1730, 44, 0.45], [2080, 44, 0.4], [2540, 46, 0.35], [3150, 46, 0.3], [3900, 48, 0.22]];   // [Hz, Q, peak gain]
+const BODY_KINDS = {
+  reso: [[180, 14, 1.0], [320, 18, 1.2], [620, 55, 2.3], [1150, 70, 2.7], [1780, 80, 2.4], [2500, 90, 2.0], [3400, 90, 1.6], [4300, 90, 1.2]],     // spun metal cone: strong, ringing upper resonances
+  banjo: [[240, 8, 1.6], [420, 10, 2.3], [610, 12, 2.1], [900, 14, 1.9], [1300, 16, 1.7], [1900, 18, 1.5], [2700, 18, 1.3], [3600, 18, 1.0]],       // drum head: bright, and dies quickly
+  bass: [[62, 12, 1.5], [98, 14, 1.8], [160, 14, 1.2], [240, 16, 0.8], [420, 18, 0.4]],
+};
+function makeBodyIR(ac, b) {
+  b = Object.assign({ size: 1, q: 1, gain: 1, noise: 1, direct: 0.6, kind: null }, b);
+  const sr = ac.sampleRate, len = Math.floor(sr * 0.4), buf = ac.createBuffer(1, len, sr), d = buf.getChannelData(0), rnd = mulberry32(4107);
+  (BODY_KINDS[b.kind] || WOOD_MODES).forEach(([f0, Q0, G0], m) => {
+    const f = Math.min(f0 * b.size, sr * 0.4), Q = Q0 * b.q, G = G0 * b.gain;
+    const tau = Q / (Math.PI * f), A = 2 * G / (tau * sr) * (m < 2 || rnd() < 0.5 ? 1 : -1), w = 2 * Math.PI * f / sr, k = 1 / (tau * sr);
+    const n = Math.min(len, Math.floor(tau * sr * 7));
+    for (let i = 0; i < n; i++) d[i] += A * Math.exp(-i * k) * Math.sin(w * i);
+  });
+  let a = 0, c = 0;
+  for (let i = 1; i < Math.floor(sr * 0.05); i++) { const x = rnd() * 2 - 1; a += 0.55 * (x - a); c += 0.07 * (x - c); d[i] += 0.05 * b.noise * (a - c) * Math.exp(-i / (sr * 0.007)); }
+  d[0] += b.direct;
+  return buf;
+}
+// Instruments. All keep the guitar's string pattern (so chords and songs still work), moved up or down as a whole;
+// the four-string instruments are therefore their six-string relatives (bass VI, guitalele, six-string banjo, octave mandolin-guitar).
+const INSTRUMENTS = [
+  { id: 'dread', name: 'Dreadnought (steel)', group: 'Acoustic guitars', p: {}, body: {} },
+  { id: 'nylon', name: 'Classical (nylon)', group: 'Acoustic guitars', p: { tdc: 0.55, thf: 0.5, stiff: 0.25, bright: 0.5 }, body: { size: 1.05, q: 0.8, noise: 0.7 } },
+  { id: 'twelve', name: '12-string', group: 'Acoustic guitars', p: { dbl: 'oct', thf: 1.1, bright: 1.1 }, body: {} },
+  { id: 'parlor', name: 'Parlor (small body)', group: 'Acoustic guitars', p: { tdc: 0.8, thf: 0.9 }, body: { size: 1.25, gain: 1.15, noise: 1.1 } },
+  { id: 'jumbo', name: 'Jumbo', group: 'Acoustic guitars', level: 0.85, p: { tdc: 1.2 }, body: { size: 0.86, gain: 1.15 } },
+  { id: 'reso', name: 'Resonator', group: 'Acoustic guitars', p: { tdc: 0.9, thf: 1.2, bright: 1.3 }, body: { kind: 'reso', direct: 0.45 } },
+  { id: 'bari', name: 'Baritone (a fourth lower)', group: 'Acoustic guitars', p: { shift: -5, tdc: 1.15, stiff: 1.2, bright: 0.9 }, body: { size: 0.92 } },
+  { id: 'bass', name: 'Bass (an octave lower)', group: 'Related instruments', level: 0.6, p: { shift: -12, tdc: 1.3, thf: 0.6, stiff: 1.3, bright: 0.55 }, body: { kind: 'bass', direct: 0.9, noise: 0.3 }, lp: 3800 },
+  { id: 'uke', name: 'Ukulele (a fourth higher)', group: 'Related instruments', p: { shift: 5, tdc: 0.4, thf: 0.5, stiff: 0.2, bright: 0.55 }, body: { size: 1.75, q: 0.8 } },
+  { id: 'banjo', name: 'Banjo', group: 'Related instruments', p: { tdc: 0.28, thf: 0.7, stiff: 0.6, bright: 1.5 }, body: { kind: 'banjo', direct: 0.7, noise: 1.6 } },
+  { id: 'mando', name: 'Mandolin (an octave higher)', group: 'Related instruments', p: { shift: 12, dbl: 'uni', tdc: 0.45, thf: 0.8, stiff: 0.1, bright: 1.2 }, body: { size: 2.1 } },
+  // Electric guitars: a solid body (no wooden resonance), a pickup, and an amplifier with effects. `fx` is the starting effects setting.
+  { id: 'eclean', name: 'Clean electric', group: 'Electric guitars', level: 0.55, electric: true, p: { tdc: 1.6, thf: 1.3, stiff: 0.9, pickup: 0.17 }, fx: { amp: true, ampTone: 0.75, comp: 0.3, chorus: 0.15, rev: 'spring', revAmt: 0.22 } },
+  { id: 'ecountry', name: 'Country twang', group: 'Electric guitars', level: 0.6, electric: true, p: { tdc: 1.3, thf: 1.5, stiff: 0.9, bright: 1.4, pickup: 0.08 }, fx: { amp: true, ampTone: 0.85, drive: 0.08, comp: 0.6, echo: 0.28, echoTime: 0.11, rev: 'spring', revAmt: 0.15 } },
+  { id: 'ejazz', name: 'Jazz hollow-body', group: 'Electric guitars', level: 0.6, electric: true, p: { tdc: 1.1, thf: 0.6, bright: 0.5, pickup: 0.27 }, fx: { amp: true, ampTone: 0.2, comp: 0.2, rev: 'hall', revAmt: 0.16 } },
+  { id: 'eblues', name: 'Blues crunch', group: 'Electric guitars', level: 0.6, electric: true, p: { tdc: 1.6, thf: 1.2, pickup: 0.2 }, fx: { amp: true, ampTone: 0.6, drive: 0.42, comp: 0.2, rev: 'spring', revAmt: 0.2 } },
+  { id: 'erock', name: 'Classic rock', group: 'Electric guitars', level: 0.7, electric: true, p: { tdc: 1.8, thf: 1.0, pickup: 0.11 }, fx: { amp: true, ampTone: 0.55, drive: 0.68, comp: 0.3, rev: 'plate', revAmt: 0.16 } },
+  { id: 'emetal', name: 'Hard rock / metal', group: 'Electric guitars', level: 0.72, electric: true, p: { tdc: 2.0, thf: 1.0, pickup: 0.09 }, fx: { amp: true, ampTone: 0.5, drive: 1, comp: 0.35, rev: 'room', revAmt: 0.1 } },
+  { id: 'esurf', name: 'Surf', group: 'Electric guitars', level: 0.42, electric: true, p: { tdc: 1.5, thf: 1.4, bright: 1.3, pickup: 0.1 }, fx: { amp: true, ampTone: 0.8, drive: 0.05, trem: 0.5, tremRate: 5.5, rev: 'spring', revAmt: 0.55 } },
+];
+const FX_OFF = { drive: 0, comp: 0, chorus: 0, trem: 0, tremRate: 5, echo: 0, echoTime: 0.32, wah: 0, amp: false, ampTone: 0.6, rev: 'room' };
+const curInstrument = () => INSTRUMENTS.find(x => x.id === st.inst) || INSTRUMENTS[0];
+// usePreset: also load the instrument's own effects (when the player picks it); otherwise keep the effects as they are
+function applyInstrument(usePreset) {
+  const ins = curInstrument(); st.inst = ins.id;
+  if ($('inst').value !== ins.id) $('inst').value = ins.id;
+  if (usePreset || !st.fx) { st.fx = Object.assign({}, FX_OFF, ins.fx); delete st.fx.revAmt; if (ins.fx && ins.fx.revAmt !== undefined) $('room').value = ins.fx.revAmt; else if (usePreset) $('room').value = 0.3; }
+  st.fx = Object.assign({}, FX_OFF, st.fx); syncFxUI(); $('body').disabled = !!ins.electric;
+  if (!graph) return;
+  send({ type: 'inst', p: ins.p }); if (!ins.electric) graph.body.buffer = makeBodyIR(actx, ins.body); graph.lp.frequency.value = ins.lp || 9500;
+  applyFx(); applyMix(); resyncFrets();
+}
+function applyFx() { if (!graph) return; graph.fx.set(st.fx); if (graph.revType !== st.fx.rev) { graph.room.buffer = makeReverbIR(actx, st.fx.rev); graph.revType = st.fx.rev; } }
+// Reverb spaces: decaying noise shaped differently for a small room, a hall, a metal plate and an amplifier's spring tank.
+function makeReverbIR(ac, type) {
+  const T = { room: [1.1, 0.16, 4, 0.08, 0.06, 0], hall: [3.2, 0.62, 1.6, 0.05, 0.05, 0], plate: [2.0, 0.36, 0.5, 0.3, 0.05, 0], spring: [2.4, 0.42, 0.8, 0.22, 0.07, 1] }[type] || [1.1, 0.16, 4, 0.08, 0.06, 0];
+  const [secs, tau, darken, bright, level, springy] = T, sr = ac.sampleRate, len = Math.floor(sr * secs), buf = ac.createBuffer(2, len, sr), rnd = mulberry32(99), pre = Math.floor(sr * 0.012);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch); let lp = 0, hp = 0;
+    for (let i = pre; i < len; i++) {
+      const t = (i - pre) / sr, c = 0.5 * Math.exp(-t * darken) + bright; lp += c * ((rnd() * 2 - 1) - lp);
+      let v = lp; if (springy) { hp += 0.02 * (v - hp); v = (v - hp) * (0.45 + 0.55 * Math.pow(Math.cos(Math.PI * t / (0.037 + ch * 0.003)), 2)) * 1.6; }      // spring: thin, with a fluttering "boing"
+      d[i] = v * Math.exp(-t / tau) * level;
+    }
+  }
+  return buf;
+}
+// Effects, in the order a guitarist would chain them: compressor, wah, overdrive, amplifier, chorus, tremolo, echo.
+// Stages that are switched off are taken out of the signal path entirely.
+function buildFx(ac) {
+  const G = v => { const g = ac.createGain(); g.gain.value = v; return g; };
+  const F = (type, f, q, gain) => { const b = ac.createBiquadFilter(); b.type = type; b.frequency.value = f; if (q) b.Q.value = q; if (gain) b.gain.value = gain; return b; };
+  const lfo = hz => { const o = ac.createOscillator(); o.frequency.value = hz; o.start(); return o; };
+  const input = G(1), output = G(1);
+  const comp = ac.createDynamicsCompressor(), compMake = G(1); comp.attack.value = 0.006; comp.release.value = 0.18; comp.knee.value = 12; comp.connect(compMake);
+  const wIn = G(1), wDry = G(1), wBp = F('bandpass', 950, 4), wWet = G(0), wOut = G(1), wLfo = lfo(1.7), wDepth = G(650);
+  wIn.connect(wDry); wDry.connect(wOut); wIn.connect(wBp); wBp.connect(wWet); wWet.connect(wOut); wLfo.connect(wDepth); wDepth.connect(wBp.frequency);
+  const dPre = G(1), dHp = F('highpass', 110, 0.7), shaper = ac.createWaveShaper(), dPost = G(1);
+  const curve = new Float32Array(4097); for (let i = 0; i < 4097; i++) curve[i] = Math.tanh(2.5 * (i / 2048 - 1) + 0.15) - Math.tanh(0.15);     // slightly lopsided, like a valve stage
+  shaper.curve = curve; shaper.oversample = '2x'; dPre.connect(dHp); dHp.connect(shaper); shaper.connect(dPost);
+  const aHp = F('highpass', 85, 0.7), aMid = F('peaking', 2600, 1, 5), aLp = F('lowpass', 4800, 0.9); aHp.connect(aMid); aMid.connect(aLp);           // amplifier and speaker cabinet voicing
+  const cIn = G(1), cOut = G(1), cDelay = ac.createDelay(0.05), cWet = G(0), cLfo = lfo(0.8), cDepth = G(0.0035);
+  cDelay.delayTime.value = 0.018; cIn.connect(cOut); cIn.connect(cDelay); cDelay.connect(cWet); cWet.connect(cOut); cLfo.connect(cDepth); cDepth.connect(cDelay.delayTime);
+  const trem = G(1), tLfo = lfo(5), tDepth = G(0); tLfo.connect(tDepth); tDepth.connect(trem.gain);
+  const eIn = G(1), eOut = G(1), eDelay = ac.createDelay(1.2), eFb = G(0.35), eLp = F('lowpass', 3200, 0.5), eWet = G(0);
+  eIn.connect(eOut); eIn.connect(eDelay); eDelay.connect(eLp); eLp.connect(eFb); eFb.connect(eDelay); eLp.connect(eWet); eWet.connect(eOut);
+  const stages = { comp: [comp, compMake], wah: [wIn, wOut], drive: [dPre, dPost], amp: [aHp, aLp], chorus: [cIn, cOut], trem: [trem, trem], echo: [eIn, eOut] }, order = Object.keys(stages);
+  let active = null;
+  function set(fx) {
+    const on = { comp: fx.comp > 0.01, wah: fx.wah > 0.01, drive: fx.drive > 0.01, amp: !!fx.amp, chorus: fx.chorus > 0.01, trem: fx.trem > 0.01, echo: fx.echo > 0.01 }, key = order.filter(k => on[k]).join(',');
+    if (key !== active) { input.disconnect(); for (const k of order) stages[k][1].disconnect(); let prev = input; for (const k of order) if (on[k]) { prev.connect(stages[k][0]); prev = stages[k][1]; } prev.connect(output); active = key; }
+    comp.threshold.value = -18 - 22 * fx.comp; comp.ratio.value = 2 + 10 * fx.comp; compMake.gain.value = 1 + fx.comp * 1.6;
+    wWet.gain.value = fx.wah * 2.2; wDry.gain.value = 1 - fx.wah * 0.8;
+    dPre.gain.value = 1 + fx.drive * fx.drive * 60; dPost.gain.value = DRIVE_OUT(fx.drive);
+    aLp.frequency.value = 1700 + 5200 * fx.ampTone;
+    cWet.gain.value = fx.chorus * 0.9;
+    trem.gain.value = 1 - fx.trem * 0.5; tDepth.gain.value = fx.trem * 0.5; tLfo.frequency.value = fx.tremRate || 5;
+    eWet.gain.value = fx.echo * 0.9; eDelay.delayTime.value = fx.echoTime || 0.32;
+  }
+  return { input, output, set };
+}
+const DRIVE_OUT = a => 0.25 + 0.65 * Math.exp(-8 * a);          // turns the level back down as the drive is turned up (measured to keep loudness even)
+function buildGraph(ac, source) {
+  const node = source || new AudioWorkletNode(ac, 'ks-guitar', { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [2] });
+  const body = ac.createConvolver(), room = ac.createConvolver(), dry = ac.createGain(), wet = ac.createGain(), hp = ac.createBiquadFilter(), lp = ac.createBiquadFilter(),
+    master = ac.createGain(), roomGain = ac.createGain(), pre = ac.createGain(), clip = ac.createWaveShaper();
+  body.normalize = false; body.buffer = makeBodyIR(ac); room.normalize = false; room.buffer = makeReverbIR(ac, 'room');
+  const fx = buildFx(ac); fx.set(FX_OFF);
+  hp.type = 'highpass'; hp.frequency.value = 62; hp.Q.value = 0.6; lp.type = 'lowpass'; lp.frequency.value = 9500; lp.Q.value = 0.5;
+  const curve = new Float32Array(2049); for (let i = 0; i < 2049; i++) curve[i] = Math.tanh((i / 1024 - 1) * 2.7);
+  clip.curve = curve; pre.gain.value = 1 / 3;                       // soft limiter: clean at normal levels, rounds off peaks
+  // stereo separation: mixes left and right together (mono) or pushes them apart (wide)
+  const split = ac.createChannelSplitter(2), merge = ac.createChannelMerger(2), width = [0, 1, 2, 3].map(() => ac.createGain());
+  node.connect(split); split.connect(width[0], 0); split.connect(width[1], 0); split.connect(width[2], 1); split.connect(width[3], 1);
+  width[0].connect(merge, 0, 0); width[2].connect(merge, 0, 0); width[1].connect(merge, 0, 1); width[3].connect(merge, 0, 1);
+  merge.connect(dry); merge.connect(body); body.connect(wet); dry.connect(hp); wet.connect(hp); hp.connect(lp); lp.connect(fx.input); fx.output.connect(master);
+  master.connect(pre); master.connect(room); room.connect(roomGain); roomGain.connect(pre); pre.connect(clip); clip.connect(ac.destination);
+  return { node, dry, wet, master, roomGain, width, body, lp, fx, room, revType: 'room' };
+}
+function applyMix() {
+  if (!graph) return;
+  const b = curInstrument().electric ? 0 : +$('body').value;      // a solid electric guitar has no body resonance to mix in
+  graph.master.gain.value = +$('vol').value * 1.5 * (curInstrument().level || 1); graph.wet.gain.value = b; graph.dry.gain.value = 1 - b; graph.roomGain.gain.value = +$('room').value;
+  const w = +$('sep').value * 3, same = (1 + w) / 2, cross = (1 - w) / 2;          // w = 1 is the engine's natural spread
+  graph.width[0].gain.value = same; graph.width[3].gain.value = same; graph.width[1].gain.value = cross; graph.width[2].gain.value = cross;
+}
+
+/* ===================================== instrument state ===================================== */
+const NF = 15, SCALE = 26, BRIDGE = 26, FB_END = 15.75, MUTE_X = 24.2, YS = 0.16, TOP_Y = -0.28, HOLE_X = 19.2, HOLE_R = 2.7;
+const FX = []; for (let f = 0; f <= NF; f++) FX.push(SCALE * (1 - Math.pow(2, -f / 12)));   // fret positions along the string (1 unit = one string spacing)
+const NAMES = ['E', 'A', 'D', 'G', 'B', 'e'], OPENM = [40, 45, 50, 55, 59, 64];
+const SHAPES = { C: [-1, 3, 2, 0, 1, 0], G: [3, 2, 0, 0, 0, 3], D: [-1, -1, 0, 2, 3, 2], A: [-1, 0, 2, 2, 2, 0], E: [0, 2, 2, 1, 0, 0], F: [1, 3, 3, 2, 1, 1], Am: [-1, 0, 2, 2, 1, 0], Em: [0, 2, 2, 0, 0, 0],
+  Dm: [-1, -1, 0, 2, 3, 1], Bm: [-1, 2, 4, 4, 3, 2], 'F#m': [2, 4, 4, 2, 2, 2], B7: [-1, 2, 1, 2, 0, 2], E7: [0, 2, 0, 1, 0, 0], A7: [-1, 0, 2, 0, 2, 0], D7: [-1, -1, 0, 2, 1, 2], G7: [3, 2, 0, 0, 0, 1], C7: [-1, 3, 2, 3, 1, 0] };
+const CHORDS = ['Open', 'G', 'C', 'D', 'Em', 'Am', 'E', 'A', 'Dm', 'F'];
+const st = { chord: 0, base: [0, 0, 0, 0, 0, 0], fret: [0, 0, 0, 0, 0, 0], fingers: [], env: [0, 0, 0, 0, 0, 0], vis: [0, 0, 0, 0, 0, 0], auto: [null, null, null, null, null, null],
+  tap: true, lastPos: 0.18, muteHeld: 0, shift: false, mute: 0, flipX: false, flipZ: false };
+let actx = null, graph = null, node = null;
+const send = m => { if (node) node.port.postMessage(m); };
+const zs = s => s - 2.5;                                                   // string position across the neck
+const stringAt = z => clamp(Math.round(z + 2.5), 0, 5);
+function fretAt(x) { if (x < 0) return 0; for (let f = 1; f <= NF; f++) if (x < FX[f]) return f; return NF; }
+const fretX = f => SCALE * (1 - Math.pow(2, -f / 12)), MAXFRET = 19;         // the song player may go past the last drawn fret
+const dotX = f => f <= 0 ? -0.5 : fretX(f) - Math.min(0.42, (fretX(f) - fretX(f - 1)) * 0.4);
+const shapeCache = {};
+function shapeOf(name) {                 // chord name -> fret per string; open shapes where they exist, otherwise a barre chord
+  if (SHAPES[name]) return SHAPES[name]; if (shapeCache[name]) return shapeCache[name];
+  const m = /^([A-G])([#b]?)(m|7)?$/.exec(name); if (!m) return null;
+  const pc = ({ C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 })[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0), e = (pc - 4 + 24) % 12, a = (pc - 9 + 24) % 12, q = m[3] || '';
+  return shapeCache[name] = e <= a
+    ? (q === 'm' ? [e, e + 2, e + 2, e, e, e] : q === '7' ? [e, e + 2, e, e + 1, e, e] : [e, e + 2, e + 2, e + 1, e, e])
+    : (q === 'm' ? [-1, a, a + 2, a + 2, a + 1, a] : q === '7' ? [-1, a, a + 2, a, a + 2, a] : [-1, a, a + 2, a + 2, a + 2, a]);
+}
+const pickPos = x => 0.05 + 0.33 * clamp((BRIDGE - x) / (BRIDGE - FB_END), 0, 1);     // fraction of the string length from the bridge
+
+try { Object.assign(st, window.__savedSettings || JSON.parse(localStorage.getItem('guitar.settings') || '{}')); } catch (_) {}   // the desktop app supplies __savedSettings
+function saveSettings() {
+  const snd = {}; for (const id of ['vol', 'tone', 'body', 'room', 'sep']) if ($(id)) snd[id] = +$(id).value;
+  const data = JSON.stringify({ flipX: st.flipX, flipZ: st.flipZ, tap: st.tap, bg: st.bg, snd, inst: st.inst, home: st.home, fx: st.fx });
+  if (window.chrome && window.chrome.webview) window.chrome.webview.postMessage('settings:' + data);
+  try {localStorage.setItem('guitar.settings', data); } catch (_) {} }
+
+/* ===================================== 3D guitar ===================================== */
+const glc = $('gl');
+const renderer = new THREE.WebGLRenderer({ canvas: glc, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.9;
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0b0806);
+const cam = new THREE.PerspectiveCamera(10, 1, 8, 3000);    // long lens: a little depth without distorting the playing surface
+const root = new THREE.Group(); scene.add(root);
+
+function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+function pixelTex(n, fn) { return canvasTex(n, n, (c) => { const im = c.createImageData(n, n), d = im.data; for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) { const [r, g, b] = fn(x, y), k = (y * n + x) * 4; d[k] = r; d[k + 1] = g; d[k + 2] = b; d[k + 3] = 255; } c.putImageData(im, 0, 0); }); }
+function woodTex(base, dark, seed, lines, alpha) {
+  return canvasTex(1024, 256, (c, w, h) => { const rnd = mulberry32(seed); c.fillStyle = base; c.fillRect(0, 0, w, h);
+    for (let i = 0; i < lines; i++) { const y = rnd() * h; c.strokeStyle = dark; c.globalAlpha = alpha * (0.3 + rnd()); c.lineWidth = 0.5 + rnd() * 2.2; c.beginPath(); c.moveTo(0, y);
+      for (let x = 0; x <= w; x += 64) c.lineTo(x, y + Math.sin(x * 0.006 + i) * 3 + (rnd() - 0.5) * 2); c.stroke(); } c.globalAlpha = 1; });
+}
+const abaloneTex = pixelTex(256, (x, y) => {                // soft pearl: pale greens, teals and pinks in slow swirls
+  const n = fbm(x * 0.012 + fbm(y * 0.02, x * 0.02) * 1.4, y * 0.012), a = n * 9;
+  return [150 + 55 * Math.sin(a + 2.1), 185 + 40 * Math.sin(a), 175 + 45 * Math.sin(a + 4.2)];
+});
+const tortoiseTex = pixelTex(256, (x, y) => { const n = fbm(x * 0.025, y * 0.04), t = clamp((n - 0.46) * 4, 0, 1), m = fbm(x * 0.09 + 9, y * 0.09) * 0.25; return [lerp(26, 128, t) + m * 30, lerp(10, 58, t) + m * 14, lerp(5, 14, t)]; });
+abaloneTex.wrapS = abaloneTex.wrapT = tortoiseTex.wrapS = tortoiseTex.wrapT = THREE.RepeatWrapping;
+
+// Body outline in (x along strings, z across strings). The playing view is compressed along the strings so that
+// frets and strings are both easy to hit; zooming out stretches the whole guitar along x (KFULL) back to true
+// proportions, which is what this dreadnought outline is drawn for.
+const V2 = (x, y) => new THREE.Vector2(x, y), KFULL = 2.37;
+const HALF = [[14.75, 8.4], [16.0, 11.9], [18.3, 13.7], [20.6, 13.6], [22.4, 13.0], [24.4, 13.9], [27.0, 17.0], [29.6, 18.8], [32.0, 18.2], [33.8, 15.2], [34.7, 9.5]];
+function outlineShape() {
+  const s = new THREE.Shape(); s.moveTo(14.42, 0); s.lineTo(14.42, 4.6);
+  s.splineThru([...HALF.map(p => V2(p[0], p[1])), V2(34.95, 0), ...HALF.slice().reverse().map(p => V2(p[0], -p[1])), V2(14.42, -4.6)]); s.lineTo(14.42, 0);
+  return s;
+}
+const outlinePts = outlineShape().getPoints(20);
+const TW = 2048, TXS = x => (x - 14) / 22 * TW, TZS = z => (1 - (z + 20) / 40) * TW;       // top texture covers x 14..36, z -20..20
+const roundItems = [];                                 // things that must stay circular while the guitar stretches
+const round = o => { roundItems.push(o); return o; };
+const spruceTex = canvasTex(TW, TW, (c, w, h) => {
+  const rnd = mulberry32(31);
+  c.fillStyle = '#e6c387'; c.fillRect(0, 0, w, h);
+  const rg = c.createRadialGradient(TXS(24), TZS(0), 60, TXS(24), TZS(0), w * 0.6); rg.addColorStop(0, 'rgba(255,238,196,0.55)'); rg.addColorStop(0.55, 'rgba(240,205,140,0.1)'); rg.addColorStop(1, 'rgba(150,84,26,0.5)');
+  c.fillStyle = rg; c.fillRect(0, 0, w, h);
+  for (let y = 0; y < h; y += 1.2 + rnd() * 2.6) {            // straight, tight grain running along the strings
+    c.strokeStyle = `rgba(${118 + rnd() * 30 | 0},${72 + rnd() * 20 | 0},26,${0.07 + rnd() * 0.16})`; c.lineWidth = 0.5 + rnd() * 1.3; c.beginPath(); c.moveTo(0, y);
+    for (let x = 0; x <= w; x += 128) c.lineTo(x, y + Math.sin(x * 0.004 + y) * 1.2); c.stroke();
+  }
+  for (let i = 0; i < 2600; i++) { const x = rnd() * w, y = rnd() * h; c.fillStyle = `rgba(255,244,214,${0.03 + rnd() * 0.05})`; c.fillRect(x, y, 1.2, 10 + rnd() * 26); }   // cross-grain silking
+  const k = TW / 22 * 0.7;                                    // purfling and binding along the body edge
+  for (const [wd, col] of [[0.5, '#17110d'], [0.44, '#7fb9a6'], [0.36, '#a9d8c6'], [0.29, '#7fa9b5'], [0.23, '#17110d'], [0.18, '#efe5cf']]) {
+    c.strokeStyle = col; c.lineWidth = wd * 2 * k; c.lineJoin = 'round'; c.beginPath(); outlinePts.forEach((p, i) => i ? c.lineTo(TXS(p.x), TZS(p.y)) : c.moveTo(TXS(p.x), TZS(p.y))); c.stroke();
+  }
+});
+spruceTex.repeat.set(1 / 22, 1 / 40); spruceTex.offset.set(-14 / 22, 0.5);
+
+const M = {
+  top: new THREE.MeshPhysicalMaterial({ map: spruceTex, roughness: 0.42, clearcoat: 1, clearcoatRoughness: 0.06 }),
+  side: new THREE.MeshPhysicalMaterial({ map: woodTex('#3a1c12', '#140805', 5, 240, 0.5), roughness: 0.4, clearcoat: 1, clearcoatRoughness: 0.08 }),
+  inside: new THREE.MeshBasicMaterial({ color: 0x070504 }),
+  ebony: new THREE.MeshPhysicalMaterial({ map: woodTex('#100c0a', '#2a1e17', 9, 120, 0.2), roughness: 0.62, clearcoat: 0.2, clearcoatRoughness: 0.4, envMapIntensity: 0.5 }),
+  neck: new THREE.MeshPhysicalMaterial({ map: woodTex('#6a3721', '#2f1408', 13, 200, 0.35), roughness: 0.4, clearcoat: 1, clearcoatRoughness: 0.1 }),
+  ivory: new THREE.MeshPhysicalMaterial({ color: 0xefe5cf, roughness: 0.38, clearcoat: 0.6 }),
+  bone: new THREE.MeshStandardMaterial({ color: 0xf2ead8, roughness: 0.45 }),
+  fret: new THREE.MeshStandardMaterial({ color: 0xdcdcd4, metalness: 1, roughness: 0.2 }),
+  wound: new THREE.MeshStandardMaterial({ color: 0xc08f4c, metalness: 1, roughness: 0.42 }),
+  plain: new THREE.MeshStandardMaterial({ color: 0xe6e9ee, metalness: 1, roughness: 0.18 }),
+  abalone: new THREE.MeshPhysicalMaterial({ map: abaloneTex, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.04, iridescence: 1, iridescenceIOR: 1.6, side: THREE.DoubleSide }),
+  tortoise: new THREE.MeshPhysicalMaterial({ map: tortoiseTex, roughness: 0.25, clearcoat: 1, clearcoatRoughness: 0.05, side: THREE.DoubleSide }),
+  dark: new THREE.MeshStandardMaterial({ color: 0x120d0a, roughness: 0.6, side: THREE.DoubleSide }),
+  gold: new THREE.MeshStandardMaterial({ color: 0xdcb565, metalness: 1, roughness: 0.24 }),
+};
+function mesh(geo, mat, x, y, z, opt) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); if (opt && opt.cast) m.castShadow = true; if (!opt || opt.recv !== false) m.receiveShadow = true; root.add(m); return m; }
+const flat = geo => geo.rotateX(-Math.PI / 2);
+
+{ // reflections: a small "photo studio" of soft boxes rendered into an environment map
+  const env = new THREE.Scene(); env.background = new THREE.Color(0x15110d);
+  const box = (w, h, x, y, z, i, col) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(col).multiplyScalar(i), side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); env.add(m); };
+  box(26, 9, -4, 16, 3, 2.6, 0xfff4e0); box(10, 10, 18, 9, 10, 1.6, 0xffe2bd); box(8, 14, -18, 6, -8, 1.0, 0xcfe0ff); box(30, 4, 0, 5, -18, 0.8, 0xffd9a8);
+  const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(env, 0.03).texture; pm.dispose();
+}
+const key = new THREE.DirectionalLight(0xfff0dc, 1.5); key.castShadow = true; key.shadow.mapSize.set(4096, 4096);
+Object.assign(key.shadow.camera, { left: -24, right: 24, top: 12, bottom: -12, near: 5, far: 150 }); key.shadow.bias = -0.0003; key.shadow.normalBias = 0.02; key.shadow.radius = 3;
+scene.add(key, key.target);
+scene.add(new THREE.HemisphereLight(0xffe9cf, 0x1a120c, 0.35));
+
+/* Rooms behind the guitar: a dark studio (default) and a living room with a fireplace.
+   They are built in ordinary room coordinates (X right, Y up, Z toward the viewer, roughly centimetres)
+   and turned so that the back wall sits behind the floating guitar. */
+const GUITAR_H = 85, WALL_Z = -150;
+const roomRoot = new THREE.Group(); roomRoot.rotation.x = -Math.PI / 2; scene.add(roomRoot);
+const studioG = new THREE.Group(), livingG = new THREE.Group(); roomRoot.add(studioG, livingG);
+const rAdd = (g, geo, mat, x, y, z) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); g.add(m); return m; };
+const floorGeo = (w, d) => new THREE.PlaneGeometry(w, d).rotateX(-Math.PI / 2);
+const glowTex = canvasTex(128, 128, (c) => { const g = c.createRadialGradient(64, 64, 2, 64, 64, 64); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.3, 'rgba(255,255,255,0.45)'); g.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = g; c.fillRect(0, 0, 128, 128); });
+const glow = (g, color, size, x, y, z, op) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false })); sp.scale.set(size, size, 1); sp.position.set(x, y, z); g.add(sp); return sp; };
+{ // dark studio: a charcoal wall with a soft spotlight, a glossy black floor and a warm light strip where they meet
+  const wallT = canvasTex(512, 512, (c) => { const g = c.createRadialGradient(256, 256, 20, 256, 256, 300); g.addColorStop(0, '#3a2819'); g.addColorStop(0.42, '#180f0a'); g.addColorStop(1, '#050302'); c.fillStyle = g; c.fillRect(0, 0, 512, 512); });
+  rAdd(studioG, new THREE.PlaneGeometry(1400, 760), new THREE.MeshBasicMaterial({ map: wallT }), 0, GUITAR_H + 30, WALL_Z);
+  rAdd(studioG, floorGeo(1400, 700), new THREE.MeshStandardMaterial({ color: 0x0b0907, roughness: 0.22, envMapIntensity: 0.7 }), 0, 0, WALL_Z + 350);
+  rAdd(studioG, new THREE.BoxGeometry(1400, 1.6, 1.6), new THREE.MeshBasicMaterial({ color: 0xffc777 }), 0, 1, WALL_Z + 1);
+  const washT = canvasTex(8, 128, (c) => { const g = c.createLinearGradient(0, 128, 0, 0); g.addColorStop(0, 'rgba(255,190,110,0.5)'); g.addColorStop(0.35, 'rgba(255,170,90,0.12)'); g.addColorStop(1, 'rgba(255,170,90,0)'); c.fillStyle = g; c.fillRect(0, 0, 8, 128); });
+  const washM = new THREE.MeshBasicMaterial({ map: washT, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  rAdd(studioG, new THREE.PlaneGeometry(1400, 120), washM, 0, 60, WALL_Z + 0.6);
+  const fw = rAdd(studioG, new THREE.PlaneGeometry(1400, 150), washM, 0, 0.4, WALL_Z + 75); fw.rotation.x = -Math.PI / 2; fw.rotation.z = Math.PI;
+}
+const flames = [];
+{ // living room
+  const rnd = mulberry32(77);
+  const plankT = canvasTex(1024, 1024, (c, w, h) => { for (let i = 0; i < 8; i++) { let y = -rnd() * 300; while (y < h) { const len = 260 + rnd() * 380, t = 0.75 + rnd() * 0.4; c.fillStyle = `rgb(${92 * t | 0},${58 * t | 0},${34 * t | 0})`; c.fillRect(i * 128, y, 127, len - 2);
+      for (let k = 0; k < 14; k++) { c.strokeStyle = `rgba(40,22,10,${0.08 + rnd() * 0.12})`; c.beginPath(); const x = i * 128 + rnd() * 127; c.moveTo(x, y); c.lineTo(x + (rnd() - 0.5) * 8, y + len); c.stroke(); } y += len; } c.fillStyle = 'rgba(20,10,5,0.7)'; c.fillRect(i * 128 + 127, 0, 1.5, h); } });
+  plankT.wrapS = plankT.wrapT = THREE.RepeatWrapping; plankT.repeat.set(5, 3);
+  const stoneT = canvasTex(512, 512, (c, w, h) => { c.fillStyle = '#6f685f'; c.fillRect(0, 0, w, h); for (let r = 0; r < 8; r++) for (let q = -1; q < 4; q++) { const t = 0.86 + rnd() * 0.26; c.fillStyle = `rgb(${196 * t | 0},${186 * t | 0},${170 * t | 0})`; c.fillRect(q * 128 + (r % 2) * 64 + 2, r * 64 + 2, 124, 60); }
+    for (let i = 0; i < 5000; i++) { c.fillStyle = `rgba(${rnd() < 0.5 ? '60,50,40' : '255,250,240'},${rnd() * 0.08})`; c.fillRect(rnd() * w, rnd() * h, 2, 2); } });
+  stoneT.wrapS = stoneT.wrapT = THREE.RepeatWrapping; stoneT.repeat.set(1 / 56, 1 / 56);
+  const rugT = canvasTex(600, 340, (c, w, h) => { c.fillStyle = '#4d1c1a'; c.fillRect(0, 0, w, h); for (const [m, col, lw] of [[10, '#c9b38a', 6], [24, '#1d2a44', 12], [44, '#c9b38a', 3]]) { c.strokeStyle = col; c.lineWidth = lw; c.strokeRect(m, m, w - 2 * m, h - 2 * m); }
+    c.fillStyle = '#1d2a44'; c.beginPath(); c.moveTo(w / 2, 70); c.lineTo(w - 120, h / 2); c.lineTo(w / 2, h - 70); c.lineTo(120, h / 2); c.fill(); c.fillStyle = '#c9b38a'; c.beginPath(); c.moveTo(w / 2, 110); c.lineTo(w - 190, h / 2); c.lineTo(w / 2, h - 110); c.lineTo(190, h / 2); c.fill();
+    c.fillStyle = '#6a2622'; c.beginPath(); c.ellipse(w / 2, h / 2, 60, 34, 0, 0, 6.3); c.fill(); for (let i = 0; i < 26; i++) { c.fillStyle = i % 2 ? '#c9b38a' : '#7d2c27'; c.fillRect(60 + i * 18.5, 54, 9, 9); c.fillRect(60 + i * 18.5, h - 63, 9, 9); } });
+  const paintT = canvasTex(512, 320, (c, w, h) => { const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#27375e'); g.addColorStop(0.45, '#c97f5e'); g.addColorStop(0.62, '#f0c48a'); g.addColorStop(1, '#2c3e52'); c.fillStyle = g; c.fillRect(0, 0, w, h);
+    const ridge = (base, amp, col, seed) => { const r = mulberry32(seed); c.fillStyle = col; c.beginPath(); c.moveTo(0, h); let y = base; for (let x = 0; x <= w; x += 16) { y = base + (r() - 0.5) * amp + Math.sin(x * 0.02 + seed) * amp * 0.6; c.lineTo(x, y); } c.lineTo(w, h); c.fill(); };
+    ridge(150, 70, '#e8e4ea', 3); ridge(175, 50, '#8d93ad', 8); ridge(205, 30, '#39485a', 5); c.fillStyle = '#1c2b33'; for (let x = 0; x < w; x += 9) { const t = 14 + (x * 37 % 23); c.beginPath(); c.moveTo(x, 236); c.lineTo(x + 4.5, 236 - t); c.lineTo(x + 9, 236); c.fill(); }
+    const lg = c.createLinearGradient(0, 236, 0, h); lg.addColorStop(0, '#c79a78'); lg.addColorStop(1, '#22344a'); c.fillStyle = lg; c.fillRect(0, 236, w, h - 236); });
+  const bookT = canvasTex(512, 512, (c, w, h) => { c.fillStyle = '#1a110b'; c.fillRect(0, 0, w, h); const cols = ['#6b2a22', '#23374f', '#2f4a36', '#8a6a2c', '#4a2d4f', '#7a7466', '#2a2a2e', '#925c33'];
+    for (let r = 0; r < 5; r++) { let x = 8; while (x < w - 16) { const bw = 12 + rnd() * 22, bh = 62 + rnd() * 26; c.fillStyle = cols[rnd() * cols.length | 0]; c.fillRect(x, r * 102 + 96 - bh, bw - 1.5, bh); c.fillStyle = 'rgba(230,200,140,0.5)'; c.fillRect(x + 2, r * 102 + 96 - bh + 8, bw - 5.5, 2); x += bw; } c.fillStyle = '#3a2516'; c.fillRect(0, r * 102 + 96, w, 6); } });
+  const flameT = canvasTex(128, 256, (c) => { c.translate(64, 176); c.scale(1, 2.1); const g = c.createRadialGradient(0, 0, 2, 0, -8, 60); g.addColorStop(0, 'rgba(255,250,210,1)'); g.addColorStop(0.25, 'rgba(255,200,80,0.9)'); g.addColorStop(0.6, 'rgba(255,100,20,0.4)'); g.addColorStop(1, 'rgba(255,60,0,0)'); c.fillStyle = g; c.fillRect(-64, -90, 128, 130); });
+  const S = (color, rough, extra) => new THREE.MeshStandardMaterial({ color, roughness: rough, ...extra }), B = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+  const wall = S(0x39453f, 0.9), trim = S(0x8f887c, 0.6), walnut = S(0x2c1a10, 0.5), fabric = S(0x3f4a3a, 1), stone = S(0x6f685f, 0.9, { map: stoneT });
+  rAdd(livingG, new THREE.PlaneGeometry(600, 280), wall, 0, 140, WALL_Z);
+  for (const sx of [-1, 1]) { const m = rAdd(livingG, new THREE.PlaneGeometry(520, 280), wall, sx * 300, 140, WALL_Z + 260); m.rotation.y = -sx * Math.PI / 2; }
+  rAdd(livingG, floorGeo(600, 520), S(0xa08a72, 0.45, { map: plankT, envMapIntensity: 0.5 }), 0, 0, WALL_Z + 260);
+  const ceil = rAdd(livingG, floorGeo(600, 520), S(0x6d675e, 1), 0, 280, WALL_Z + 260); ceil.rotation.x = Math.PI;
+  rAdd(livingG, B(600, 14, 2.5), trim, 0, 7, WALL_Z + 1.3); rAdd(livingG, B(600, 10, 4), trim, 0, 275, WALL_Z + 2);
+  // fireplace
+  const su = new THREE.Shape(); su.moveTo(-88, 0); su.lineTo(-88, 128); su.lineTo(88, 128); su.lineTo(88, 0); su.lineTo(46, 0); su.lineTo(46, 72); su.lineTo(-46, 72); su.lineTo(-46, 0); su.lineTo(-88, 0);
+  rAdd(livingG, new THREE.ExtrudeGeometry(su, { depth: 26, bevelEnabled: false }), stone, 0, 0, WALL_Z);
+  rAdd(livingG, B(198, 9, 38), trim, 0, 132.5, WALL_Z + 19); rAdd(livingG, B(204, 5, 62), S(0x24211f, 0.5), 0, 2.5, WALL_Z + 31);
+  rAdd(livingG, new THREE.PlaneGeometry(92, 72), S(0x241d1a, 1, { map: stoneT.clone() }), 0, 36, WALL_Z + 2).material.map.repeat.set(4, 6);
+  for (const [x, y, z, r] of [[0, 9, 13, 0.15], [-5, 9, 21, -0.2], [7, 17, 17, 0.35]]) { const m = rAdd(livingG, new THREE.CylinderGeometry(4.6, 4.6, 54, 10), S(0x1c120c, 1), x, y, WALL_Z + z); m.rotation.z = Math.PI / 2; m.rotation.y = r; }
+  glow(livingG, 0xff6a1a, 110, 0, 14, WALL_Z + 20, 0.55);
+  for (let i = 0; i < 9; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameT, color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); const x = -26 + i * 6.5 + (rnd() - 0.5) * 5, base = 34 + rnd() * 24;
+    sp.position.set(x, 16 + base * 0.42, WALL_Z + 14 + rnd() * 9); livingG.add(sp); flames.push({ sp, x, base, w: 15 + rnd() * 10, ph: rnd() * 10, sp2: 2.5 + rnd() * 3 }); }
+  const fire = new THREE.PointLight(0xff7a2e, 11000, 800, 2); fire.position.set(0, 32, WALL_Z + 46); livingG.add(fire); flames.light = fire;
+  // above the mantel
+  rAdd(livingG, B(126, 86, 4), S(0x7a5a2a, 0.4, { metalness: 0.6 }), 0, 196, WALL_Z + 2); rAdd(livingG, new THREE.PlaneGeometry(112, 72), S(0xbfbfbf, 0.6, { map: paintT }), 0, 196, WALL_Z + 4.2);
+  for (const [x, hgt] of [[-74, 18], [-66, 12], [-58, 22]]) { rAdd(livingG, new THREE.CylinderGeometry(2.3, 2.3, hgt, 12), S(0xd9cfbb, 0.7), x, 137 + hgt / 2, WALL_Z + 20); glow(livingG, 0xffc070, 16, x, 137 + hgt + 4, WALL_Z + 20, 0.9); }
+  rAdd(livingG, new THREE.SphereGeometry(9, 20, 14), S(0x2f5a5c, 0.25), 66, 146, WALL_Z + 20).scale.set(1, 1.3, 1); rAdd(livingG, new THREE.CylinderGeometry(3.5, 5, 8, 14), S(0x2f5a5c, 0.25), 66, 160, WALL_Z + 20);
+  for (const sx of [-1, 1]) { rAdd(livingG, B(5, 16, 9), S(0x5a4a2a, 0.4, { metalness: 0.7 }), sx * 128, 178, WALL_Z + 5); rAdd(livingG, new THREE.SphereGeometry(6.5, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffe0b0 }), sx * 128, 192, WALL_Z + 10); glow(livingG, 0xffb060, 120, sx * 128, 192, WALL_Z + 12, 0.38);
+    const pl = new THREE.PointLight(0xffc98a, 2600, 420, 2); pl.position.set(sx * 128, 192, WALL_Z + 30); livingG.add(pl); }
+  rAdd(livingG, floorGeo(310, 180), S(0x9a9a9a, 1, { map: rugT }), 0, 0.5, WALL_Z + 165);
+  // bookshelf, armchair and lamp
+  rAdd(livingG, B(96, 212, 34), walnut, -226, 106, WALL_Z + 17); rAdd(livingG, new THREE.PlaneGeometry(86, 200), S(0x8a8a8a, 0.8, { map: bookT }), -226, 106, WALL_Z + 34.3);
+  rAdd(livingG, B(84, 24, 78), fabric, 214, 30, WALL_Z + 70); rAdd(livingG, B(84, 74, 20), fabric, 214, 78, WALL_Z + 40); for (const sx of [-1, 1]) rAdd(livingG, B(15, 48, 78), fabric, 214 + sx * 42, 46, WALL_Z + 70);
+  rAdd(livingG, new THREE.CylinderGeometry(1.6, 1.6, 150, 10), S(0x5a4a2a, 0.4, { metalness: 0.7 }), 276, 75, WALL_Z + 30); rAdd(livingG, new THREE.CylinderGeometry(17, 24, 30, 24, 1, true), new THREE.MeshBasicMaterial({ color: 0xf2d6a6, side: THREE.DoubleSide }), 276, 162, WALL_Z + 30); glow(livingG, 0xffbd70, 150, 276, 160, WALL_Z + 34, 0.32);
+}
+function animateRoom(now) {
+  if (!livingG.visible) return; const t = now / 1000; let sum = 0;
+  for (const f of flames) { const n = 0.5 + 0.5 * Math.sin(t * f.sp2 + f.ph) * Math.sin(t * f.sp2 * 0.63 + f.ph * 2.1), hgt = f.base * (0.7 + 0.5 * n); sum += n;
+    f.sp.scale.set(f.w * (0.85 + 0.3 * n), hgt, 1); f.sp.position.x = f.x + Math.sin(t * 2.2 + f.ph) * 1.6; f.sp.position.y = 13 + hgt * 0.42; f.sp.material.opacity = 0.55 + 0.4 * n; }
+  flames.light.intensity = 9000 + 3200 * (sum / flames.length) + 500 * Math.sin(t * 17);
+}
+
+{ // body: gloss spruce top, sound hole, rosewood sides and back, binding
+  const top = new THREE.ExtrudeGeometry(outlineShape(), { depth: 10.5, bevelEnabled: false, curveSegments: 24 }); top.rotateX(Math.PI / 2);
+  mesh(top, [M.top, M.side], 0, TOP_Y, 0, { cast: true });
+  const curve = new THREE.CatmullRomCurve3(outlinePts.map(p => new THREE.Vector3(p.x, TOP_Y - 0.02, p.y)), true);
+  mesh(new THREE.TubeGeometry(curve, 500, 0.085, 6, true), M.ivory, 0, 0, 0);
+  // sound hole and rosette (kept circular as the guitar stretches)
+  const holeG = round(new THREE.Group()); holeG.position.set(HOLE_X, TOP_Y + 0.004, 0); root.add(holeG);
+  const ring = (a, b, mat, y) => { const m = new THREE.Mesh(flat(a ? new THREE.RingGeometry(a, b, 128) : new THREE.CircleGeometry(b, 96)), mat); m.position.y = y || 0; m.receiveShadow = true; holeG.add(m); };
+  ring(0, HOLE_R, M.inside, 0.002);
+  for (const [a, b, mat] of [[HOLE_R, HOLE_R + 0.07, M.dark], [HOLE_R + 0.16, HOLE_R + 0.22, M.dark], [HOLE_R + 0.25, HOLE_R + 0.62, M.abalone], [HOLE_R + 0.65, HOLE_R + 0.71, M.dark], [HOLE_R + 0.84, HOLE_R + 0.88, M.ivory]]) ring(a, b, mat);
+  // pickguard
+  const pg = new THREE.Shape(), r = HOLE_R + 0.96, a0 = 0.72, a1 = 2.3;
+  pg.moveTo(HOLE_X + r * Math.cos(a1), r * Math.sin(a1)); pg.bezierCurveTo(16.4, 4.6, 16.9, 7.5, 19.2, 7.7); pg.bezierCurveTo(22, 7.9, 24.6, 6.6, 24.5, 4.9); pg.bezierCurveTo(24.4, 3.6, 22.6, 2.9, HOLE_X + r * Math.cos(a0), r * Math.sin(a0));
+  pg.absarc(HOLE_X, 0, r, a0, a1, false);
+  const pgg = new THREE.ShapeGeometry(pg, 48); pgg.rotateX(Math.PI / 2);
+  const uv = pgg.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 0.16, uv.getY(i) * 0.16);
+  mesh(pgg, M.tortoise, 0, TOP_Y + 0.014, 0);
+}
+const POSTS = [[-1.7, -2.75], [-3.6, -2.75], [-5.5, -2.75], [-5.5, 2.75], [-3.6, 2.75], [-1.7, 2.75]];     // tuner post for each string, low E first
+function segment(a, b, r, mat) {                       // a thin cylinder between two points
+  const d = new THREE.Vector3().subVectors(b, a), m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, d.length(), 8), mat);
+  m.position.copy(a).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.clone().normalize()); m.castShadow = true; root.add(m); return m;
+}
+{ // neck, fretboard, frets, inlays, nut, headstock and tuning machines
+  mesh(new THREE.BoxGeometry(14.7, 1.42, 7.1), M.neck, 7.07, -0.99, 0, { cast: true });
+  mesh(new THREE.BoxGeometry(FB_END, 0.28, 6.9), M.ebony, FB_END / 2, -0.14, 0, { cast: true });
+  for (const z of [-3.5, 3.5]) mesh(new THREE.BoxGeometry(FB_END + 0.06, 0.28, 0.1), M.ivory, FB_END / 2, -0.14, z);
+  mesh(new THREE.BoxGeometry(0.1, 0.28, 7.1), M.ivory, FB_END + 0.03, -0.14, 0);
+  mesh(new THREE.BoxGeometry(0.22, 0.42, 6.9), M.bone, -0.11, -0.07, 0, { cast: true });
+  const hs = new THREE.Shape(); hs.moveTo(-0.22, -3.55); hs.bezierCurveTo(-0.9, -3.6, -1.1, -4.2, -2.0, -4.25); hs.lineTo(-6.5, -4.45); hs.bezierCurveTo(-7.05, -4.45, -7.2, -3.4, -7.25, -2.6);
+  hs.quadraticCurveTo(-7.75, -1.3, -7.5, 0); hs.quadraticCurveTo(-7.75, 1.3, -7.25, 2.6); hs.bezierCurveTo(-7.2, 3.4, -7.05, 4.45, -6.5, 4.45); hs.lineTo(-2.0, 4.25); hs.bezierCurveTo(-1.1, 4.2, -0.9, 3.6, -0.22, 3.55); hs.lineTo(-0.22, -3.55);
+  const hg = new THREE.ExtrudeGeometry(hs, { depth: 1.15, bevelEnabled: false, curveSegments: 20 }); hg.rotateX(Math.PI / 2);
+  mesh(hg, [M.ebony, M.neck], 0, -0.06, 0, { cast: true });
+  const logo = round(new THREE.Group()); logo.position.set(-6.0, -0.052, 0); root.add(logo);        // pearl inlay on the headstock
+  for (const [x, z, r] of [[0, 0, 0.42], [0.62, 0, 0.2], [-0.62, 0, 0.2], [0, 0.62, 0.2], [0, -0.62, 0.2]]) { const m = new THREE.Mesh(flat(new THREE.CircleGeometry(r, 28)), M.abalone); m.position.set(x, 0, z); logo.add(m); }
+  POSTS.forEach(([x, z], i) => {                       // gold tuning machines with pearl buttons
+    const g = round(new THREE.Group()), side = Math.sign(z); g.position.set(x, 0, z); root.add(g);
+    const part = (geo, mat, px, py, pz) => { const m = new THREE.Mesh(geo, mat); m.position.set(px, py, pz); m.castShadow = true; g.add(m); return m; };
+    part(new THREE.CylinderGeometry(0.34, 0.38, 0.1, 20), M.gold, 0, -0.01, 0);
+    part(new THREE.CylinderGeometry(0.15, 0.15, 0.5, 14), M.gold, 0, 0.2, 0);
+    const shaft = part(new THREE.CylinderGeometry(0.09, 0.09, 2.3, 10), M.gold, 0, -0.62, side * 2.35); shaft.rotation.x = Math.PI / 2;
+    const knob = part(new THREE.SphereGeometry(0.5, 20, 14), M.ivory, 0, -0.62, side * 3.75); knob.scale.set(1.25, 0.55, 0.8);
+  });
+  const fg = new THREE.CylinderGeometry(0.052, 0.052, 6.9, 10); fg.rotateX(Math.PI / 2);
+  const frets = new THREE.InstancedMesh(fg, M.fret, NF), o = new THREE.Object3D();
+  for (let f = 1; f <= NF; f++) { o.position.set(FX[f], 0.002, 0); o.updateMatrix(); frets.setMatrixAt(f - 1, o.matrix); }
+  frets.castShadow = true; frets.receiveShadow = true; root.add(frets);
+  for (const f of [3, 5, 7, 9, 12, 15]) {
+    const x = (FX[f - 1] + FX[f]) / 2, rr = Math.min(0.34, (FX[f] - FX[f - 1]) * 0.3);
+    for (const z of (f === 12 ? [-1.5, 1.5] : [0])) round(mesh(flat(new THREE.CircleGeometry(rr, 40)), M.abalone, x, 0.004, z));
+  }
+}
+{ // bridge, saddle, pins
+  mesh(new THREE.BoxGeometry(2.0, 0.36, 9.6), M.ebony, 26.55, TOP_Y + 0.18, 0, { cast: true });
+  mesh(new THREE.BoxGeometry(0.15, 0.2, 6.6), M.bone, BRIDGE, 0.055, 0, { cast: true });
+  for (let s = 0; s < 6; s++) { round(mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.14, 20), M.bone, 27.05, 0.15, zs(s), { cast: true })); round(mesh(flat(new THREE.CircleGeometry(0.085, 20)), M.abalone, 27.05, 0.224, zs(s))); }
+}
+// strings, plus a translucent ribbon per string that shows the vibration
+const SR = [0.064, 0.054, 0.044, 0.035, 0.027, 0.022], SEG = 28, ribbons = [];
+for (let s = 0; s < 6; s++) {
+  const g = new THREE.CylinderGeometry(SR[s], SR[s], 27.05, 8); g.rotateZ(Math.PI / 2);
+  mesh(g, s < 4 ? M.wound : M.plain, 13.525, YS, zs(s), { cast: true, recv: false });
+  segment(new THREE.Vector3(0, YS, zs(s)), new THREE.Vector3(POSTS[s][0], 0.3, POSTS[s][1]), SR[s], s < 4 ? M.wound : M.plain);      // nut to tuning post
+  const rg = new THREE.BufferGeometry(), pos = new Float32Array((SEG + 1) * 6), idx = [];
+  for (let k = 0; k < SEG; k++) { const a = k * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  rg.setAttribute('position', new THREE.BufferAttribute(pos, 3)); rg.setIndex(idx);
+  const rm = new THREE.Mesh(rg, new THREE.MeshBasicMaterial({ color: s < 4 ? 0xe2b06a : 0xf4f6fa, transparent: true, opacity: 0.42, side: THREE.DoubleSide, depthWrite: false }));
+  rm.frustumCulled = false; rm.visible = false; root.add(rm); ribbons.push(rm);
+}
+// glowing markers: latched chord shape, your fingers, and notes played by the song player
+const discTex = canvasTex(128, 128, (c) => { const g = c.createRadialGradient(64, 64, 4, 64, 64, 62); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.45, 'rgba(255,255,255,0.95)'); g.addColorStop(0.6, 'rgba(255,255,255,0.35)'); g.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = g; c.fillRect(0, 0, 128, 128); });
+function sprites(n, color, additive) { const out = []; for (let i = 0; i < n; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: discTex, color, transparent: true, depthTest: false, blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending })); sp.visible = false; sp.renderOrder = 5; root.add(sp); out.push(sp); } return out; }
+const chordSp = sprites(6, 0xf2e6cc, false), fingerSp = sprites(12, 0xffa23a, true), autoSp = sprites(6, 0xffd27a, true);
+const muteGlow = new THREE.Mesh(flat(new THREE.PlaneGeometry(1.25, 7.4)), new THREE.MeshBasicMaterial({ color: 0xff8a2a, transparent: true, opacity: 0, depthWrite: false })); muteGlow.position.set(24.95, TOP_Y + 0.02, 0); root.add(muteGlow);
+
+/* labels drawn in HTML and pinned to points on the guitar */
+const labels = [];
+function addLabel(text, cls, x, y, z) { const el = document.createElement('div'); el.className = 'lb ' + cls; el.textContent = text; $('labels').appendChild(el); const l = { el, p: new THREE.Vector3(x, y, z), text }; labels.push(l); return l; }
+for (const f of [1, 3, 5, 7, 9, 12, 15]) addLabel(String(f), '', (FX[f - 1] + FX[f]) / 2, 0, -4.0);
+const nameLb = NAMES.map((n, s) => addLabel(n, 's', 0.42, 0.3, zs(s) - 0.3));
+const muteLb = addLabel('PALM MUTE', 'z', 24.95, 0, -4.25);
+addLabel('STRUM', 'z', HOLE_X, 0, -3.95);
+
+/* camera framing, flip, and pointer -> guitar coordinates */
+// Zoom level z: below 0 is closer than the playing view, 0 is the playing view, 1 shows the whole guitar in true
+// proportions, and beyond 1 pulls back into the room.
+const view = { z: 0, zT: 0, k: 0, fx: 0, fz: 0, fxT: 0, fzT: 0, sway: new THREE.Vector2(), swayT: new THREE.Vector2() };
+const smooth = t => t * t * (3 - 2 * t), sgn = () => st.flipX ? -1 : 1, CX = 13.3;
+function applyFlip() {
+  root.scale.z = st.flipZ ? -1 : 1; view.k = 0;
+  roomRoot.position.set(sgn() * CX * KFULL, 0, GUITAR_H);
+  $('flipX').classList.toggle('on', st.flipX); $('flipX').textContent = st.flipX ? 'Sound hole on left ✓' : 'Sound hole on left';
+  $('flipZ').classList.toggle('on', st.flipZ); $('flipZ').textContent = st.flipZ ? 'Low E at bottom ✓' : 'Low E at bottom';
+  saveSettings();
+}
+function applyRoom() {
+  const living = st.bg === 'living'; studioG.visible = !living; livingG.visible = living;
+  $('bgStudio').classList.toggle('on', !living); $('bgLiving').classList.toggle('on', living); saveSettings();
+}
+function fit() { const w = glc.clientWidth, h = glc.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; }
+function setZoom(z, at) {
+  z = clamp(z, -1.4, 2.6);
+  if (z >= 0) { view.fxT = 0; view.fzT = 0; }
+  else if (at) {                                         // keep the spot under the pointer in place while zooming in
+    const r = glc.getBoundingClientRect(); ndc.set((at.clientX - r.left) / r.width * 2 - 1, -((at.clientY - r.top) / r.height * 2 - 1)); ray.setFromCamera(ndc, cam);
+    if (ray.ray.intersectPlane(plane, hitV)) { const px = hitV.x - sgn() * CX, pz = hitV.z - 0.35, f = Math.pow(2, z - Math.min(view.zT, 0));
+      view.fxT = clamp(px - (px - view.fxT) * f, -15, 15); view.fzT = clamp(pz - (pz - view.fzT) * f, -5, 5); }
+  }
+  view.zT = z;
+}
+let lastFrameT = 0;
+function placeCamera() {
+  const nowT = performance.now(), a = 1 - Math.exp(-Math.min(0.25, (nowT - lastFrameT) / 1000) * 8); lastFrameT = nowT;      // same zoom speed at any frame rate
+  view.z += (view.zT - view.z) * a; view.fx += (view.fxT - view.fx) * a; view.fz += (view.fzT - view.fz) * a; view.sway.lerp(view.swayT, a * 0.4);
+  const s = smooth(clamp(view.z, 0, 1)), k = 1 + (KFULL - 1) * s, sign = sgn();
+  if (Math.abs(k - view.k) > 1e-5) {                     // stretch the guitar toward true proportions as it zooms out
+    view.k = k; root.scale.x = sign * k; for (const o of roundItems) o.scale.x = 1 / k;
+    const sc = key.shadow.camera; sc.right = lerp(24, 74, s); sc.left = -sc.right; sc.top = lerp(12, 30, s); sc.bottom = -sc.top; sc.updateProjectionMatrix();
+    key.position.set(sign * CX * k - 9 - 18 * s, 34 + 26 * s, 15 + 12 * s); key.target.position.set(sign * CX * k, 0, 0);
+  }
+  cam.fov = lerp(10, 24, s);
+  const vf = cam.fov * Math.PI / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * cam.aspect);
+  const dist = Math.max(lerp(30.6, 122, s) / 2 / Math.tan(hf / 2), lerp(13, 50, s) / 2 / Math.tan(vf / 2)) * Math.pow(2, Math.min(view.z, 0) + Math.max(view.z - 1, 0));
+  const tilt = lerp(0.3, -0.06, s), close = clamp(-view.z / 0.25, 0, 1), far = 1 + 2 * s;
+  const cx = sign * CX * k + view.fx * close, cz = 0.35 * (1 - s) + view.fz * close;
+  cam.position.set(cx + view.sway.x * far, dist * Math.cos(tilt), cz + dist * Math.sin(tilt) + view.sway.y * far);
+  cam.up.set(0, 0, -1); cam.lookAt(cx, 0, cz); cam.updateProjectionMatrix(); cam.updateMatrixWorld();
+  $('labels').style.opacity = clamp(1 - (view.z - 0.12) / 0.3, 0, 1);
+}
+const ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -YS), hitV = new THREE.Vector3(), ndc = new THREE.Vector2();
+function gpos(e) {                       // where a pointer lands on the plane of the strings, in guitar coordinates
+  const r = glc.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height * 2 - 1));
+  ray.setFromCamera(ndc, cam); if (!ray.ray.intersectPlane(plane, hitV)) return null;
+  root.worldToLocal(hitV); return { x: hitV.x, z: hitV.z };
+}
+
+const pv = new THREE.Vector3();
+function frame() {
+  const now = performance.now();
+  placeCamera();
+  // song-player notes become visible when their audio time arrives
+  if (actx && vq.length) { const t = actx.currentTime; for (let i = vq.length - 1; i >= 0; i--) if (vq[i].t <= t) { const v = vq[i]; vq.splice(i, 1); st.auto[v.s] = { fret: v.fret, t0: now, until: now + Math.max(180, v.dur * 1000) }; } }
+  for (let s = 0; s < 6; s++) {
+    const au = st.auto[s] && now < st.auto[s].until ? st.auto[s] : null, fr = au ? au.fret : Math.max(0, st.fret[s]);
+    st.vis[s] += (Math.min(1, st.env[s] * 5) - st.vis[s]) * 0.35;
+    const amp = st.vis[s] * 0.2 * (st.mute ? 0.5 : 1), rb = ribbons[s];
+    if (amp < 0.012) rb.visible = false;
+    else {
+      rb.visible = true; const p = rb.geometry.attributes.position, x0 = fr > 0 ? FX[fr] : 0, z = zs(s);
+      for (let k = 0; k <= SEG; k++) { const u = k / SEG, hw = amp * Math.sin(Math.PI * u) + SR[s], x = lerp(x0, BRIDGE, u); p.setXYZ(k * 2, x, YS, z - hw); p.setXYZ(k * 2 + 1, x, YS, z + hw); }
+      p.needsUpdate = true;
+    }
+    const cs = chordSp[s]; cs.visible = st.base[s] > 0; if (cs.visible) { cs.position.set(dotX(st.base[s]), YS + 0.05, zs(s)); cs.scale.set(0.62 / view.k, 0.62, 1); cs.material.opacity = 0.85; }
+    const as = autoSp[s]; as.visible = !!au; if (au) { as.position.set(dotX(au.fret), YS + 0.07, zs(s)); as.scale.set(1.25 / view.k, 1.25, 1); as.material.opacity = clamp(1 - (now - au.t0) / (au.until - au.t0), 0, 1) * 0.95 + 0.05; }
+    const dead = st.fret[s] < 0 ? '✕' : NAMES[s]; if (nameLb[s].text !== dead) { nameLb[s].text = dead; nameLb[s].el.textContent = dead; }
+  }
+  fingerSp.forEach((sp, i) => { const f = st.fingers[i]; sp.visible = !!f; if (f) { sp.position.set(dotX(f.f), YS + 0.08, zs(f.s) + clamp(f.z - f.z0, -0.9, 0.9) * (f.bend > 0 ? 0.6 : 0)); sp.scale.set(1.15 / view.k, 1.15, 1); } });
+  animateRoom(now);
+  muteGlow.material.opacity += ((st.mute ? 0.3 : 0) - muteGlow.material.opacity) * 0.25; muteLb.el.classList.toggle('on', !!st.mute);
+  const w = glc.clientWidth, h = glc.clientHeight;
+  for (const l of labels) { pv.copy(l.p); root.localToWorld(pv); pv.project(cam); l.el.style.transform = `translate(-50%,-50%) translate(${((pv.x + 1) / 2 * w).toFixed(1)}px,${((1 - pv.y) / 2 * h).toFixed(1)}px)`; }
+  renderer.render(scene, cam);
+  updateTransport();
+  requestAnimationFrame(frame);
+}
+
+/* ===================================== playing by hand ===================================== */
+function pluck(s, vel, pos, delay) { send({ type: 'pluck', s, vel, pos, delay: delay || 0 }); }
+// Works out which fret is in effect on a string (highest finger, or the latched chord) and tells the engine.
+function applyString(s, why) {
+  const on = st.fingers.filter(f => f.s === s);
+  const eff = on.length ? Math.max(Math.max(st.base[s], 0), ...on.map(f => f.f)) : st.base[s];
+  if (eff === st.fret[s] && why !== 'chord') return false;
+  st.fret[s] = eff;
+  send({ type: 'fret', s, fret: Math.max(0, eff), dead: eff < 0, why, tap: st.tap, release: on.length === 0 && st.base[s] <= 0, vel: 0.62, pos: st.lastPos });
+  return true;
+}
+function setChord(i) {
+  st.chord = i; st.base = i === 0 ? [0, 0, 0, 0, 0, 0] : SHAPES[CHORDS[i]].slice();
+  for (let s = 0; s < 6; s++) applyString(s, 'chord');
+  [...$('chords').children].forEach((b, k) => b.classList.toggle('on', k === i));
+}
+function resyncFrets() { for (let s = 0; s < 6; s++) send({ type: 'fret', s, fret: Math.max(0, st.fret[s]), dead: st.fret[s] < 0, why: 'chord' }); }
+function updateMute() { const m = (st.muteHeld > 0 || st.shift) ? 1 : 0; if (m !== st.mute) { st.mute = m; send({ type: 'mute', amount: m }); } }
+function strum(dir) { const order = dir > 0 ? [0, 1, 2, 3, 4, 5] : [5, 4, 3, 2, 1, 0]; order.forEach((s, k) => pluck(s, 0.78 - k * 0.03 + Math.random() * 0.06, st.lastPos, k * 0.013)); }
+
+const ptrs = new Map(); let pinch = null, lastCamTap = 0;
+glc.addEventListener('pointerdown', e => {
+  e.preventDefault(); closePops(); try { glc.setPointerCapture(e.pointerId); } catch (_) {}
+  const g = gpos(e);
+  // A touch that lands off the playing areas controls the view: two fingers pinch to zoom, a double tap switches
+  // between the playing view and the whole guitar.
+  if (!g || g.x < -1.7 || g.x > 28.3 || Math.abs(g.z) > (g.x < FB_END ? 3.45 : g.x < MUTE_X ? 4.3 : 4.9)) {
+    const now = performance.now(); ptrs.set(e.pointerId, { zone: 'cam', x: e.clientX, y: e.clientY }); pinch = null;
+    if (now - lastCamTap < 330 && [...ptrs.values()].filter(q => q.zone === 'cam').length === 1) { setZoom(view.zT > 0.5 ? 0 : 1); lastCamTap = 0; } else lastCamTap = now;
+    return;
+  }
+  if (g.x < FB_END) {
+    const s = stringAt(g.z), fg = { s, f: fretAt(g.x), z0: g.z, z: g.z, bend: 0 };
+    st.fingers.push(fg); ptrs.set(e.pointerId, { zone: 'fret', fg });
+    if (!applyString(s, 'down') && st.tap) pluck(s, 0.62, st.lastPos, 0);
+  } else if (g.x < MUTE_X) {
+    ptrs.set(e.pointerId, { zone: 'strum', z: g.z, t: e.timeStamp });
+    st.lastPos = pickPos(g.x);
+    const s = stringAt(g.z); if (Math.abs(g.z - zs(s)) < 0.32) pluck(s, 0.7, st.lastPos, 0);
+  } else { ptrs.set(e.pointerId, { zone: 'mute' }); st.muteHeld++; updateMute(); }
+});
+glc.addEventListener('pointermove', e => {
+  const p = ptrs.get(e.pointerId);
+  if (!p) { if (e.pointerType === 'mouse' && !ptrs.size) { const r = glc.getBoundingClientRect(); view.swayT.set(((e.clientX - r.left) / r.width - 0.5) * 1.1, ((e.clientY - r.top) / r.height - 0.5) * 0.8); } return; }
+  if (p.zone === 'mute') return;
+  if (p.zone === 'cam') {
+    p.x = e.clientX; p.y = e.clientY; const cams = [...ptrs.values()].filter(q => q.zone === 'cam');
+    if (cams.length === 2) { const d = Math.hypot(cams[0].x - cams[1].x, cams[0].y - cams[1].y) || 1; if (!pinch) pinch = { d0: d, z0: view.zT };
+      setZoom(pinch.z0 - Math.log2(d / pinch.d0), { clientX: (cams[0].x + cams[1].x) / 2, clientY: (cams[0].y + cams[1].y) / 2 }); }
+    return;
+  }
+  const list = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
+  for (const ev of (list.length ? list : [e])) {
+    const g = gpos(ev); if (!g) continue;
+    if (p.zone === 'fret') {
+      const fg = p.fg, f = fretAt(Math.min(g.x, FB_END - 0.01)); fg.z = g.z;
+      if (f !== fg.f) { fg.f = f; fg.z0 = g.z; fg.bend = 0; applyString(fg.s, 'slide'); }
+      else {
+        const b = clamp((Math.abs(g.z - fg.z0) - 0.12) * 1.6, 0, 3);
+        if (Math.abs(b - fg.bend) > 0.015 && fg.f === st.fret[fg.s]) { fg.bend = b; send({ type: 'bend', s: fg.s, semis: b }); }
+      }
+    } else {
+      const dt = Math.max(1, ev.timeStamp - p.t), vel = clamp(0.3 + Math.abs(g.z - p.z) / dt * 18, 0.25, 1), hit = [];
+      st.lastPos = pickPos(g.x);
+      for (let s = 0; s < 6; s++) { const zz = zs(s); if ((p.z < zz && zz <= g.z) || (g.z <= zz && zz < p.z)) hit.push(s); }
+      if (g.z < p.z) hit.reverse();
+      for (const s of hit) pluck(s, vel, st.lastPos, 0);
+      p.z = g.z; p.t = ev.timeStamp;
+    }
+  }
+});
+function pointerEnd(e) {
+  const p = ptrs.get(e.pointerId); if (!p) return; ptrs.delete(e.pointerId);
+  if (p.zone === 'cam') { pinch = null; return; }
+  if (p.zone === 'fret') { st.fingers.splice(st.fingers.indexOf(p.fg), 1); if (!applyString(p.fg.s, 'up') && p.fg.bend > 0) send({ type: 'bend', s: p.fg.s, semis: 0 }); }
+  else if (p.zone === 'mute') { st.muteHeld = Math.max(0, st.muteHeld - 1); updateMute(); }
+}
+glc.addEventListener('pointerup', pointerEnd); glc.addEventListener('pointercancel', pointerEnd);
+glc.addEventListener('contextmenu', e => e.preventDefault());
+glc.addEventListener('wheel', e => { e.preventDefault(); setZoom(view.zT + clamp(e.deltaY, -300, 300) * 0.0014, e); }, { passive: false });
+
+addEventListener('keydown', e => {
+  if (e.key === 'F1') { e.preventDefault(); showManual($('manual').classList.contains('hidden')); return; }
+  if (!$('manual').classList.contains('hidden')) { if (e.key === 'Escape') showManual(false); return; }      // keys don't play the guitar while the manual is open
+  if (e.target && (e.target.tagName === 'TEXTAREA' || (e.target.tagName === 'INPUT' && e.target.type === 'text'))) return;
+  if (e.key === 'Shift') { st.shift = true; updateMute(); return; }
+  if (e.repeat || e.ctrlKey || e.altKey || e.metaKey) return;
+  const k = e.key.toLowerCase(), pick = 'asdfgh'.indexOf(k);
+  if (k === ' ' || k === 'arrowdown') { e.preventDefault(); strum(1); }
+  else if (k === 'arrowup') { e.preventDefault(); strum(-1); }
+  else if (k === 'enter') { e.preventDefault(); togglePlay(); }
+  else if (k === 'escape') { closePops(); $('lib').classList.remove('open'); }
+  else if (k === '-' || k === '_') setZoom(view.zT + 0.25);
+  else if (k === '=' || k === '+') setZoom(view.zT - 0.25);
+  else if (k.length === 1 && k >= '0' && k <= '9') setChord(k === '0' ? 9 : +k - 1);
+  else if (pick >= 0 && k.length === 1) pluck(pick, 0.7, st.lastPos, 0);
+});
+addEventListener('keyup', e => { if (e.key === 'Shift') { st.shift = false; updateMute(); } });
+addEventListener('blur', () => { st.shift = false; st.muteHeld = 0; updateMute(); });
+
+/* ===================================== song library ===================================== */
+// Notation: notes are name+octave, optionally ":n" for n units long (unit = `u` beats); "z" is a rest; "|" is only for reading.
+// `c` is the chord per bar (or "Name:beats"); `st` is the accompaniment style the arranger builds from those chords.
+const rep = (s, n) => Array(n).fill(s).join(' ');
+const P1 = 'G2 D3 B3 A3 B3 D3 B3 D3', P2 = 'G2 E3 C4 B3 C4 E3 C4 E3', P3 = 'G2 F#3 C4 B3 C4 F#3 C4 F#3', MOTIF = 'B4 A4:.5 B4:.5 G4';
+const CANON = 'D:2 A:2 Bm:2 F#m:2 G:2 D:2 G:2 A:2';
+const SONGS = [
+  { t: 'Greensleeves', by: 'Traditional English', g: 'Classical', y: 1580, yl: '16th century', lvl: 'Full tune', bpm: 138, bar: 3, pk: 1, st: 'arp',
+    m: 'A4 | C5:2 D5 | E5:1.5 F5:.5 E5 | D5:2 B4 | G4:1.5 A4:.5 B4 | C5:2 A4 | A4:1.5 G#4:.5 A4 | B4:2 G#4 | E4:2 A4 | C5:2 D5 | E5:1.5 F5:.5 E5 | D5:2 B4 | G4:1.5 A4:.5 B4 | C5:1.5 B4:.5 A4 | G#4:1.5 F#4:.5 G#4 | A4:3 | A4:3 | G5:3 | G5:1.5 F#5:.5 E5 | D5:2 B4 | G4:1.5 A4:.5 B4 | C5:2 A4 | A4:1.5 G#4:.5 A4 | B4:2 G#4 | E4:3 | G5:3 | G5:1.5 F#5:.5 E5 | D5:2 B4 | G4:1.5 A4:.5 B4 | C5:1.5 B4:.5 A4 | G#4:1.5 F#4:.5 G#4 | A4:3 | A4:2',
+    c: 'Am C G Em Am Am E E Am C G Em Am E Am Am C C G Em Am Am E E C C G Em Am E Am Am' },
+  { t: 'Spanish Romance', by: 'Anonymous', g: 'Classical', y: 1890, yl: '19th century', lvl: 'First section', bpm: 72, bar: 3, st: 'triplet', rep: 2,
+    m: 'B4 B4 B4 | B4 A4 G4 | G4 F#4 E4 | E4 G4 B4 | E5 E5 E5 | E5 D5 C5 | C5 B4 A4 | A4 B4 C5 | B4 C5 B4 | D#5 C5 B4 | B4 A4 G4 | G4 F#4 E4 | F#4 F#4 F#4 | F#4 G4 F#4 | E4 E4 E4 | E4:3',
+    c: 'Em Em Em Em Am Am Am Am B7 B7 Em Em B7 B7 Em Em' },
+  { t: 'Prelude, Cello Suite No. 1', by: 'J. S. Bach', g: 'Classical', y: 1720, yl: 'c. 1720', lvl: 'Opening', bpm: 66, bar: 4, u: 0.25, st: 'none',
+    m: `${P1} ${P1} | ${P2} ${P2} | ${P3} ${P3} | G2 G3 B3 A3 B3 G3 B3 G3 G2 G3 B3 A3 B3 G3 B3 F#3 | ${P1} ${P1} | ${P2} ${P2} | ${P3} ${P3} | G2 G3 B3 A3 B3 G3 B3 G3 G2 D3 G3 B3 D4:12` },
+  { t: 'Bourrée in E minor', by: 'J. S. Bach', g: 'Classical', y: 1712, yl: 'c. 1712', lvl: 'Opening', bpm: 144, bar: 4, u: 0.5, pk: 1, st: 'bass', rep: 2,
+    m: 'E4 F#4 | G4:2 F#4 E4 D#4:2 E4 F#4 | B3:2 C#4 D#4 E4:2 D4 C4 | B3:2 A3 G3 F#3:2 G3 A3 | B3 A3 G3 F#3 E3:2',
+    c: 'Em:2 B7:2 B7:2 Em:2 Em:2 B7:2 B7:2 Em:2' },
+  { t: 'Canon in D', by: 'Johann Pachelbel', g: 'Classical', y: 1680, yl: 'c. 1680', lvl: 'Three variations', bpm: 92, bar: 4, st: 'arp',
+    m: 'z:4 | z:4 | z:4 | z:4 | F#5:2 E5:2 | D5:2 C#5:2 | B4:2 A4:2 | B4:2 C#5:2 | D5:2 C#5:2 | B4:2 A4:2 | G4:2 F#4:2 | G4:2 E4:2 | D4 F#4 A4 G4 | F#4 D4 F#4 E4 | D4 B3 D4 A4 | G4 B4 A4 G4 | F#4:4',
+    c: `${rep(CANON, 4)} D` },
+  { t: 'Ode to Joy', by: 'Ludwig van Beethoven', g: 'Classical', y: 1824, yl: '1824', lvl: 'Full theme', bpm: 116, bar: 4, st: 'strum',
+    m: 'B4 B4 C5 D5 | D5 C5 B4 A4 | G4 G4 A4 B4 | B4:1.5 A4:.5 A4:2 | B4 B4 C5 D5 | D5 C5 B4 A4 | G4 G4 A4 B4 | A4:1.5 G4:.5 G4:2 | A4 A4 B4 G4 | A4 B4:.5 C5:.5 B4 G4 | A4 B4:.5 C5:.5 B4 A4 | G4 A4 D4:2 | B4 B4 C5 D5 | D5 C5 B4 A4 | G4 G4 A4 B4 | A4:1.5 G4:.5 G4:2',
+    c: 'G D G D G D G D:2 G:2 D G D A7:2 D:2 G D G D:2 G:2' },
+  { t: 'Für Elise', by: 'Ludwig van Beethoven', g: 'Classical', y: 1810, yl: '1810', lvl: 'Main theme', bpm: 132, bar: 3, u: 0.5, pk: 1, st: 'none', rep: 2,
+    m: 'E5 D#5 | E5 D#5 E5 B4 D5 C5 | A4:2 z C4 E4 A4 | B4:2 z E4 G#4 B4 | C5:2 z E4 E5 D#5 | E5 D#5 E5 B4 D5 C5 | A4:2 z C4 E4 A4 | B4:2 z E4 C5 B4 | A4:4',
+    b: 'z:2 | z:6 | A2 E3 A3 z:3 | E2 E3 G#3 z:3 | A2 E3 A3 z:3 | z:6 | A2 E3 A3 z:3 | E2 E3 G#3 z:3 | A2 E3 A3 z' },
+  { t: 'House of the Rising Sun', by: 'Traditional American', g: 'Folk', y: 1890, yl: '19th century', lvl: 'One verse', bpm: 92, bar: 3, pk: 1, st: 'arp', rep: 2,
+    m: 'E4 | E4:2 F#4 | G4:2 B4 | A4:2 E4 | E4:3 | z:2 B4 | E5:2 E5 | D5:2 B4 | B4:3 | z E5 E5 | E5:2 D5 | B4:2 B4 | A4 G4 E4 | G4:2 E4 | F#4:2 D#4 | E4:3 | z:2',
+    c: 'Em G A C Em G B7 B7 Em G A C Em B7 Em B7' },
+  { t: 'Scarborough Fair', by: 'Traditional English', g: 'Folk', y: 1670, yl: '17th century', lvl: 'One verse', bpm: 116, bar: 3, st: 'arp', rep: 2,
+    m: 'E4:2 E4 | B4 B4 B4 | F#4:1.5 G4:.5 F#4 | E4:3 | z B4 D5 | E5:2 D5 | B4 C#5 A4 | B4:3 | z:2 E5 | E5:2 E5 | D5:2 B4 | B4 A4 G4 | F#4:2 D4 | E4:3 | B4:2 A4 | G4 F#4 E4 | D4:3 | E4:3 | z:3',
+    c: 'Em D Em Em G Em A Em Em Em G G D Em G Em D Em Em' },
+  { t: 'Amazing Grace', by: 'Traditional hymn', g: 'Folk', y: 1835, yl: '1779 / 1835', lvl: 'Full tune', bpm: 84, bar: 3, pk: 1, st: 'arp', rep: 2,
+    m: 'D4 | G4:2 B4:.5 G4:.5 | B4:2 A4 | G4:2 E4 | D4:2 D4 | G4:2 B4:.5 G4:.5 | B4:2 A4 | D5:3 | D5:2 B4 | D5:2 B4:.5 G4:.5 | B4:2 A4 | G4:2 E4 | D4:2 D4 | G4:2 B4:.5 G4:.5 | B4:2 A4 | G4:3 | G4:2',
+    c: 'G G C G G G D D G G C G Em D G G' },
+  { t: 'Shenandoah', by: 'Traditional American', g: 'Folk', y: 1820, yl: 'early 1800s', lvl: 'Full tune', bpm: 72, bar: 4, pk: 1, st: 'arp', rep: 2,
+    m: 'A3 | D4:.5 D4:.5 D4:1.5 E4:.5 F#4:.5 G4:.5 | B4:.5 A4:2.5 D5:.5 C#5:.5 | B4:2.5 A4:.5 B4:.5 A4:.5 | F#4:.5 A4:2.5 A4 | B4:.5 B4:.5 B4:1.5 F#4:.5 A4:.5 F#4:.5 | E4:.5 D4:2.5 E4 | F#4:2 D4 F#4 | B4:.5 A4:2.5 D4:.5 E4:.5 | F#4:2 D4 E4 | D4:3',
+    c: 'D G:1 D:3 G:3 D:1 D Bm D D G:1 D:3 D:2 A:2 D' },
+  { t: 'Danny Boy', by: 'Londonderry Air', g: 'Folk', y: 1913, yl: '1855 / 1913', lvl: 'Full tune', bpm: 66, bar: 4, u: 0.5, pk: 1.5, st: 'arp',
+    m: 'B3 C4 D4 | E4:3 D4 E4 A4 G4 E4 | D4 C4 A3:3 C4 E4 F4 | G4:3 A4 G4 E4 C4 E4 | D4:5 B3 C4 D4 | E4:3 D4 E4 A4 G4 E4 | D4 C4 A3:3 B3 C4 D4 | E4:3 F4 E4 D4 C4 D4 | C4:5 G4 A4 B4 | C5:3 B4 B4 A4 G4 A4 | G4 E4 C4:3 G4 A4 B4 | C5:3 B4 B4 A4 G4 E4 | D4:5 G4 G4 G4 | E5:3 D5 D5 C5 A4 C5 | G4 E4 C4:3 B3 C4 D4 | E4 A4 G4 E4 D4 C4 A3 B3 | C4:5',
+    c: 'C F C G C F C:2 G:2 C F C Am G C:2 F:2 C C:2 G:2 C' },
+  { t: 'Oh! Susanna', by: 'Stephen Foster', g: 'Folk', y: 1848, yl: '1848', lvl: 'Verse and chorus', bpm: 126, bar: 4, pk: 1, st: 'strum',
+    m: 'G4:.5 A4:.5 | B4 D5 D5:1.5 E5:.5 | D5 B4 G4:1.5 A4:.5 | B4 B4 A4 G4 | A4:3 G4:.5 A4:.5 | B4 D5 D5:1.5 E5:.5 | D5 B4 G4:1.5 A4:.5 | B4 B4 A4 A4 | G4:3 z | C5:2 C5:2 | E5 E5:2 E5 | D5 D5 B4 G4 | A4:3 G4:.5 A4:.5 | B4 D5 D5:1.5 E5:.5 | D5 B4 G4:1.5 A4:.5 | B4 B4 A4 A4 | G4:3',
+    c: 'G G G D G G G:2 D:2 G C C G D G G G:2 D:2 G' },
+  { t: 'The Entertainer', by: 'Scott Joplin', g: 'Ragtime & Blues', y: 1902, yl: '1902', lvl: 'First strain', bpm: 84, bar: 2, u: 0.25, pk: 0.5, st: 'boom', rep: 2,
+    m: 'D4 D#4 | E4 C5:2 E4 C5:2 E4 C5:5 | z C5 D5 D#5 | E5 C5 D5 E5:2 B4 D5:2 | C5:4 z:2 D4 D#4 | E4 C5:2 E4 C5:2 E4 C5:5 | z:2 A4 G4 | F#4 A4 C5 E5:2 D5 C5 A4 | D5:4 z:2 D4 D#4 | E4 C5:2 E4 C5:2 E4 C5:5 | z C5 D5 D#5 | E5 C5 D5 E5:2 B4 D5:2 | C5:4 z:2 C5 D5 | E5 C5 D5 E5:2 C5 D5 C5 | E5 C5 D5 E5:2 C5 D5 C5 | E5 C5 D5 E5:2 B4 D5:2 | C5:4 z:2',
+    c: 'C C C:1 G7:1 C C C D7 G C C C:1 G7:1 C F C C:1 G7:1 C' },
+  { t: 'Take Me Out to the Ball Game', by: 'Albert Von Tilzer', g: 'Standards', y: 1908, yl: '1908', lvl: 'Chorus', bpm: 168, bar: 3, st: 'strum',
+    m: 'C4:2 C5 | A4 G4 E4 | G4:3 | D4:3 | C4:2 C5 | A4 G4 E4 | G4:3 | G4:3 | A4 G#4 A4 | E4 F4 G4 | A4:2 F4 | D4:3 | A4:2 A4 | A4 B4 C5 | D5 B4 A4 | G4 E4 D4 | C4:2 C5 | A4 G4 E4 | G4:3 | D4:2 D4 | C4 D4 E4 | F4 G4 A4 | A4 A4 B4 | C5:3 | D5:3 | E5 C5 A4 | G4 F#4 G4 | A4:2 B4 | C5:3 | C5:3',
+    c: 'C C G G C C G G A7 Dm Dm D7 D7 D7 G7 G7 C C G G C F F:2 G7:1 C C F C G7 C C' },
+  { t: 'Silent Night', by: 'Franz Gruber', g: 'Holiday', y: 1818, yl: '1818', lvl: 'Full tune', bpm: 92, bar: 3, st: 'arp',
+    m: 'G4:1.5 A4:.5 G4 | E4:3 | G4:1.5 A4:.5 G4 | E4:3 | D5:2 D5 | B4:3 | C5:2 C5 | G4:3 | A4:2 A4 | C5:1.5 B4:.5 A4 | G4:1.5 A4:.5 G4 | E4:3 | A4:2 A4 | C5:1.5 B4:.5 A4 | G4:1.5 A4:.5 G4 | E4:3 | D5:2 D5 | F5:1.5 D5:.5 B4 | C5:3 | E5:3 | C5 G4 E4 | G4:1.5 F4:.5 D4 | C4:3 | C4:3',
+    c: 'C C C C G G C C F F C C F F C C G G C C C G C C' },
+  { t: 'Jingle Bells', by: 'James Pierpont', g: 'Holiday', y: 1857, yl: '1857', lvl: 'Verse and chorus', bpm: 170, bar: 4, st: 'strum',
+    m: 'D4 B4 A4 G4 | D4:3 D4:.5 D4:.5 | D4 B4 A4 G4 | E4:4 | E4 C5 B4 A4 | F#4:4 | D5 D5 C5 A4 | B4:4 | D4 B4 A4 G4 | D4:4 | D4 B4 A4 G4 | E4:3 E4 | E4 C5 B4 A4 | D5 D5 D5 D5 | E5 D5 C5 A4 | G4:2 D5:2 | B4 B4 B4:2 | B4 B4 B4:2 | B4 D5 G4:1.5 A4:.5 | B4:4 | C5 C5 C5:1.5 C5:.5 | C5 B4 B4 B4:.5 B4:.5 | B4 A4 A4 B4 | A4:2 D5:2 | B4 B4 B4:2 | B4 B4 B4:2 | B4 D5 G4:1.5 A4:.5 | B4:4 | C5 C5 C5:1.5 C5:.5 | C5 B4 B4 B4:.5 B4:.5 | D5 D5 C5 A4 | G4:4',
+    c: 'G G G C C D D G G G G C C D D G G G G G C G A7 D G G G G C G D G' },
+  { t: 'Deck the Halls', by: 'Traditional Welsh', g: 'Holiday', y: 1862, yl: '16th c. / 1862', lvl: 'Full tune', bpm: 150, bar: 4, st: 'strum',
+    m: 'D5:1.5 C5:.5 B4 A4 | G4 A4 B4 G4 | A4:.5 B4:.5 C5:.5 A4:.5 B4:1.5 A4:.5 | G4 F#4 G4:2 | D5:1.5 C5:.5 B4 A4 | G4 A4 B4 G4 | A4:.5 B4:.5 C5:.5 A4:.5 B4:1.5 A4:.5 | G4 F#4 G4:2 | A4:1.5 B4:.5 C5 A4 | B4:1.5 C5:.5 D5 A4 | B4:.5 C#5:.5 D5 E5:.5 F#5:.5 G5 | F#5 E5 D5:2 | D5:1.5 C5:.5 B4 A4 | G4 A4 B4 G4 | E5:.5 E5:.5 E5:.5 E5:.5 D5:1.5 C5:.5 | B4 A4 G4:2',
+    c: 'G G D G:1 D:1 G:2 G G D G:1 D:1 G:2 D G A7:2 D:2 D:1 A7:1 D:2 G G C G:1 D:1 G:2' },
+  { t: 'Carol of the Bells', by: 'Mykola Leontovych', g: 'Holiday', y: 1914, yl: '1914', lvl: 'Main theme', bpm: 168, bar: 3, st: 'bass',
+    m: `${rep(MOTIF, 8)} B4 B4:.5 B4:.5 A4:.5 G4:.5 | F#4 F#4:.5 F#4:.5 E4:.5 D4:.5 | E4 E4:.5 E4:.5 F#4:.5 E4:.5 | B3 B3:.5 B3:.5 B3 | ${rep(MOTIF, 4)} E4:3`,
+    c: 'Em Em Em Em Em D C B7 Em D Em Em Em D C B7 Em' },
+  { t: 'La Cucaracha', by: 'Traditional Mexican', g: 'Latin', y: 1880, yl: '19th century', lvl: 'Refrain', bpm: 132, bar: 4, u: 0.5, pk: 1.5, st: 'strum', rep: 2,
+    m: 'D4 D4 D4 | G4:3 B4:2 D4 D4 D4 | G4:3 B4:2 z:3 | G4 G4 F#4 F#4 E4 E4 D4:2 | z:5 D4 D4 D4 | F#4:3 A4:2 D4 D4 D4 | F#4:3 A4:2 z:3 | D5 E5 D5 C5 B4 A4 G4:2 | z:5',
+    c: 'G G G:2 D:2 D D D D:2 G:2 G' },
+  // listed in the library but not yet arranged: these need a score to be transcribed accurately
+  ...[['Lágrima', 'Francisco Tárrega', 'Classical', 1891], ['Adelita', 'Francisco Tárrega', 'Classical', 1899], ['Recuerdos de la Alhambra', 'Francisco Tárrega', 'Classical', 1896], ['Study in B minor', 'Fernando Sor', 'Classical', 1828],
+    ['Wayfaring Stranger', 'Traditional American', 'Folk', 1858], ['Red River Valley', 'Traditional American', 'Folk', 1879], ['Wildwood Flower', 'J. P. Webster', 'Folk', 1860], ['Man of Constant Sorrow', 'Traditional American', 'Folk', 1913],
+    ['Maple Leaf Rag', 'Scott Joplin', 'Ragtime & Blues', 1899], ['St. Louis Blues', 'W. C. Handy', 'Ragtime & Blues', 1914], ['Frankie and Johnny', 'Traditional American', 'Ragtime & Blues', 1904], ['St. James Infirmary', 'Traditional', 'Ragtime & Blues', 1928], ['Careless Love', 'Traditional American', 'Ragtime & Blues', 1911],
+    ['Sweet Georgia Brown', 'Bernie, Pinkard & Casey', 'Standards', 1925], ['Blue Skies', 'Irving Berlin', 'Standards', 1926], ["Ain't Misbehavin'", 'Waller & Brooks', 'Standards', 1929], ["Singin' in the Rain", 'Nacio Herb Brown', 'Standards', 1929], ['Georgia on My Mind', 'Hoagy Carmichael', 'Standards', 1930], ['I Got Rhythm', 'George Gershwin', 'Standards', 1930],
+    ['Cielito Lindo', 'Quirino Mendoza y Cortés', 'Latin', 1882], ['La Paloma', 'Sebastián Iradier', 'Latin', 1863]].map(([t, by, g, y]) => ({ t, by, g, y, yl: String(y), locked: true })),
+];
+const FROM_SHEET_MUSIC = [   // transcribed by reading scans of the original printed sheet music
+  { t: "Singin' in the Rain", lvl: 'Full chorus', bpm: 160, bar: 4, pk: 1, st: 'strum', src: '1929 Robbins sheet music (scan on Wikimedia Commons), read by eye',
+    m: 'D4 | D5:2.75 B4:.25 A4:.75 G4:.25 | E4:3 D4 | G4:2.75 G4:.25 A4:.75 B4:.25 | D5:3 D4:.75 E4:.25 | G4:2.75 A4:.25 B4 | D5:2 B4 D5 | D5:2.75 B4:.25 A4 | E4:3 D4 | D5:2.75 B4:.25 A4 | E4:3 D4 | D5:2 B4:1.5 A4:.5 | E4:3 D4 | D5:2.75 B4:.25 E4 | F#4:2.75 B4:.25 E4 | G4:2.75 E4:.25 G4 | E4:3 D4:.75 E4:.25 | G4:2.75 A4:.25 B4 | D5:3 D4:.75 E4:.25 | G4:2.75 A4:.25 B4 | D5:3 D4 | G4:2.75 A4:.25 B4 | D5:2 B4 D5 | D5:2.75 B4:.25 A4 | E4:3 D4 | D5:2 B4:1.5 A4:.5 | E4:3 D4:.5 D4:.5 | D5:2.75 B4:.25 A4 | E4:3 D4 | D5:.5 D5:2.5 D4 | F#4:.5 F#4 B4:1.5 D4 | G4:7',
+    c: 'G G G G G G D7 D7 D7 D7 D7 D7 D7 D7 G G G G G G G G D7 D7 D7 D7 D7 D7 D7 D7 G G' },
+  { t: 'I Got Rhythm', lvl: 'Full refrain', bpm: 196, bar: 4, st: 'strum', src: '1930 New World Music sheet music (scan on Wikimedia Commons), read by eye and moved from B-flat to G',
+    m: `${rep('z D4:1.5 E4:1.5 | G4:1.5 A4:2.5 | z A4:1.5 G4:1.5 | E4:1.5 D4:2.5 | z D4:1.5 E4:1.5 | G4:1.5 A4 C5 A4:.5 | B4 B4 A4:.5 B4:.5 A4 |', 1)} G4:3 z | z D4:1.5 E4:1.5 | G4:1.5 A4:2.5 | z A4:1.5 G4:1.5 | E4:1.5 D4:2.5 | z D4:1.5 E4:1.5 | G4:1.5 A4 C5 A4:.5 | B4 B4 A4:.5 B4:.5 A4 | G4:4 | z B4:1.5 B4:1.5 | B4:1.5 C#5:2.5 | z B4:1.5 B4:1.5 | B4:1.5 E4:2.5 | z A4:1.5 A4:1.5 | A4:1.5 B4:2.5 | z A4:1.5 A4:1.5 | A4:4 | z D4:1.5 E4:1.5 | G4:1.5 A4:2.5 | z A4:1.5 G4:1.5 | E4:1.5 D4:2.5 | z D4:1.5 E4:1.5 | G4:1.5 A4 C5 A4:.5 | B4 B4 A4:.5 B4:.5 C5 | D5:3 C5:.5 G#4:.5 | B4 B4 A4:.5 B4:.5 A4 | G4:4`,
+    c: 'G:2 Em:2 Am:2 D7:2 Em:2 A7:2 Am:2 D7:2 G:2 Em:2 Am:2 D7:2 G:2 D7:2 G:2 D7:2 G:2 Em:2 Am:2 D7:2 Em:2 A7:2 Am:2 D7:2 G:2 Em:2 Am:2 D7:2 G:2 D7:2 G B7 B7 E E7 A7 A7 A7 D7 G:2 Em:2 Am:2 D7:2 Em:2 A7:2 Am:2 D7:2 G:2 Em:2 Am:2 D7:2 G:2 Dm:2 E7 A7:2 D7:2 G' },
+];
+for (const sc of [...SCORES, ...FROM_SHEET_MUSIC]) { const i = SONGS.findIndex(s => s.t === sc.t); if (i >= 0) SONGS[i] = { ...SONGS[i], ...sc, locked: false }; }
+const eraOf = y => y < 1700 ? 'Before 1700' : y < 1800 ? '1700s' : y < 1900 ? '1800s' : y < 1920 ? '1900–1919' : '1920–1930';
+
+/* turns a song into timed plucks on specific strings and frets */
+const NOTE = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+function midiOf(tok) { const m = /^([A-G])([#b]?)(\d)$/.exec(tok); if (!m) throw new Error('bad note ' + tok); return 12 * (+m[3] + 1) + NOTE[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0); }
+function parseVoice(str, u) { const notes = []; let b = 0; for (const tok of str.split(/[\s|]+/)) { if (!tok) continue; const [n, mult] = tok.split(':'), d = (mult ? +mult : 1) * u; if (n !== 'z') notes.push({ b, d, midi: midiOf(n) }); b += d; } return { notes, len: b }; }
+function parseChords(str, bar, start) { const out = []; let b = start; for (const tok of str.split(/[\s|]+/)) { if (!tok) continue; const [n, d] = tok.split(':'), len = d ? +d : bar; out.push({ b, d: len, name: n }); b += len; } return out; }
+function pickString(midi, taken) { let best = -1, bf = 99; for (let s = 0; s < 6; s++) { const f = midi - OPENM[s]; if (f < 0 || f > MAXFRET || (taken && taken.has(s))) continue; if (f < bf) { bf = f; best = s; } } return best < 0 ? null : { s: best, fret: bf }; }
+function buildEvents(song) {
+  if (song.ev) return { ev: song.ev.map(([b, s, fret, d, vel]) => ({ b, s, fret, d, vel, pos: s < 3 ? 0.2 : 0.15, off: 0 })), total: song.total };   // already fingered (from a full score)
+  const u = song.u || 1, bar = song.bar, pk = song.pk || 0, one = [], rnd = mulberry32(song.t.length * 977 + 5), EPS = 1e-6;
+  const mel = parseVoice(song.m, u), bass = song.b ? parseVoice(song.b, u) : { notes: [], len: 0 }, len = Math.max(mel.len, bass.len), melSeg = [];
+  for (const n of mel.notes) { const p = pickString(n.midi); if (!p) continue; melSeg.push({ b: n.b, s: p.s }); one.push({ b: n.b, d: n.d, s: p.s, fret: p.fret, vel: 0.84, pos: 0.15 }); }
+  const melStrAt = b => { let s = 6; for (const m of melSeg) { if (m.b <= b + EPS) s = m.s; else break; } return s; };
+  for (const n of bass.notes) { const p = pickString(n.midi, new Set([melStrAt(n.b)])); if (p) one.push({ b: n.b, d: n.d, s: p.s, fret: p.fret, vel: 0.7, pos: 0.2 }); }
+  if (song.c && song.st !== 'none') {
+    const barPos = b => (((b - pk) % bar) + bar) % bar;
+    for (const ch of parseChords(song.c, bar, pk)) {
+      const shape = shapeOf(ch.name); if (!shape) throw new Error('unknown chord ' + ch.name);
+      const strs = []; for (let s = 0; s < 6; s++) if (shape[s] >= 0) strs.push(s);
+      const rootS = strs[0], alt = strs[1], end = ch.b + ch.d - EPS;
+      const add = (b, s, vel, off) => { if (s === undefined || shape[s] < 0 || s >= melStrAt(b)) return; one.push({ b, d: 1, s, fret: shape[s], vel, pos: 0.2, off: off || 0 }); };
+      const upper = (b, from) => strs.filter(s => s > from && s < melStrAt(b)).slice(-3);
+      const strumAt = (b, vel) => upper(b, alt).forEach((s, k) => add(b, s, vel, k * 0.012));
+      if (song.st === 'triplet') for (let b = ch.b; b < end; b++) { if (barPos(b) < EPS) add(b, rootS, 0.6); add(b + 1 / 3, 4, 0.42); add(b + 2 / 3, 3, 0.38); }
+      else if (song.st === 'bass') add(ch.b, rootS, 0.6);
+      else if (song.st === 'boom') for (let b = ch.b; b < end; b++) { add(b, Math.round(barPos(b)) % 2 ? alt : rootS, 0.58); strumAt(b + 0.5, 0.34); }
+      else if (song.st === 'strum') for (let b = ch.b; b < end; b++) { const p = barPos(b); if (b === ch.b || p < EPS) add(b, rootS, 0.6); else if (bar === 4 && Math.abs(p - 2) < EPS) add(b, alt, 0.52); else strumAt(b, 0.36); }
+      else if (song.st === 'arp') for (let b = ch.b; b < end; b += 0.5) {
+        const k = Math.round(barPos(b) * 2), up = upper(b, rootS);
+        if (b === ch.b || k === 0) add(b, rootS, 0.58);
+        else if (bar === 4 && k === 4) add(b, alt, 0.5);
+        else if (up.length) add(b, up[Math.min(up.length - 1, (bar === 3 ? [0, 0, 1, 2, 1, 0] : [0, 0, 1, 2, 0, 0, 1, 2])[k] || 0)], 0.42);
+      }
+    }
+  }
+  const ev = [], reps = song.rep || 1;
+  for (let r = 0; r < reps; r++) for (const e of one) ev.push({ ...e, b: e.b + r * len, vel: e.vel * (0.92 + rnd() * 0.14), off: (e.off || 0) + (rnd() - 0.5) * 0.008 });
+  ev.sort((a, b) => a.b - b.b || a.s - b.s);
+  return { ev, total: reps * len + 2 };
+}
+
+/* the player: schedules notes slightly ahead on the audio clock */
+const player = { i: -1, song: null, ev: [], idx: 0, total: 0, playing: false, loop: false, tempo: 1, anchorT: 0, anchorB: 0, timer: 0 }, vq = [];
+const spb = () => 60 / (player.song.bpm * player.tempo);
+const curBeat = () => player.playing ? player.anchorB + (actx.currentTime - player.anchorT) / spb() : player.anchorB;
+function seekIdx() { player.idx = player.ev.findIndex(e => e.b >= player.anchorB - 1e-6); if (player.idx < 0) player.idx = player.ev.length; }
+function loadSong(i) {
+  stopSong(); const s = SONGS[i]; if (!s || s.locked) return;
+  const built = buildEvents(s); Object.assign(player, { i, song: s, ev: built.ev, total: built.total, anchorB: 0, idx: 0 });
+  $('nTitle').textContent = s.t; $('nSub').textContent = `${s.by} · ${s.yl} · ${s.lvl}`; loadLyrics();
+  [...$('songs').children].forEach(el => el.classList.toggle('cur', +el.dataset.i === i));
+}
+function tick() {
+  if (!player.playing) return;
+  const now = actx.currentTime, s = spb(), horizon = player.anchorB + (now + 0.22 - player.anchorT) / s;
+  while (player.idx < player.ev.length && player.ev[player.idx].b <= horizon) {
+    const e = player.ev[player.idx++], t = Math.max(now, player.anchorT + (e.b - player.anchorB) * s + e.off);
+    send({ type: 'note', s: e.s, fret: e.fret, vel: e.vel, pos: e.pos, delay: t - now }); vq.push({ t, s: e.s, fret: e.fret, dur: e.d * s });
+  }
+  if (player.idx >= player.ev.length && curBeat() >= player.total) { if (player.loop) { player.anchorB = 0; player.anchorT = now + 0.05; player.idx = 0; } else stopSong(); }
+}
+function playSong() {
+  if (!player.song || !actx) return; if (actx.state !== 'running') actx.resume();
+  if (player.anchorB >= player.total - 1e-6) player.anchorB = 0;
+  setChord(0); seekIdx(); player.anchorT = actx.currentTime + 0.1; player.playing = true; clearInterval(player.timer); player.timer = setInterval(tick, 25); tick(); $('play').textContent = '❚❚';
+}
+function pauseSong() { if (!player.playing) return; player.anchorB = curBeat(); player.playing = false; clearInterval(player.timer); vq.length = 0; send({ type: 'flush' }); resyncFrets(); $('play').textContent = '▶'; }
+function stopSong() { const was = player.playing; player.playing = false; clearInterval(player.timer); player.anchorB = 0; player.idx = 0; vq.length = 0; if (was) { send({ type: 'stop' }); resyncFrets(); } $('play').textContent = '▶'; }
+function togglePlay() { if (!player.song) { $('lib').classList.add('open'); return; } player.playing ? pauseSong() : playSong(); }
+function updateTransport() { $('prog').firstElementChild.style.width = (player.song ? clamp(curBeat() / player.total, 0, 1) * 100 : 0) + '%'; syncLyrics(); }
+
+/* ===================================== lyrics window =====================================
+   A separate window that can sit on another screen. The words are whatever the user pastes and saves for each
+   song (kept as text files by the desktop app, or in browser storage otherwise); the current line follows the player. */
+const lyr = { win: null, title: '', text: '', lines: [], stanzas: [], cur: -1 };
+const hostApp = window.chrome && window.chrome.webview ? window.chrome.webview : null;
+const LYR_PAGE = `<!doctype html><html><head><meta charset="utf-8"><title>Lyrics · Concert Acoustic</title><style>
+  html,body{margin:0;height:100%;background:#0d0a08;color:#efe6d6;font-family:"Palatino Linotype","Book Antiqua",Georgia,serif}
+  body{display:flex;flex-direction:column} header{padding:22px 30px 12px;border-bottom:1px solid rgba(214,178,110,.25)}
+  h1{margin:0;font-weight:400;font-size:28px;letter-spacing:.06em;color:#f3dfae} #by{font:13px "Segoe UI",sans-serif;color:#a3978a;margin-top:4px}
+  #body{flex:1;overflow-y:auto;padding:26px 30px 40vh;font-size:var(--fs,30px);line-height:1.5;scrollbar-width:thin;scrollbar-color:#4a3a26 transparent}
+  #body p{margin:0;color:#9c9082;transition:color .25s} #body p.gap{height:.9em} #body p.on{color:#ffe7a8} #body p.done{color:#6f665b}
+  #body .empty{font:16px/1.6 "Segoe UI",sans-serif;color:#a3978a}
+  textarea{flex:1;margin:18px 30px 0;padding:14px;background:#17110d;color:#efe6d6;border:1px solid rgba(214,178,110,.35);border-radius:10px;font:17px/1.5 "Segoe UI",sans-serif;resize:none;outline:none}
+  footer{display:flex;gap:8px;align-items:center;padding:12px 30px;border-top:1px solid rgba(214,178,110,.25);font:12px "Segoe UI",sans-serif;color:#a3978a}
+  button{all:unset;cursor:pointer;padding:7px 14px;border-radius:999px;border:1px solid rgba(214,178,110,.35);color:#e6dac6;font:12.5px "Segoe UI",sans-serif}
+  button:hover{border-color:#d6b26e;color:#f3dfae} button.gold{background:linear-gradient(180deg,#f0d9a4,#c99a4c);color:#20160c;font-weight:600;border-color:transparent} .sp{flex:1} .hide{display:none!important}
+</style></head><body><header><h1 id="t"></h1><div id="by"></div></header><div id="body"></div><textarea id="ed" class="hide" placeholder="Paste or type the words here, one line per sung line. Leave a blank line between verses."></textarea>
+<footer><button id="edit">Edit words</button><button id="save" class="gold hide">Save</button><button id="cancel" class="hide">Cancel</button><span class="sp"></span><span>Text size</span><button id="smaller">A−</button><button id="bigger">A+</button><button id="close" class="hide">Close</button></footer></body></html>`;
+function lyricsKey(t) { return 'lyrics:' + t; }
+function setLyricsText(title, text) {
+  if (title !== lyr.title) return;
+  lyr.text = text || ''; lyr.lines = []; lyr.stanzas = []; lyr.cur = -1;
+  let stanza = [];
+  for (const raw of lyr.text.split(/\r?\n/)) { const line = raw.trim(); if (line) { stanza.push(lyr.lines.length); lyr.lines.push(line); } else if (stanza.length) { lyr.stanzas.push(stanza); stanza = []; } }
+  if (stanza.length) lyr.stanzas.push(stanza);
+  renderLyrics();
+}
+function loadLyrics() {
+  lyr.title = player.song ? player.song.t : ''; lyr.text = ''; lyr.lines = []; lyr.stanzas = []; lyr.cur = -1; renderLyrics();
+  if (!lyr.title) return;
+  if (hostApp) hostApp.postMessage('getLyrics:' + lyr.title);
+  else { let t = ''; try { t = localStorage.getItem(lyricsKey(lyr.title)) || ''; } catch (_) {} setLyricsText(lyr.title, t); }
+}
+function saveLyrics(text) {
+  if (!lyr.title) return;
+  if (hostApp) hostApp.postMessage('saveLyrics:' + JSON.stringify({ title: lyr.title, text })); else { try { localStorage.setItem(lyricsKey(lyr.title), text); } catch (_) {} }
+  setLyricsText(lyr.title, text);
+}
+if (hostApp) hostApp.addEventListener('message', e => { const d = e.data; if (d && d.type === 'lyrics') setLyricsText(d.title, d.text); });
+function renderLyrics() {
+  const w = lyr.win; if (!w || w.closed) return; const d = w.document, s = player.song;
+  d.getElementById('t').textContent = s ? s.t : 'Lyrics'; d.getElementById('by').textContent = s ? `${s.by} · ${s.yl}` : 'Choose a song from the library';
+  const body = d.getElementById('body'); body.textContent = '';
+  if (!lyr.lines.length) { const p = d.createElement('div'); p.className = 'empty'; p.textContent = s ? 'No words are saved for this song yet. Click "Edit words", paste them in, and save. They will be remembered and will follow along as the guitar plays.' : 'Pick a song and its words will appear here.'; body.appendChild(p); return; }
+  lyr.stanzas.forEach((st, k) => { if (k) { const g = d.createElement('p'); g.className = 'gap'; body.appendChild(g); } for (const i of st) { const p = d.createElement('p'); p.dataset.i = i; p.textContent = lyr.lines[i]; body.appendChild(p); } });
+  lyr.cur = -1;
+}
+function openLyrics() {
+  const closePanel = () => { if (lyr.frame) { lyr.frame.remove(); lyr.frame = null; lyr.win = null; } };
+  if (lyr.frame) { closePanel(); return; }
+  if (lyr.win && !lyr.win.closed) { lyr.win.focus(); return; }
+  // A separate window where the system allows one; otherwise (iPad, installed web app, blocked pop-ups) a panel on the right.
+  const touchOnly = navigator.standalone || matchMedia('(display-mode: standalone)').matches || (navigator.maxTouchPoints > 1 && matchMedia('(pointer: coarse)').matches);
+  let w = touchOnly ? null : window.open('', 'guitarLyrics', 'width=620,height=860');
+  if (!w) { lyr.frame = document.createElement('iframe'); lyr.frame.id = 'lyrPanel'; document.body.appendChild(lyr.frame); w = lyr.frame.contentWindow; }
+  lyr.win = w;
+  w.document.open(); w.document.write(LYR_PAGE); w.document.close();
+  const d = w.document, g = id => d.getElementById(id), editing = on => { for (const id of ['ed', 'save', 'cancel']) g(id).classList.toggle('hide', !on); g('body').classList.toggle('hide', on); g('edit').classList.toggle('hide', on); };
+  let fs = 30; try { fs = +localStorage.getItem('lyrics.size') || 30; } catch (_) {} const size = () => { g('body').style.setProperty('--fs', fs + 'px'); try { localStorage.setItem('lyrics.size', fs); } catch (_) {} }; size();
+  g('edit').onclick = () => { g('ed').value = lyr.text; editing(true); g('ed').focus(); };
+  g('cancel').onclick = () => editing(false);
+  g('save').onclick = () => { saveLyrics(g('ed').value); editing(false); };
+  if (lyr.frame) { g('close').classList.remove('hide'); g('close').onclick = closePanel; }
+  g('smaller').onclick = () => { fs = Math.max(14, fs - 3); size(); }; g('bigger').onclick = () => { fs = Math.min(72, fs + 3); size(); };
+  if (!lyr.title && player.song) loadLyrics(); else renderLyrics();
+}
+// Which line is being sung: verses are spread evenly over each pass of the arrangement.
+function syncLyrics() {
+  const w = lyr.win; if (!w || w.closed || !lyr.lines.length || !player.song) return;
+  const passes = player.song.rep || 1, len = (player.total - 2) / passes, beat = Math.min(curBeat(), player.total - 2 - 1e-6);
+  let cur = -1;
+  if (beat > 0 || player.playing) {
+    const pass = Math.min(passes - 1, Math.floor(beat / len)), frac = clamp((beat - pass * len) / len, 0, 0.9999);
+    if (passes > 1 && lyr.stanzas.length > 1) { const st = lyr.stanzas[Math.min(pass, lyr.stanzas.length - 1)]; cur = st[Math.floor(frac * st.length)]; }
+    else cur = Math.floor(clamp(beat / (player.total - 2), 0, 0.9999) * lyr.lines.length);
+  }
+  if (cur === lyr.cur) return; lyr.cur = cur;
+  for (const p of w.document.querySelectorAll('#body p[data-i]')) { const i = +p.dataset.i; p.className = i === cur ? 'on' : i < cur ? 'done' : ''; if (i === cur) p.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+}
+
+/* ===================================== interface wiring ===================================== */
+$('lyr').onclick = openLyrics;
+// user's manual: contents list built from the section headings
+for (const h of $('mbody').querySelectorAll('h2')) { const a = document.createElement('a'); a.textContent = h.textContent; a.onclick = () => h.scrollIntoView({ behavior: 'smooth', block: 'start' }); a.dataset.for = h.id; $('mnav').appendChild(a); }
+function showManual(on) { closePops(); $('lib').classList.remove('open'); $('manual').classList.toggle('hidden', !on); if (on) $('mbody').scrollTop = 0; }
+$('bManual').onclick = () => showManual(true); $('mClose').onclick = () => showManual(false);
+$('mbody').addEventListener('scroll', () => { let cur = null; for (const h of $('mbody').querySelectorAll('h2')) if (h.offsetTop - $('mbody').scrollTop < 140) cur = h.id; for (const a of $('mnav').children) a.classList.toggle('on', a.dataset.for === cur); });
+CHORDS.forEach((name, i) => { const b = document.createElement('button'); b.innerHTML = `${name}<kbd>${(i + 1) % 10}</kbd>`; b.onclick = () => setChord(i); if (i === 0) b.classList.add('on'); $('chords').appendChild(b); });
+$('tap').classList.toggle('on', st.tap);
+$('tap').onclick = () => { st.tap = !st.tap; $('tap').classList.toggle('on', st.tap); saveSettings(); };
+function closePops() { $('pView').classList.add('hidden'); $('pSound').classList.add('hidden'); $('pFx').classList.add('hidden'); }
+$('bFx').onclick = e => { e.stopPropagation(); const o = $('pFx').classList.contains('hidden'); closePops(); $('pFx').classList.toggle('hidden', !o); };
+// effects controls
+const FX_SLIDERS = { fxTone: 'ampTone', fxDrive: 'drive', fxComp: 'comp', fxWah: 'wah', fxChorus: 'chorus', fxTrem: 'trem', fxEcho: 'echo', fxEchoTime: 'echoTime' };
+function syncFxUI() { if (!st.fx) return; for (const id in FX_SLIDERS) $(id).value = st.fx[FX_SLIDERS[id]]; $('fxRev').value = st.fx.rev; $('fxAmp').classList.toggle('on', !!st.fx.amp); $('fxAmp').textContent = st.fx.amp ? 'Amplifier on' : 'Amplifier off'; }
+for (const id in FX_SLIDERS) { $(id).oninput = () => { st.fx[FX_SLIDERS[id]] = +$(id).value; applyFx(); }; $(id).onchange = saveSettings; }
+$('fxAmp').onclick = () => { st.fx.amp = !st.fx.amp; syncFxUI(); applyFx(); saveSettings(); };
+$('fxRev').onchange = () => { st.fx.rev = $('fxRev').value; applyFx(); saveSettings(); $('fxRev').blur(); };
+$('fxOff').onclick = () => { st.fx = Object.assign({}, FX_OFF, { rev: st.fx.rev }); syncFxUI(); applyFx(); saveSettings(); };
+$('bView').onclick = e => { e.stopPropagation(); const o = $('pView').classList.contains('hidden'); closePops(); $('pView').classList.toggle('hidden', !o); };
+$('bSound').onclick = e => { e.stopPropagation(); const o = $('pSound').classList.contains('hidden'); closePops(); $('pSound').classList.toggle('hidden', !o); };
+$('bLib').onclick = () => { closePops(); $('lib').classList.toggle('open'); };
+$('libClose').onclick = () => $('lib').classList.remove('open');
+$('flipX').onclick = () => { st.flipX = !st.flipX; applyFlip(); };
+$('flipZ').onclick = () => { st.flipZ = !st.flipZ; applyFlip(); };
+$('zIn').onclick = () => setZoom(view.zT - 0.3); $('zOut').onclick = () => setZoom(view.zT + 0.3); $('zPlay').onclick = () => setZoom(0); $('zFull').onclick = () => setZoom(1);
+$('bgStudio').onclick = () => { st.bg = 'studio'; applyRoom(); }; $('bgLiving').onclick = () => { st.bg = 'living'; applyRoom(); };
+// instrument chooser
+{ const groups = {}; for (const ins of INSTRUMENTS) { let g = groups[ins.group]; if (!g) { g = groups[ins.group] = document.createElement('optgroup'); g.label = ins.group; $('inst').appendChild(g); } const o = document.createElement('option'); o.value = ins.id; o.textContent = ins.name; g.appendChild(o); } }
+$('inst').onchange = () => { st.inst = $('inst').value; applyInstrument(true); saveSettings(); $('inst').blur(); };
+applyInstrument(false);
+// default view: remember the current zoom and position as the view the app opens with
+const goHome = () => { const h = st.home; if (!h) { setZoom(0); return; } view.zT = clamp(+h.z || 0, -1.4, 2.6); view.fxT = +h.fx || 0; view.fzT = +h.fz || 0; };
+$('homeSet').onclick = () => { st.home = { z: +view.zT.toFixed(3), fx: +view.fxT.toFixed(2), fz: +view.fzT.toFixed(2) }; saveSettings(); $('homeSet').textContent = 'Saved ✓'; setTimeout(() => { $('homeSet').textContent = 'Set as default'; }, 1600); };
+$('homeGo').onclick = goHome;
+$('homeClear').onclick = () => { st.home = null; saveSettings(); setZoom(0); };
+if (st.home) { goHome(); view.z = view.zT; view.fx = view.fxT; view.fz = view.fzT; }       // open straight into the saved view
+if (st.snd) for (const id in st.snd) if ($(id) && isFinite(st.snd[id])) $(id).value = st.snd[id];       // restore the sound sliders
+for (const id of ['vol', 'body', 'room', 'sep']) { $(id).oninput = applyMix; $(id).onchange = saveSettings; }
+$('tone').oninput = () => send({ type: 'tone', value: +$('tone').value }); $('tone').onchange = saveSettings;
+$('play').onclick = togglePlay; $('stop').onclick = stopSong;
+$('loop').onclick = () => { player.loop = !player.loop; $('loop').classList.toggle('on', player.loop); };
+$('tempo').oninput = () => { const v = +$('tempo').value; if (player.playing) { player.anchorB = curBeat(); player.anchorT = actx.currentTime; } player.tempo = v; $('tempoV').textContent = Math.round(v * 100) + '%'; $('tempoReset').classList.toggle('show', Math.abs(v - 1) > 0.004); };
+$('tempoReset').onclick = () => { $('tempo').value = 1; $('tempo').oninput(); };
+$('tempo').ondblclick = $('tempoReset').onclick;
+$('prog').onclick = e => { if (!player.song) return; const r = $('prog').getBoundingClientRect(); player.anchorB = clamp((e.clientX - r.left) / r.width, 0, 1) * player.total; seekIdx(); if (player.playing) { player.anchorT = actx.currentTime + 0.05; vq.length = 0; send({ type: 'flush' }); } };
+
+const filt = { g: 'All', e: 'All' };
+function renderLib() {
+  const genres = ['All', ...new Set(SONGS.map(s => s.g))], eras = ['All', 'Before 1700', '1700s', '1800s', '1900–1919', '1920–1930'];
+  const chips = (host, list, key) => { host.innerHTML = ''; list.forEach(v => { const b = document.createElement('button'); b.className = 'chip' + (filt[key] === v ? ' on' : ''); b.textContent = v; b.onclick = () => { filt[key] = v; renderLib(); }; host.appendChild(b); }); };
+  chips($('genres'), genres, 'g'); chips($('eras'), eras, 'e');
+  const host = $('songs'); host.innerHTML = '';
+  const shown = SONGS.map((s, i) => [s, i]).filter(([s]) => (filt.g === 'All' || s.g === filt.g) && (filt.e === 'All' || eraOf(s.y) === filt.e)).sort((a, b) => (a[0].locked ? 1 : 0) - (b[0].locked ? 1 : 0));
+  for (const [s, i] of shown) {
+    const el = document.createElement('div'); el.className = 'song' + (s.locked ? ' locked' : '') + (i === player.i ? ' cur' : ''); el.dataset.i = i;
+    el.innerHTML = `<div class="ic">${s.locked ? '…' : '▶'}</div><div><b></b><span></span></div><em></em>`;
+    el.querySelector('b').textContent = s.t; el.querySelector('span').textContent = `${s.by} · ${s.yl} · ${s.g}`; el.querySelector('em').textContent = s.locked ? 'Score needed' : s.lvl;
+    if (!s.locked) el.onclick = () => { loadSong(i); playSong(); };
+    if (s.src) el.title = 'Score: ' + s.src;
+    host.appendChild(el);
+  }
+  const note = document.createElement('p'); note.className = 'srcnote'; note.textContent = 'Some arrangements are converted from published public-domain scores (the Mutopia Project and public ABC collections). Hover a song for its source; full credits are in lib/SOURCES.txt.'; host.appendChild(note);
+  $('libCount').textContent = `${SONGS.filter(s => !s.locked).length} playable · ${SONGS.length} titles`;
+}
+
+function report() {
+  if (!actx) return;
+  const ms = Math.round(((actx.baseLatency || 0) + (actx.outputLatency || 0)) * 1000);
+  const text = actx.state === 'running' ? `audio running · ${actx.sampleRate} Hz · output latency ≈ ${ms} ms` : `audio ${actx.state}`;
+  $('lat').textContent = text.charAt(0).toUpperCase() + text.slice(1) + '.';
+  if (window.chrome && window.chrome.webview) window.chrome.webview.postMessage(text);
+  if (actx.state === 'running') $('start').classList.add('hidden');
+}
+async function initAudio() {
+  if (!window.isSecureContext || !window.AudioWorkletNode) throw new Error('This page was opened in a way that blocks low-latency audio. Open it through AcousticGuitar.exe.');
+  actx = new AudioContext({ latencyHint: 'interactive' });
+  await actx.audioWorklet.addModule(URL.createObjectURL(new Blob(['(' + engineModule.toString() + ')();'], { type: 'application/javascript' })));
+  graph = buildGraph(actx); node = graph.node;
+  node.port.onmessage = e => { st.env = e.data; };
+  applyMix(); send({ type: 'tone', value: +$('tone').value }); applyInstrument();
+  actx.onstatechange = report; report(); setInterval(report, 2000);
+}
+const ready = initAudio().catch(err => {
+  $('startMsg').textContent = err.message; $('start').querySelector('b').textContent = 'Audio could not start';
+  if (window.chrome && window.chrome.webview) window.chrome.webview.postMessage('audio error: ' + err.message);
+});
+async function unlockAudio() { await ready; if (actx) { try { await actx.resume(); } catch (_) {} report(); } }
+for (const type of ['pointerdown', 'pointerup', 'touchend', 'click']) $('start').addEventListener(type, unlockAudio);      // iPad needs the resume inside a tap
+try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (_) {}                              // keep sounding with the iPad's silent mode on
+document.addEventListener('gesturestart', e => e.preventDefault());                                                    // no browser pinch-zoom of the page itself
+document.addEventListener('visibilitychange', () => { if (!document.hidden && actx && actx.state !== 'running') actx.resume().catch(() => {}); });
+// Offline support for the web build: cache everything on first visit. (Not used inside the Windows app.)
+if ('serviceWorker' in navigator && !hostApp && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+
+applyFlip(); applyRoom(); renderLib(); new ResizeObserver(fit).observe($('stage')); fit(); requestAnimationFrame(frame);
+window.__guitar = { st, player, SONGS, buildEvents, engineModule, loadSong, playSong, stopSong, gpos, cam, root, THREE, FX, view, setZoom, applyRoom, lyr, openLyrics, saveLyrics, syncLyrics, getGraph: () => graph, INSTRUMENTS, applyInstrument, buildGraph, makeBodyIR, makeReverbIR, FX_OFF };
+</script>
+</body>
+</html>

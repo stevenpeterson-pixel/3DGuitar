@@ -1,0 +1,11 @@
+# built programs (large; rebuild with: dotnet publish shell -c Release)
+*.exe
+publish/
+shell/bin/
+shell/obj/
+
+# words pasted by the user for each song stay on their own machine
+lyrics/
+
+# old name of the web build folder
+ipad-web/

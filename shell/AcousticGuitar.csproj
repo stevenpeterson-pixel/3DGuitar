@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>AcousticGuitar</AssemblyName>
+    <RootNamespace>AcousticGuitar</RootNamespace>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <!-- one self-contained .exe: no .NET install needed on the target machine -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>none</DebugType>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <NoWarn>$(NoWarn);MSB3277</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.*" />
+    <!-- the instrument itself is a web page, embedded in the .exe together with its 3D library -->
+    <EmbeddedResource Include="..\index.html" LogicalName="index.html" />
+    <EmbeddedResource Include="..\lib\three.module.min.js" LogicalName="lib/three.module.min.js" />
+    <EmbeddedResource Include="..\lib\scores.js" LogicalName="lib/scores.js" />
+  </ItemGroup>
+
+</Project>
