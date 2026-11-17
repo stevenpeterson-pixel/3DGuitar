@@ -1,4 +1,4 @@
-Concert Acoustic - web version (iPad and other browsers)
+﻿Concert Acoustic - web version (iPad and other browsers)
 =========================================================
 
 This folder is a complete static website. It must be opened through a web address, not by tapping

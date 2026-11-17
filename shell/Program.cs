@@ -155,6 +155,18 @@ sealed class MainForm : Form
                 finally { deferral.Complete(); }
             };
 
+            // Stage mode asks for full screen: the window drops its frame and fills the screen, then returns as it was.
+            var savedBorder = FormBorderStyle; var savedState = WindowState;
+            web.CoreWebView2.ContainsFullScreenElementChanged += (_, _) =>
+            {
+                if (web.CoreWebView2.ContainsFullScreenElement)
+                {
+                    savedBorder = FormBorderStyle; savedState = WindowState;
+                    FormBorderStyle = FormBorderStyle.None; WindowState = FormWindowState.Normal; WindowState = FormWindowState.Maximized;
+                }
+                else { FormBorderStyle = savedBorder; WindowState = savedState; }
+            };
+
             // Serve the page from a secure (https) origin, which the audio engine requires.
             web.CoreWebView2.SetVirtualHostNameToFolderMapping("guitar.example", site, CoreWebView2HostResourceAccessKind.Allow);
             web.CoreWebView2.Navigate("https://guitar.example/index.html");
