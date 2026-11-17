@@ -107,6 +107,25 @@
   #mbody table { border-collapse: collapse; width: 100%; margin-top: 6px; } #mbody td { padding: 8px 10px 8px 0; border-bottom: 1px solid rgba(214, 178, 110, 0.14); vertical-align: top; } #mbody td:first-child { white-space: nowrap; width: 38%; }
   #mClose { position: sticky; top: 0; float: right; z-index: 2; }
   @media (max-width: 860px) { .mwrap { grid-template-columns: minmax(0, 1fr); } #mnav { display: none; } }
+  .pop { max-height: calc(100vh - 96px); overflow-y: auto; box-sizing: border-box; scrollbar-width: thin; scrollbar-color: #4a3a26 transparent; } #pTools { width: 300px; }
+  .pop input[type=text] { flex: 1; min-width: 0; font: 12.5px var(--sans); color: #efe6d6; background: #1d1611; border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; outline: none; user-select: text; -webkit-user-select: text; }
+  .pop select:disabled { opacity: 0.35; }
+  #prog .mk { position: absolute; top: -5px; width: 2px; height: 13px; background: #ffb347; border-radius: 2px; }
+  #tab { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(max(18px, env(safe-area-inset-bottom)) + 74px); width: min(820px, calc(100vw - 36px)); height: 96px; border-radius: 14px; border: 1px solid var(--line); background: rgba(14, 10, 8, 0.8); z-index: 3; pointer-events: none; }
+  #hud { position: fixed; top: 72px; left: 50%; transform: translateX(-50%); padding: 8px 20px; border-radius: 999px; border: 1px solid var(--line); background: rgba(18, 13, 10, 0.84); color: var(--gold2); font-size: 14px; z-index: 4; pointer-events: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #karaoke { position: fixed; top: 116px; left: 50%; transform: translateX(-50%); width: min(1100px, 90vw); text-align: center; z-index: 4; pointer-events: none; font-family: var(--serif); text-shadow: 0 2px 14px #000, 0 0 4px #000, 0 0 2px #000; }
+  #karNow { font-size: clamp(28px, 4.6vw, 64px); line-height: 1.15; color: #ffe7a8; min-height: 1.15em; } #karNext { font-size: clamp(15px, 2.1vw, 30px); color: rgba(239, 230, 214, 0.66); margin-top: 8px; }
+  #tunerBox { position: fixed; top: 78px; left: 50%; transform: translateX(-50%); width: 300px; padding: 16px 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 16px; background: rgba(18, 13, 10, 0.94); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55); z-index: 6; }
+  #tuNote { font-family: var(--serif); font-weight: 400; font-size: 52px; color: var(--gold2); line-height: 1; } #tuCents { font-size: 13px; color: #cbbda8; text-align: center; }
+  #tuBar { position: relative; width: 100%; height: 10px; border-radius: 6px; background: rgba(214, 178, 110, 0.18); } #tuBar em { position: absolute; left: 50%; top: -3px; width: 2px; height: 16px; background: rgba(243, 223, 174, 0.7); } #tuBar i { position: absolute; top: -2px; left: 50%; width: 10px; height: 14px; margin-left: -5px; border-radius: 4px; background: #f0b34c; transition: left 0.08s; }
+  #wahPedal { position: fixed; left: 14px; top: 50%; width: 46px; height: 210px; margin-top: -105px; border: 1px solid var(--line); border-radius: 14px; background: rgba(18, 13, 10, 0.86); z-index: 4; display: flex; flex-direction: column; align-items: center; touch-action: none; }
+  #wahPedal span { font-size: 9.5px; letter-spacing: 0.2em; color: var(--mute); margin-top: 8px; } #wahPos { position: absolute; top: 108px; left: 23px; width: 150px; margin: 0; transform: translate(-50%, -50%) rotate(-90deg); touch-action: none; }
+  #banner { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; background: rgba(8, 6, 4, 0.72); }
+  #banner .card { max-width: 520px; margin: 20px; padding: 28px 34px; text-align: center; border: 1px solid var(--line); border-radius: 18px; background: #15100c; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6); }
+  #banTitle { display: block; font-family: var(--serif); font-weight: 400; font-size: 26px; letter-spacing: 0.08em; color: var(--gold2); } #banStars { font-size: 40px; color: #f0c05a; letter-spacing: 8px; margin: 6px 0; } #banText { font-size: 14.5px; line-height: 1.6; color: #ddd2c0; margin: 6px 0 18px; }
+  #chordLib { position: fixed; top: 0; left: 0; bottom: 0; width: min(380px, 92vw); z-index: 7; background: rgba(15, 11, 8, 0.95); backdrop-filter: blur(22px); border-right: 1px solid var(--line); box-shadow: 24px 0 60px rgba(0, 0, 0, 0.55); transform: translateX(-105%); transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1); overflow-y: auto; touch-action: pan-y; }
+  #chordLib.open { transform: none; } #chordLib .top { padding: 20px 22px 10px; display: flex; align-items: baseline; gap: 10px; } #chordLib h2 { margin: 0; flex: 1; font-family: var(--serif); font-weight: 400; font-size: 22px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold2); }
+  .clInfo { padding: 12px 22px 4px; } .clInfo b { display: block; font-family: var(--serif); font-weight: 400; font-size: 34px; color: #f1e8d8; } .clInfo span { font-size: 13px; color: var(--gold); font-variant-numeric: tabular-nums; } .clInfo p { font-size: 12px; color: var(--mute); margin: 8px 0 0; }
   /* touch devices: keep clear of rounded corners and the home bar, and stop the browser's own gestures */
   html, body { -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; touch-action: none; }
   header { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); padding-top: env(safe-area-inset-top); }
@@ -119,7 +138,7 @@
   .pop input:disabled { opacity: 0.35; }
   @media (max-width: 1180px) { .seg button kbd { display: none; } .seg button { padding: 6px 7px; font-size: 12px; } .brand i { display: none; } .brand b { font-size: 15px; letter-spacing: 0.08em; } .brand svg { width: 30px; height: 30px; }
     header { gap: 8px; padding: 0 14px; } .btn { padding: 8px 11px; font-size: 12px; } }
-  @media (max-width: 1280px) { .brand > div { display: none; } .seg button { padding: 6px 6px; font-size: 11.5px; min-width: 16px; } .btn { padding: 7px 9px; font-size: 11.5px; } header { gap: 6px; } }
+  @media (max-width: 1440px) { .brand > div { display: none; } .seg button { padding: 6px 6px; font-size: 11.5px; min-width: 16px; } .btn { padding: 7px 9px; font-size: 11.5px; } header { gap: 6px; } }
   @media (max-width: 900px) { .brand b { display: none; } }
 </style>
 </head>
@@ -135,7 +154,8 @@
   </div>
   <div class="seg" id="chords"></div>
   <div class="sp"></div>
-  <button class="btn on" id="tap" title="When on, touching a fret also sounds the note">Tap plays</button>
+  <button class="btn" id="bPlay">Practice</button>
+  <button class="btn" id="bTools">Tools</button>
   <button class="btn" id="bView">View</button>
   <button class="btn" id="bSound">Sound</button>
   <button class="btn" id="bFx">Effects</button>
@@ -155,13 +175,47 @@
   <div class="row"><button class="btn gold" id="homeSet" title="Open with the current zoom, position, backdrop and flip next time">Set as default</button><button class="btn" id="homeGo" title="Return to the saved default view">Go to it</button><button class="btn" id="homeClear" title="Forget the saved view and use the playing view">Reset</button></div>
   <p>Scroll the mouse wheel over the guitar to zoom: in for a close look, out to see the whole instrument and the room. You can play at any zoom level.</p>
 </div>
+<div class="pop hidden" id="pPlay">
+  <h3>Practice</h3>
+  <div class="row"><button class="btn on" id="mListen">Listen</button><button class="btn" id="mLearn">Learn</button><button class="btn" id="mGame">Game</button></div>
+  <p id="modeHelp"></p>
+  <div class="row"><button class="btn" id="tabBtn" title="Scrolling fret numbers for the song">Tab strip</button><button class="btn" id="karBtn" title="Large lyrics over the guitar">Karaoke</button></div>
+  <h3 style="margin-top:16px">Loop a section</h3>
+  <div class="row"><button class="btn" id="loopA">Start here</button><button class="btn" id="loopB">End here</button><button class="btn" id="loopClr">Clear</button></div>
+  <p id="loopInfo"></p>
+  <h3 style="margin-top:16px">Record</h3>
+  <div class="row"><button class="btn" id="recBtn">Start recording</button></div>
+  <p id="recInfo">Saves what you hear as a WAV sound file, up to ten minutes.</p>
+</div>
+<div class="pop hidden" id="pTools">
+  <h3>Tools</h3>
+  <div class="row"><button class="btn on" id="tap" title="When on, touching a fret also sounds the note">Tap plays</button><button class="btn" id="chordLibBtn">Chord library</button></div>
+  <label>Capo <select id="capo"></select></label>
+  <div class="row"><button class="btn" id="slideBtn" title="A bottleneck slide across all six strings">Slide</button><button class="btn" id="harmBtn" title="Touch over the 5th, 7th or 12th fret for bell-like harmonics">Harmonics</button></div>
+  <h3 style="margin-top:16px">Fretboard guide</h3>
+  <label>Scale <select id="scType"></select></label>
+  <label>Key <select id="scRoot"></select></label>
+  <div class="row"><button class="btn" id="namesBtn">Note names</button></div>
+  <h3 style="margin-top:16px">Rhythm</h3>
+  <div class="row"><button class="btn" id="metroBtn">Metronome</button><button class="btn" id="countBtn" title="One bar of clicks before a song starts">Count-in</button></div>
+  <label>Speed <input type="range" id="bpm" min="40" max="220" step="1" value="100"></label>
+  <p id="bpmV"></p>
+  <label>Pattern <select id="pattern"></select></label>
+  <div class="row"><button class="btn" id="patBtn">Start pattern (P)</button></div>
+  <h3 style="margin-top:16px">Tuner</h3>
+  <div class="row"><button class="btn" id="tunerBtn">Tune a real guitar</button></div>
+</div>
 <div class="pop hidden" id="pFx">
   <h3>Effects</h3>
   <div class="row"><button class="btn" id="fxAmp" title="Amplifier and speaker voicing">Amplifier</button><button class="btn" id="fxOff" title="Switch every effect off">All off</button></div>
+  <label title="Which pickup an electric guitar uses">Pickup <select id="fxPickup"><option value="preset">Standard</option><option value="neck">Neck (warm)</option><option value="mid">Middle</option><option value="bridge">Bridge (bright)</option><option value="both">Neck + bridge</option></select></label>
+  <label title="The electric guitar's own tone knob">Gtr tone <input type="range" id="fxGtrTone" min="0" max="1" step="0.01" value="1"></label>
   <label title="How bright the amplifier is">Amp tone <input type="range" id="fxTone" min="0" max="1" step="0.01" value="0.6"></label>
   <label title="Overdrive and distortion">Drive <input type="range" id="fxDrive" min="0" max="1" step="0.01" value="0"></label>
   <label title="Evens out loud and soft notes and lengthens sustain">Compress <input type="range" id="fxComp" min="0" max="1" step="0.01" value="0"></label>
   <label title="A sweeping filter that moves on its own">Wah <input type="range" id="fxWah" min="0" max="1" step="0.01" value="0"></label>
+  <label>Wah type <select id="fxWahMode"><option value="auto">Sweeps by itself</option><option value="pedal">Pedal you move</option></select></label>
+  <div class="row"><button class="btn" id="fxTilt" title="On a tablet, rock the screen to move the wah">Use tilt</button></div>
   <label title="A shimmering doubled sound">Chorus <input type="range" id="fxChorus" min="0" max="1" step="0.01" value="0"></label>
   <label title="A rhythmic pulsing of the volume">Tremolo <input type="range" id="fxTrem" min="0" max="1" step="0.01" value="0"></label>
   <label title="Repeating echoes">Echo <input type="range" id="fxEcho" min="0" max="1" step="0.01" value="0"></label>
@@ -172,6 +226,8 @@
 <div class="pop hidden" id="pSound">
   <h3>Sound</h3>
   <label>Guitar <select id="inst"></select></label>
+  <label title="Your saved guitar-and-effects setups">Preset <select id="presetSel"></select></label>
+  <div class="row"><input id="presetName" type="text" maxlength="40" placeholder="Name this setup"><button class="btn" id="presetSave">Save</button><button class="btn" id="presetDel">Delete</button></div>
   <label>Volume <input type="range" id="vol" min="0" max="1" step="0.01" value="0.5"></label>
   <label>Tone <input type="range" id="tone" min="0" max="1" step="0.01" value="0.6"></label>
   <label>Body <input type="range" id="body" min="0" max="1" step="0.01" value="0.85"></label>
@@ -191,12 +247,26 @@
 <div id="tp">
   <div class="ctl"><button class="round" id="play" title="Play / pause (Enter)">▶</button><button class="round sm" id="stop" title="Stop">■</button><button class="round sm" id="loop" title="Loop">⟲</button></div>
   <div><button class="btn" id="lyr" title="Open the lyrics in their own window (drag it to another screen)">Lyrics</button></div>
-  <div id="now"><b id="nTitle">Choose a song from the library</b><span id="nSub">or play the guitar yourself</span><div id="prog"><i></i></div></div>
-  <div id="tempoBox"><span>Tempo</span><input type="range" id="tempo" min="0.5" max="1.5" step="0.01" value="1"><span id="tempoV">100%</span><button id="tempoReset" title="Back to 100%">100%</button></div>
+  <div id="now"><b id="nTitle">Choose a song from the library</b><span id="nSub">or play the guitar yourself</span><div id="prog"><i></i><span class="mk hidden" id="mkA"></span><span class="mk hidden" id="mkB"></span></div></div>
+  <div id="tempoBox"><span>Tempo</span><input type="range" id="tempo" min="0.25" max="1.5" step="0.01" value="1"><span id="tempoV">100%</span><button id="tempoReset" title="Back to 100%">100%</button></div>
 </div>
 
 <div id="start"><b>Concert Acoustic</b><span id="startMsg">Click or tap to begin</span></div>
 <div id="rotate">Turn the screen sideways to play</div>
+<canvas id="tab" class="hidden"></canvas>
+<div id="hud" class="hidden"></div>
+<div id="karaoke" class="hidden"><div id="karNow"></div><div id="karNext"></div></div>
+<div id="tunerBox" class="hidden"><b id="tuNote">–</b><span id="tuCents"></span><div id="tuBar"><em></em><i></i></div><button class="btn" id="tuClose">Close</button></div>
+<div id="wahPedal" class="hidden"><span>WAH</span><input type="range" id="wahPos" min="0" max="1" step="0.01" value="0"></div>
+<div id="banner" class="hidden"><div class="card"><b id="banTitle"></b><div id="banStars"></div><p id="banText"></p><button class="btn gold" id="banOk">OK</button></div></div>
+<aside id="chordLib">
+  <div class="top"><h2>Chords</h2><button class="btn" id="clClose">Close</button></div>
+  <div class="chips" id="clRoots"></div>
+  <div class="chips" id="clQuals"></div>
+  <div class="clInfo"><b id="clName"></b><span id="clShape"></span><p>The shape is shown on the neck. Strum to hear it.</p></div>
+  <div class="top" style="padding-top:6px"><h2 style="font-size:15px">Put it on a key</h2><button class="btn" id="clReset">Reset keys</button></div>
+  <div class="chips" id="clSlots"></div>
+</aside>
 
 <div id="manual" class="hidden">
   <div class="mwrap">
@@ -217,7 +287,7 @@
       <h3>Choosing notes on the fretboard</h3>
       <ul>
         <li><b>Press a fret:</b> click or touch between two fret wires on a string. The note is the one a real guitar gives at that fret. Touching left of the first fret plays the open string.</li>
-        <li><b>Tap plays (top bar):</b> when on, pressing a fret also sounds the note, which suits picking out a melody with one finger or a mouse. When off, pressing a fret is silent, as on a real guitar, and you strum to hear it. Turn it off when holding chord shapes on a touch screen.</li>
+        <li><b>Tap plays (Tools menu):</b> when on, pressing a fret also sounds the note, which suits picking out a melody with one finger or a mouse. When off, pressing a fret is silent, as on a real guitar, and you strum to hear it. Turn it off when holding chord shapes on a touch screen.</li>
         <li><b>Releasing a fret</b> stops that note, leaving the open string ringing faintly.</li>
         <li><b>Several fingers:</b> on a touch screen you can hold as many frets as you have fingers. On one string, the highest fret held is the one that sounds.</li>
       </ul>
@@ -239,7 +309,7 @@
       </ul>
 
       <h2 id="m-chords">Chord buttons</h2>
-      <p>The row at the top holds ten chords: Open, G, C, D, Em, Am, E, A, Dm and F. Clicking one sets the fretting hand for you; pale dots on the fretboard show the shape. It stays set until you choose another. <b>Open</b> clears it.</p>
+      <p>The row at the top holds ten chord keys, which start as Open, G, C, D, Em, Am, E, A, Dm and F. Clicking one sets the fretting hand for you; pale dots on the fretboard show the shape. It stays set until you choose another. <b>Open</b> clears it. You can change which chord sits on each key in the chord library (below).</p>
       <ul>
         <li>Strum or pick as usual and you hear the chord.</li>
         <li>You can still press frets yourself on top of a chord, for example to add a melody note.</li>
@@ -260,9 +330,53 @@
         <li><b>Stop</b> (■) returns to the start and silences the strings.</li>
         <li><b>Loop</b> (⟲) repeats the song until you turn it off.</li>
         <li><b>Progress line:</b> click anywhere along it to jump to that point.</li>
-        <li><b>Tempo:</b> the slider runs from half speed to one and a half times. The small <b>100%</b> button that appears beside it, or a double-click on the slider, returns to normal speed.</li>
+        <li><b>Tempo:</b> the slider runs from a quarter speed to one and a half times. The small <b>100%</b> button that appears beside it, or a double-click on the slider, returns to normal speed.</li>
         <li><b>Playing along:</b> you can strum and pick while a song plays.</li>
       </ul>
+
+      <h2 id="m-practice">Practice: learn mode and the game</h2>
+      <p>Open <b>Practice</b> in the top bar and choose how the player behaves when you press play.</p>
+      <ul>
+        <li><b>Listen:</b> the guitar plays the whole song by itself, as before.</li>
+        <li><b>Learn:</b> the next note of the tune glows on the neck and a fainter glow shows the one after. Play it (press the fret, then pick the string, or with <b>Tap plays</b> on just press the fret) and the guitar adds the harmony and moves on. It waits for you, so there is no hurry.</li>
+        <li><b>Game:</b> the guitar plays the backing and leaves the tune to you. A ring closes in on each melody note; pluck the note as the ring reaches the dot. Hits within a split second are <i>Perfect</i>, a little further off are <i>Good</i>. A streak multiplies your points, and you get a score and up to three stars at the end. Lower the tempo to make it easier.</li>
+        <li><b>Tab strip:</b> scrolling fret numbers on six lines, one per string, with the tune in gold. The line on the left is "now". Turn it off in the Practice menu.</li>
+      </ul>
+      <h3>Looping a section</h3>
+      <ul>
+        <li>Move to where the hard part starts (play or click the progress line) and click <b>Start here</b>, then move to where it ends and click <b>End here</b>. Orange marks appear on the progress line and that section repeats.</li>
+        <li>Combine it with the Tempo slider to practise slowly, then speed up. <b>Clear</b> removes the loop. It works in all three modes.</li>
+      </ul>
+      <h3>Recording</h3>
+      <p><b>Start recording</b> captures everything you hear, your playing and the songs, with all effects. <b>Stop and save</b> saves a WAV sound file to your Downloads folder (on an iPad, the Files app). Up to ten minutes at a time.</p>
+
+      <h2 id="m-tools">Tools</h2>
+      <h3>Chord library</h3>
+      <ul>
+        <li><b>Tools → Chord library</b> opens a panel with every root note and eleven kinds of chord: major, minor, 7, m7, maj7, sus4, sus2, 6, 9, dim and aug. Choosing one sets it on the neck straight away.</li>
+        <li>Under <b>Put it on a key</b>, click a number to place the chord on that chord key. <b>Reset keys</b> restores the original ten. Your keys are remembered.</li>
+        <li>Chords without an easy open shape use the lowest barre shape that works.</li>
+      </ul>
+      <h3>Capo</h3>
+      <p>Choose a fret from 1 to 11. A capo bar appears on the neck and everything moves up: open strings, chord keys, the chord library and the songs. Fret numbers in the tab strip and learn mode count from the capo, as guitarists do.</p>
+      <h3>Slide and harmonics</h3>
+      <ul>
+        <li><b>Slide:</b> pressing the fretboard lays a metal slide across all six strings. Drag along the neck and the pitch glides smoothly with no fret steps. With <b>Tap plays</b> on it strums as it lands; otherwise strum with the other hand. Try it with the Resonator or an electric guitar.</li>
+        <li><b>Harmonics:</b> white diamonds mark the spots over the 5th, 7th, 12th and 19th fret wires. Touch a string there for a bell-like chime. Elsewhere the neck plays normally.</li>
+      </ul>
+      <h3>Fretboard guide</h3>
+      <ul>
+        <li><b>Scale</b> and <b>Key</b> mark every note of a scale on the neck: the key note in orange and the others in blue, each with its name. Nine scales are included, from major and minor to blues and the modes.</li>
+        <li><b>Note names</b> labels every fret with the note it plays. The guide follows the capo, the instrument's tuning and the flip settings.</li>
+      </ul>
+      <h3>Rhythm</h3>
+      <ul>
+        <li><b>Metronome:</b> clicks on each beat, with a higher click on the first beat of the bar. During a song it follows the song's tempo; otherwise it uses the <b>Speed</b> slider.</li>
+        <li><b>Count-in:</b> one bar of clicks before a song starts from the beginning.</li>
+        <li><b>Pattern</b> and <b>Start pattern</b> (or <kbd>P</kbd>): the guitar strums or fingerpicks whatever chord you are holding, over and over, at the Speed setting. Change chords with the chord keys or your fingers and the pattern follows. Choose from down strums, down-up, a folk strum, boom-chick, waltz, Travis picking and arpeggios.</li>
+      </ul>
+      <h3>Tuner</h3>
+      <p><b>Tune a real guitar</b> listens through the microphone; the browser asks permission the first time. Play one string at a time: the note name appears with a needle and how many cents sharp or flat it is. Green means in tune. <b>Close</b> switches the microphone off.</p>
 
       <h2 id="m-lyrics">Lyrics window</h2>
       <p>The <b>Lyrics</b> button in the player bar opens the words for the current song in their own window, which you can drag to a second screen. On a tablet it opens as a panel on the right instead.</p>
@@ -272,6 +386,11 @@
         <li><b>Text size:</b> the A− and A+ buttons.</li>
         <li><b>Where words are kept:</b> in the Windows app, as a text file per song in a <i>lyrics</i> folder next to the program. In a browser or on a tablet, inside the browser's own storage.</li>
       </ul>
+
+      <h3>Exact timing</h3>
+      <p>Normally the words are spread evenly across the song. For exact timing, click <b>Set timing</b> in the lyrics window: the song plays from the start, and you click the same button once as each line begins. When the last line is marked the timing is saved with the words.</p>
+      <h3>Karaoke</h3>
+      <p><b>Practice → Karaoke</b> shows the current line in large letters over the guitar, with the next line underneath. It uses the same words as the lyrics window.</p>
 
       <h2 id="m-view">View</h2>
       <ul>
@@ -320,9 +439,10 @@
         <li><b>Surf:</b> clean, drenched in spring reverb with pulsing tremolo.</li>
       </ul>
 
-      <h2 id="m-fx">Effects</h2>
-      <p>The <b>Effects</b> menu works with any guitar, acoustic or electric. Anything set to zero is switched out completely.</p>
-      <ul>
+      $1
+        <li><b>Pickup</b> (electric guitars): <i>Neck</i> is warm and round, <i>Bridge</i> bright and biting, <i>Middle</i> in between, and <i>Neck + bridge</i> hollow and funky. <i>Standard</i> uses each guitar's own choice.</li>
+        <li><b>Gtr tone</b> (electric guitars): the tone knob on the guitar itself; turning it down darkens the sound before it reaches the amplifier.</li>
+        <li><b>Wah type:</b> <i>Sweeps by itself</i>, or <i>Pedal you move</i>, which shows a pedal on the left of the screen. Drag it up and down, hold <kbd>W</kbd> to rock it forward, or on a tablet click <b>Use tilt</b> and rock the screen.</li>
         <li><b>Amplifier:</b> gives the sound the voice of a guitar amplifier and speaker. Leave it on for electric guitars; distortion without it sounds harsh and buzzy.</li>
         <li><b>Amp tone:</b> darker to the left, brighter to the right.</li>
         <li><b>Drive:</b> from a slight edge to heavy distortion.</li>
@@ -339,6 +459,9 @@
       <ul>
       </ul>
 
+      <h3>Presets</h3>
+      <p>Under <b>Sound</b>, type a name and click <b>Save</b> to remember the current guitar, effects, pickup and sound sliders. Choose it from <b>Preset</b> later to bring it all back; <b>Delete</b> removes it.</p>
+
       <h2 id="m-keys">Keyboard shortcuts</h2>
       <table>
         <tr><td><kbd>Space</kbd> or <kbd>↓</kbd></td><td>Strum down</td></tr>
@@ -348,6 +471,8 @@
         <tr><td>Hold <kbd>Shift</kbd></td><td>Palm mute</td></tr>
         <tr><td><kbd>Enter</kbd></td><td>Play or pause the song</td></tr>
         <tr><td><kbd>=</kbd> / <kbd>−</kbd></td><td>Zoom in / out</td></tr>
+        <tr><td><kbd>P</kbd></td><td>Start or stop the strum pattern</td></tr>
+        <tr><td>Hold <kbd>W</kbd></td><td>Rock the wah pedal forward (when Wah type is Pedal)</td></tr>
         <tr><td><kbd>F1</kbd></td><td>Open this manual</td></tr>
         <tr><td><kbd>Esc</kbd></td><td>Close menus, the library or this manual</td></tr>
       </table>
@@ -365,6 +490,11 @@
 
       <h2 id="m-tips">Tips and troubleshooting</h2>
       <ul>
+        <li><b>The tuner says the microphone is not available:</b> allow microphone access for this page in the browser or iPad settings. The Windows app asks the first time.</li>
+        <li><b>Learn mode doesn't move on:</b> check the glowing string and fret, and that a chord key isn't holding that string at another fret (choose <b>Open</b>). With a capo, frets count from the capo.</li>
+        <li><b>The game feels too fast:</b> lower the Tempo, or loop the hard section.</li>
+      </ul>
+      <ul>
         <li><b>No sound:</b> click or tap once on the guitar, check Volume under Sound, and check the device's own volume and mute.</li>
         <li><b>Notes feel late:</b> close other audio programs and other open copies of this app. Wired headphones or speakers respond faster than wireless ones.</li>
         <li><b>Notes cut off when I let go:</b> that is how a fretted string behaves. Use the chord buttons, or keep holding, to let notes ring.</li>
@@ -376,6 +506,57 @@
       <h2 id="m-about">About the sound</h2>
       <p>Nothing here is a recording. Each string is simulated as it vibrates: a pluck sends a burst of energy around a loop that loses a little brightness on every pass, the way a real string does. The pick position, palm muting, hammer-ons and bends all act on that simulation, and a model of a spruce-topped body shapes the result.</p>
       <p class="small">Song scores are credited in the library and in lib/SOURCES.txt. The 3D graphics use three.js (MIT licence).</p>
+
+      <h2 id="m-versions">Version history</h2>
+      <p>This is version 6. Every version and what it added, newest first.</p>
+      <h3>Version 6</h3>
+      <ul>
+        <li><b>Practice menu:</b> Learn mode (the next note glows and the song waits for you), a falling-notes Game with scoring, streaks and stars, a scrolling Tab strip, section looping, and recording to a WAV file.</li>
+        <li><b>Tools menu:</b> a chord library with every root and eleven chord types, assignable to the ten chord keys; a capo on frets 1 to 11; a bottleneck slide; natural harmonics; a scale and key guide with nine scales; note names on the fretboard.</li>
+        <li><b>Rhythm:</b> metronome, one-bar count-in, and nine auto-strum and fingerpicking patterns.</li>
+        <li><b>Tuner</b> for a real guitar, using the microphone.</li>
+        <li><b>Electric guitars:</b> pickup selector (neck, middle, bridge, neck + bridge) and a guitar tone knob.</li>
+        <li><b>Wah you control:</b> an on-screen pedal, the W key, or tilting a tablet.</li>
+        <li><b>Karaoke view</b> with large lyrics over the guitar, and exact lyric timing marked by tapping along.</li>
+        <li><b>Presets:</b> save and recall a named guitar-and-effects setup.</li>
+        <li>The neck now has 20 frets; the tempo slider goes down to a quarter speed; this version history.</li>
+      </ul>
+      <h3>Version 5</h3>
+      <ul>
+        <li><b>Electric guitars:</b> clean, country twang, jazz hollow-body, blues crunch, classic rock, hard rock / metal and surf, each with a pickup and amplifier model.</li>
+        <li><b>Effects menu:</b> amplifier, amp tone, drive, compressor, wah, chorus, tremolo, echo, and room, hall, plate and spring reverbs.</li>
+        <li><b>More instruments:</b> classical nylon, 12-string, parlor, jumbo, resonator, baritone, bass, ukulele, banjo and mandolin, with loudness balanced across all of them.</li>
+        <li><b>Default view:</b> save any zoom, position and backdrop as the view the app opens with.</li>
+        <li><b>User's manual</b> (the Manual button or F1).</li>
+        <li><b>Touch and tablets:</b> pinch to zoom, double tap to switch views, lyrics as a side panel, a sideways-screen reminder.</li>
+        <li><b>Website and iPad version:</b> installable to the Home Screen and playable offline, published at stevenpeterson-pixel.github.io/3DGuitar.</li>
+      </ul>
+      <h3>Version 4</h3>
+      <ul>
+        <li><b>Six more songs</b> (39 in all): Careless Love, St. Louis Blues, Frankie and Johnny, La Paloma, and Singin' in the Rain and I Got Rhythm read from scans of the original sheet music.</li>
+        <li><b>Lyrics window</b> that can go on a second screen, follows the song, and remembers the words you paste in.</li>
+        <li><b>Separation</b> slider for the left-right spread of the strings; the sound sliders are remembered.</li>
+      </ul>
+      <h3>Version 3</h3>
+      <ul>
+        <li><b>Thirteen more songs</b> converted from published public-domain scores, including Lágrima, Recuerdos de la Alhambra, Maple Leaf Rag and Wildwood Flower.</li>
+        <li><b>Zoom</b> with the mouse wheel, from a close-up to the whole guitar with its headstock and tuning machines.</li>
+        <li><b>Backdrops:</b> a dark studio and a living room with a fireplace.</li>
+        <li>A button to put the tempo back to 100%.</li>
+      </ul>
+      <h3>Version 2</h3>
+      <ul>
+        <li><b>3D guitar</b> with gloss spruce, rosewood, pearl inlays, an abalone rosette and strings that blur as they ring.</li>
+        <li><b>Song library</b> of 20 self-playing songs, with filters by style and era, and a player with play, stop, loop, tempo and seeking.</li>
+        <li><b>Flip</b> the guitar left-to-right and choose which string is on top.</li>
+        <li>A new dark-and-gold interface and an app icon.</li>
+      </ul>
+      <h3>Version 1</h3>
+      <ul>
+        <li>The sound engine: six simulated strings with pick-position tone, palm muting, hammer-ons, pull-offs, bends and slides, and a modelled spruce body.</li>
+        <li>A flat fretboard and strum area for mouse, keyboard and multi-touch, with ten chord keys.</li>
+        <li>The Windows app (.NET 10 and WebView2).</li>
+      </ul>
     </article>
   </div>
 </div>
@@ -406,7 +587,7 @@ function engineModule() {
       this.kFast = 1 - Math.exp(-1 / (sr * 0.003)); this.kBend = 1 - Math.exp(-1 / (sr * 0.012)); this.kSlide = 1 - Math.exp(-1 / (sr * 0.02));
       // The instrument: shift = semitones from guitar tuning, tdc/thf = sustain and brightness of the ring, stiff = string
       // stiffness, bright = pick attack, dbl = doubled courses ('oct' as on a 12-string, 'uni' as on a mandolin).
-      this.inst = { shift: 0, tdc: 1, thf: 1, stiff: 1, bright: 1, dbl: null, pickup: 0 }; this.cpl = COUPLING;
+      this.inst = { shift: 0, capo: 0, tdc: 1, thf: 1, stiff: 1, bright: 1, dbl: null, pickup: 0, pickup2: 0 }; this.cpl = COUPLING;
       this.str = [];
       for (let n = 0; n < NS * 2; n++) {                       // strings 6-11 are the second string of each course
         const i = n % NS, a = (PAN[i] + (n >= NS ? 0.06 : 0) + 1) * Math.PI / 4;
@@ -417,7 +598,7 @@ function engineModule() {
       }
     }
     setInstrument(p) {
-      this.inst = Object.assign({ shift: 0, tdc: 1, thf: 1, stiff: 1, bright: 1, dbl: null, pickup: 0 }, p); this.pending.length = 0;
+      this.inst = Object.assign({ shift: 0, capo: 0, tdc: 1, thf: 1, stiff: 1, bright: 1, dbl: null, pickup: 0, pickup2: 0 }, p); this.pending.length = 0;
       this.cpl = COUPLING / (this.inst.dbl ? 3 : 1) / Math.max(1, this.inst.tdc * this.inst.tdc);       // long-sustain instruments get less string-to-string leakage, to stay stable
       for (const s of this.str) { s.active = false; s.buf.fill(0); s.ap.fill(0); s.lp = 0; s.env = 0; s.excLen = 0; s.excPos = 0; this.retune(s, true); }
     }
@@ -426,7 +607,7 @@ function engineModule() {
     // Recompute loop gain, damping and the delay length that puts the fundamental exactly in tune.
     retune(s, snap) {
       const sr = this.sr, I = this.inst, pair = s.mate ? (I.dbl === 'oct' && s.i < 4 ? 12 : 0) + 0.035 : 0;      // second string: an octave up, or a hair sharp
-      const f = 440 * Math.pow(2, (OPEN[s.i] + I.shift + pair + s.fret + s.bend - 69) / 12);
+      const f = 440 * Math.pow(2, (OPEN[s.i] + I.shift + (I.capo || 0) + pair + s.fret + s.bend - 69) / 12);
       s.freq = f; s.a = AP[s.i] * I.stiff;
       const m = s.dead ? 1 : this.mute, fretted = s.fret > 0 ? 0.8 : 1;
       const tdc = T_DC[s.i] * I.tdc * fretted * (1 - m) + 0.32 * Math.min(1, I.tdc) * m;
@@ -439,15 +620,15 @@ function engineModule() {
       const dLp = Math.atan2(s.p * Math.sin(w), 1 - s.p * Math.cos(w)) / w;                 // phase delay of the damping filter
       const dAp = 1 - (2 / w) * Math.atan2(s.a * Math.sin(w), 1 + s.a * Math.cos(w));       // phase delay of one all-pass
       s.Lt = Math.max(3, Math.min(BUF - 8, sr / f - dLp - NAP * dAp));
-      s.pp = I.pickup ? Math.max(1, Math.round(I.pickup * s.Lt)) : 0;      // electric pickup: how far along the string it listens
+      s.pp = I.pickup ? Math.max(1, Math.round(I.pickup * s.Lt)) : 0; s.pp2 = I.pickup2 ? Math.max(1, Math.round(I.pickup2 * s.Lt)) : 0;      // electric pickup: how far along the string it listens
       if (snap) s.L = s.Lt;
     }
 
     // Pluck: a filtered noise burst one period long, comb-filtered for the pick position.
-    excite(s, vel, pos, soft) {
+    excite(s, vel, pos, soft, pure) {
       const sr = this.sr, N = Math.min(2000, Math.max(8, Math.round(sr / s.freq)));
       const M = Math.max(1, Math.round(pos * N)), len = N + M, e = s.exc, m = s.dead ? 1 : this.mute;
-      const fc = Math.min(sr * 0.45, (soft ? 900 : 1100 + 9000 * vel * (0.35 + 0.65 * this.tone)) * (1 - 0.6 * m) * this.inst.bright);
+      const fc = Math.min(sr * 0.45, (soft ? 900 : 1100 + 9000 * vel * (0.35 + 0.65 * this.tone)) * (1 - 0.6 * m) * this.inst.bright * (pure ? 0.3 : 1));
       const al = 1 - Math.exp(-2 * Math.PI * fc / sr);
       let a = 0, b = 0, mean = 0;
       for (let n = 0; n < N; n++) { a += al * (this.rand() - a); b += al * (a - b); e[n] = b; mean += b; }
@@ -464,7 +645,7 @@ function engineModule() {
     }
 
     setFret(s, d) {
-      const old = s.fret, wasDead = s.dead, ringing = s.active && s.env > 0.004 && !s.dead;
+      const old = s.fret, wasDead = s.dead, ringing = s.active && s.env > 0.004 && !s.dead; s.harmOn = false;
       s.dead = !!d.dead; s.fret = Math.max(0, d.fret); s.bend = 0;
       s.kg = d.why === 'slide' ? this.kSlide : this.kFast;
       this.retune(s, !ringing);
@@ -482,7 +663,7 @@ function engineModule() {
     msg(d) {
       const course = d.s !== undefined ? (this.inst.dbl ? [this.str[d.s], this.str[d.s + NS]] : [this.str[d.s]]) : [];     // one string, or both of a doubled course
       if (d.type === 'pluck' || d.type === 'note') {            // 'note' = set the fret, then pluck (used by the song player)
-        const ev = { at: this.frame + (d.delay || 0) * this.sr, s: d.s, vel: d.vel, pos: d.pos, fret: d.type === 'note' ? d.fret : -1 };
+        const ev = { at: this.frame + (d.delay || 0) * this.sr, s: d.s, vel: d.vel, pos: d.pos, fret: d.type === 'note' ? d.fret : -1, harm: !!d.harm };
         if (d.delay > 0) this.pending.push(ev); else this.fire(ev);
       } else if (d.type === 'fret') { for (const s of course) this.setFret(s, d); }
       else if (d.type === 'bend') { for (const s of course) { s.bend = d.semis; s.kg = this.kBend; this.retune(s, false); } }
@@ -494,9 +675,11 @@ function engineModule() {
     }
     fire(ev) {
       const s = this.str[ev.s];
-      if (ev.fret >= 0) { s.dead = false; s.fret = ev.fret; s.bend = 0; s.dampLeft = 0; this.retune(s, true); }
-      this.excite(s, ev.vel, ev.pos, false);
-      if (this.inst.dbl && ev.s < NS) this.pending.push({ at: this.frame + 0.006 * this.sr, s: ev.s + NS, vel: ev.vel * 0.95, pos: ev.pos, fret: ev.fret });   // the pick reaches the second string a moment later
+      if (ev.harm) { const keep = s.fret; s.dead = false; s.fret = ev.fret; s.bend = 0; s.dampLeft = 0; this.retune(s, true); s.fret = keep; s.harmOn = true; }     // a harmonic rings at its own pitch; the fretting is unchanged
+      else if (ev.fret >= 0) { s.dead = false; s.fret = ev.fret; s.bend = 0; s.dampLeft = 0; s.harmOn = false; this.retune(s, true); }
+      else if (s.harmOn) { s.harmOn = false; this.retune(s, true); }
+      this.excite(s, ev.vel, ev.pos, false, ev.harm);
+      if (this.inst.dbl && ev.s < NS) this.pending.push({ at: this.frame + 0.006 * this.sr, s: ev.s + NS, vel: ev.vel * 0.95, pos: ev.pos, fret: ev.fret, harm: ev.harm });   // the pick reaches the second string a moment later
     }
 
     process(outL, outR, n) {
@@ -520,7 +703,7 @@ function engineModule() {
           if (s.excPos < s.excLen) u += s.exc[s.excPos++];
           b[w] = u; s.w = (w + 1) & MASK;
           const av = v < 0 ? -v : v; s.env = av > s.env ? av : s.env * 0.99985;
-          const o = s.pp ? (v - b[(w - s.pp) & MASK]) * 0.85 : v;          // a pickup hears the string at one point, which hollows out some harmonics
+          let o = s.pp ? (v - b[(w - s.pp) & MASK]) * 0.85 : v; if (s.pp2) o = (o + (v - b[(w - s.pp2) & MASK]) * 0.85) * 0.6;          // a pickup hears the string at one point, which hollows out some harmonics
           sum += v; l += o * s.panL; r += o * s.panR;
         }
         bridge = sum; outL[i] = l; outR[i] = r;
@@ -541,6 +724,13 @@ function engineModule() {
         if ((this.cnt += o[0].length) >= 2048) { this.cnt = 0; const st = this.eng.str, lv = []; for (let k = 0; k < 6; k++) lv.push(Math.max(st[k].active ? st[k].env : 0, st[k + 6].active ? st[k + 6].env : 0)); this.port.postMessage(lv); }
         return true;
       }
+    });
+  }
+  if (typeof registerProcessor === 'function') {
+    // passes the finished sound to the page while a recording is being made
+    registerProcessor('rec-tap', class extends AudioWorkletProcessor {
+      constructor() { super(); this.on = false; this.port.onmessage = e => { this.on = e.data === 'start'; }; }
+      process(inputs) { const i = inputs[0]; if (this.on && i.length && i[0]) { const L = i[0], R = i[1] || i[0], b = new Float32Array(L.length * 2); b.set(L, 0); b.set(R, L.length); this.port.postMessage(b, [b.buffer]); } return true; }
     });
   }
   return GuitarEngine;
@@ -605,18 +795,23 @@ const INSTRUMENTS = [
   { id: 'emetal', name: 'Hard rock / metal', group: 'Electric guitars', level: 0.72, electric: true, p: { tdc: 2.0, thf: 1.0, pickup: 0.09 }, fx: { amp: true, ampTone: 0.5, drive: 1, comp: 0.35, rev: 'room', revAmt: 0.1 } },
   { id: 'esurf', name: 'Surf', group: 'Electric guitars', level: 0.42, electric: true, p: { tdc: 1.5, thf: 1.4, bright: 1.3, pickup: 0.1 }, fx: { amp: true, ampTone: 0.8, drive: 0.05, trem: 0.5, tremRate: 5.5, rev: 'spring', revAmt: 0.55 } },
 ];
-const FX_OFF = { drive: 0, comp: 0, chorus: 0, trem: 0, tremRate: 5, echo: 0, echoTime: 0.32, wah: 0, amp: false, ampTone: 0.6, rev: 'room' };
+const FX_OFF = { drive: 0, comp: 0, chorus: 0, trem: 0, tremRate: 5, echo: 0, echoTime: 0.32, wah: 0, wahMode: 'auto', amp: false, ampTone: 0.6, rev: 'room' };
 const curInstrument = () => INSTRUMENTS.find(x => x.id === st.inst) || INSTRUMENTS[0];
 // usePreset: also load the instrument's own effects (when the player picks it); otherwise keep the effects as they are
 function applyInstrument(usePreset) {
   const ins = curInstrument(); st.inst = ins.id;
   if ($('inst').value !== ins.id) $('inst').value = ins.id;
+  if (usePreset) { st.opt.pickup = 'preset'; st.opt.gtrTone = 1; }
   if (usePreset || !st.fx) { st.fx = Object.assign({}, FX_OFF, ins.fx); delete st.fx.revAmt; if (ins.fx && ins.fx.revAmt !== undefined) $('room').value = ins.fx.revAmt; else if (usePreset) $('room').value = 0.3; }
-  st.fx = Object.assign({}, FX_OFF, st.fx); syncFxUI(); $('body').disabled = !!ins.electric;
+  st.fx = Object.assign({}, FX_OFF, st.fx); syncFxUI(); $('body').disabled = !!ins.electric; drawOverlay();
+  $('fxPickup').value = st.opt.pickup; $('fxGtrTone').value = st.opt.gtrTone; $('fxWahMode').value = st.fx.wahMode || 'auto'; $('fxPickup').disabled = $('fxGtrTone').disabled = !ins.electric;
   if (!graph) return;
-  send({ type: 'inst', p: ins.p }); if (!ins.electric) graph.body.buffer = makeBodyIR(actx, ins.body); graph.lp.frequency.value = ins.lp || 9500;
+  const p = Object.assign({}, ins.p, { capo: st.opt.capo }), pk = st.opt.pickup;                // the capo, and the player's choice of pickup on an electric
+  if (ins.electric && pk !== 'preset') { p.pickup = pk === 'neck' ? 0.27 : pk === 'mid' ? 0.17 : 0.09; p.pickup2 = pk === 'both' ? 0.27 : 0; }
+  send({ type: 'inst', p }); if (!ins.electric) graph.body.buffer = makeBodyIR(actx, ins.body); applyTone();
   applyFx(); applyMix(); resyncFrets();
 }
+function applyTone() { if (!graph) return; const ins = curInstrument(); graph.lp.frequency.value = ins.electric ? 600 * Math.pow(16, st.opt.gtrTone) : (ins.lp || 9500); }      // the guitar's tone knob
 function applyFx() { if (!graph) return; graph.fx.set(st.fx); if (graph.revType !== st.fx.rev) { graph.room.buffer = makeReverbIR(actx, st.fx.rev); graph.revType = st.fx.rev; } }
 // Reverb spaces: decaying noise shaped differently for a small room, a hall, a metal plate and an amplifier's spring tank.
 function makeReverbIR(ac, type) {
@@ -658,13 +853,14 @@ function buildFx(ac) {
     if (key !== active) { input.disconnect(); for (const k of order) stages[k][1].disconnect(); let prev = input; for (const k of order) if (on[k]) { prev.connect(stages[k][0]); prev = stages[k][1]; } prev.connect(output); active = key; }
     comp.threshold.value = -18 - 22 * fx.comp; comp.ratio.value = 2 + 10 * fx.comp; compMake.gain.value = 1 + fx.comp * 1.6;
     wWet.gain.value = fx.wah * 2.2; wDry.gain.value = 1 - fx.wah * 0.8;
+    const pedal = fx.wahMode === 'pedal'; wDepth.gain.value = pedal ? 0 : 650; if (!pedal) wBp.frequency.value = 950;      // pedal mode: the player moves the filter
     dPre.gain.value = 1 + fx.drive * fx.drive * 60; dPost.gain.value = DRIVE_OUT(fx.drive);
     aLp.frequency.value = 1700 + 5200 * fx.ampTone;
     cWet.gain.value = fx.chorus * 0.9;
     trem.gain.value = 1 - fx.trem * 0.5; tDepth.gain.value = fx.trem * 0.5; tLfo.frequency.value = fx.tremRate || 5;
     eWet.gain.value = fx.echo * 0.9; eDelay.delayTime.value = fx.echoTime || 0.32;
   }
-  return { input, output, set };
+  return { input, output, set, wah: pos => wBp.frequency.setTargetAtTime(350 * Math.pow(7, pos), ac.currentTime, 0.015) };
 }
 const DRIVE_OUT = a => 0.25 + 0.65 * Math.exp(-8 * a);          // turns the level back down as the drive is turned up (measured to keep loudness even)
 function buildGraph(ac, source) {
@@ -682,7 +878,9 @@ function buildGraph(ac, source) {
   width[0].connect(merge, 0, 0); width[2].connect(merge, 0, 0); width[1].connect(merge, 0, 1); width[3].connect(merge, 0, 1);
   merge.connect(dry); merge.connect(body); body.connect(wet); dry.connect(hp); wet.connect(hp); hp.connect(lp); lp.connect(fx.input); fx.output.connect(master);
   master.connect(pre); master.connect(room); room.connect(roomGain); roomGain.connect(pre); pre.connect(clip); clip.connect(ac.destination);
-  return { node, dry, wet, master, roomGain, width, body, lp, fx, room, revType: 'room' };
+  let tap = null;                                      // listens to the finished sound for the recorder
+  if (!source) try { tap = new AudioWorkletNode(ac, 'rec-tap', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [2] }); const z = ac.createGain(); z.gain.value = 0; clip.connect(tap); tap.connect(z); z.connect(ac.destination); } catch (_) { tap = null; }
+  return { node, dry, wet, master, roomGain, width, body, lp, fx, room, revType: 'room', tap };
 }
 function applyMix() {
   if (!graph) return;
@@ -693,7 +891,7 @@ function applyMix() {
 }
 
 /* ===================================== instrument state ===================================== */
-const NF = 15, SCALE = 26, BRIDGE = 26, FB_END = 15.75, MUTE_X = 24.2, YS = 0.16, TOP_Y = -0.28, HOLE_X = 19.2, HOLE_R = 2.7;
+const NF = 20, SCALE = 26, BRIDGE = 26, FB_END = 17.95, MUTE_X = 24.2, YS = 0.16, TOP_Y = -0.28, HOLE_X = 20.4, HOLE_R = 2.5;
 const FX = []; for (let f = 0; f <= NF; f++) FX.push(SCALE * (1 - Math.pow(2, -f / 12)));   // fret positions along the string (1 unit = one string spacing)
 const NAMES = ['E', 'A', 'D', 'G', 'B', 'e'], OPENM = [40, 45, 50, 55, 59, 64];
 const SHAPES = { C: [-1, 3, 2, 0, 1, 0], G: [3, 2, 0, 0, 0, 3], D: [-1, -1, 0, 2, 3, 2], A: [-1, 0, 2, 2, 2, 0], E: [0, 2, 2, 1, 0, 0], F: [1, 3, 3, 2, 1, 1], Am: [-1, 0, 2, 2, 1, 0], Em: [0, 2, 2, 0, 0, 0],
@@ -706,23 +904,32 @@ const send = m => { if (node) node.port.postMessage(m); };
 const zs = s => s - 2.5;                                                   // string position across the neck
 const stringAt = z => clamp(Math.round(z + 2.5), 0, 5);
 function fretAt(x) { if (x < 0) return 0; for (let f = 1; f <= NF; f++) if (x < FX[f]) return f; return NF; }
-const fretX = f => SCALE * (1 - Math.pow(2, -f / 12)), MAXFRET = 19;         // the song player may go past the last drawn fret
+const fretX = f => SCALE * (1 - Math.pow(2, -f / 12)), MAXFRET = 20;         // the song player may go past the last drawn fret
 const dotX = f => f <= 0 ? -0.5 : fretX(f) - Math.min(0.42, (fretX(f) - fretX(f - 1)) * 0.4);
 const shapeCache = {};
-function shapeOf(name) {                 // chord name -> fret per string; open shapes where they exist, otherwise a barre chord
+Object.assign(SHAPES, { Cmaj7: [-1, 3, 2, 0, 0, 0], Dm7: [-1, -1, 0, 2, 1, 1], Dmaj7: [-1, -1, 0, 2, 2, 2], Dsus4: [-1, -1, 0, 2, 3, 3], Dsus2: [-1, -1, 0, 2, 3, 0], D6: [-1, -1, 0, 2, 0, 2], Fmaj7: [-1, -1, 3, 2, 1, 0],
+  Gmaj7: [3, 2, 0, 0, 0, 2], G6: [3, 2, 0, 0, 0, 0], Gsus4: [3, 3, 0, 0, 1, 3], C6: [-1, 3, 2, 2, 1, 0], Csus4: [-1, 3, 3, 0, 1, 1], Cadd9: [-1, 3, 2, 0, 3, 0] });
+// movable shapes built on the E chord (root on the lowest string) and the A chord (root on the fifth string); null = string not played
+const TPL_E = { '': [0, 2, 2, 1, 0, 0], m: [0, 2, 2, 0, 0, 0], 7: [0, 2, 0, 1, 0, 0], m7: [0, 2, 0, 0, 0, 0], maj7: [0, 2, 1, 1, 0, 0], sus4: [0, 2, 2, 2, 0, 0], 6: [0, 2, 2, 1, 2, 0], 9: [0, 2, 0, 1, 0, 2], aug: [0, 3, 2, 1, 1, 0] };
+const TPL_A = { '': [null, 0, 2, 2, 2, 0], m: [null, 0, 2, 2, 1, 0], 7: [null, 0, 2, 0, 2, 0], m7: [null, 0, 2, 0, 1, 0], maj7: [null, 0, 2, 1, 2, 0], sus4: [null, 0, 2, 2, 3, 0], sus2: [null, 0, 2, 2, 0, 0], 6: [null, 0, 2, 2, 2, 2],
+  9: [null, 0, -1, 0, 0, 0], dim: [null, 0, 1, 2, 1, null], aug: [null, 0, 3, 2, 2, 1] };
+function shapeOf(name) {                 // chord name -> fret per string; open shapes where they exist, otherwise the lowest movable shape
   if (SHAPES[name]) return SHAPES[name]; if (shapeCache[name]) return shapeCache[name];
-  const m = /^([A-G])([#b]?)(m|7)?$/.exec(name); if (!m) return null;
-  const pc = ({ C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 })[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0), e = (pc - 4 + 24) % 12, a = (pc - 9 + 24) % 12, q = m[3] || '';
-  return shapeCache[name] = e <= a
-    ? (q === 'm' ? [e, e + 2, e + 2, e, e, e] : q === '7' ? [e, e + 2, e, e + 1, e, e] : [e, e + 2, e + 2, e + 1, e, e])
-    : (q === 'm' ? [-1, a, a + 2, a + 2, a + 1, a] : q === '7' ? [-1, a, a + 2, a, a + 2, a] : [-1, a, a + 2, a + 2, a + 2, a]);
+  const m = /^([A-G])([#b]?)(maj7|m7|sus4|sus2|dim|aug|m|7|6|9)?$/.exec(name); if (!m) return null;
+  const pc = ({ C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 })[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0), q = m[3] || '', found = [];
+  for (const [tpl, n] of [[TPL_E[q], (pc - 4 + 24) % 12], [TPL_A[q], (pc - 9 + 24) % 12]]) { if (!tpl) continue; const sh = tpl.map(v => v === null ? -1 : v + n); if (tpl.some((v, i) => v !== null && sh[i] < 0)) continue; found.push([n, sh]); }
+  if (!found.length) return null; found.sort((x, y) => x[0] - y[0]); return shapeCache[name] = found[0][1];
 }
 const pickPos = x => 0.05 + 0.33 * clamp((BRIDGE - x) / (BRIDGE - FB_END), 0, 1);     // fraction of the string length from the bridge
 
 try { Object.assign(st, window.__savedSettings || JSON.parse(localStorage.getItem('guitar.settings') || '{}')); } catch (_) {}   // the desktop app supplies __savedSettings
+const OPT_DEFAULT = { capo: 0, tabStrip: true, names: false, scale: 'off', scaleRoot: 0, slide: false, harm: false, metro: false, countIn: false, bpm: 100, pattern: 'off', karaoke: false,
+  slots: ['Open', 'G', 'C', 'D', 'Em', 'Am', 'E', 'A', 'Dm', 'F'], presets: {}, pickup: 'preset', gtrTone: 1 };
+st.opt = Object.assign({}, OPT_DEFAULT, st.opt); if (!Array.isArray(st.opt.slots) || st.opt.slots.length !== 10) st.opt.slots = OPT_DEFAULT.slots.slice(); if (!st.opt.presets || typeof st.opt.presets !== 'object') st.opt.presets = {};
+const absF = f => f > 0 ? f + st.opt.capo : st.opt.capo;        // where a fret counted from the capo sits on the neck
 function saveSettings() {
   const snd = {}; for (const id of ['vol', 'tone', 'body', 'room', 'sep']) if ($(id)) snd[id] = +$(id).value;
-  const data = JSON.stringify({ flipX: st.flipX, flipZ: st.flipZ, tap: st.tap, bg: st.bg, snd, inst: st.inst, home: st.home, fx: st.fx });
+  const data = JSON.stringify({ flipX: st.flipX, flipZ: st.flipZ, tap: st.tap, bg: st.bg, snd, inst: st.inst, home: st.home, fx: st.fx, opt: st.opt });
   if (window.chrome && window.chrome.webview) window.chrome.webview.postMessage('settings:' + data);
   try {localStorage.setItem('guitar.settings', data); } catch (_) {} }
 
@@ -898,7 +1105,7 @@ function animateRoom(now) {
   for (const [a, b, mat] of [[HOLE_R, HOLE_R + 0.07, M.dark], [HOLE_R + 0.16, HOLE_R + 0.22, M.dark], [HOLE_R + 0.25, HOLE_R + 0.62, M.abalone], [HOLE_R + 0.65, HOLE_R + 0.71, M.dark], [HOLE_R + 0.84, HOLE_R + 0.88, M.ivory]]) ring(a, b, mat);
   // pickguard
   const pg = new THREE.Shape(), r = HOLE_R + 0.96, a0 = 0.72, a1 = 2.3;
-  pg.moveTo(HOLE_X + r * Math.cos(a1), r * Math.sin(a1)); pg.bezierCurveTo(16.4, 4.6, 16.9, 7.5, 19.2, 7.7); pg.bezierCurveTo(22, 7.9, 24.6, 6.6, 24.5, 4.9); pg.bezierCurveTo(24.4, 3.6, 22.6, 2.9, HOLE_X + r * Math.cos(a0), r * Math.sin(a0));
+  pg.moveTo(HOLE_X + r * Math.cos(a1), r * Math.sin(a1)); pg.bezierCurveTo(17.6, 4.6, 18.1, 7.5, 20.4, 7.7); pg.bezierCurveTo(22.8, 7.9, 25.0, 6.6, 24.9, 4.9); pg.bezierCurveTo(24.8, 3.6, 23.6, 2.9, HOLE_X + r * Math.cos(a0), r * Math.sin(a0));
   pg.absarc(HOLE_X, 0, r, a0, a1, false);
   const pgg = new THREE.ShapeGeometry(pg, 48); pgg.rotateX(Math.PI / 2);
   const uv = pgg.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 0.16, uv.getY(i) * 0.16);
@@ -933,7 +1140,7 @@ function segment(a, b, r, mat) {                       // a thin cylinder betwee
   const frets = new THREE.InstancedMesh(fg, M.fret, NF), o = new THREE.Object3D();
   for (let f = 1; f <= NF; f++) { o.position.set(FX[f], 0.002, 0); o.updateMatrix(); frets.setMatrixAt(f - 1, o.matrix); }
   frets.castShadow = true; frets.receiveShadow = true; root.add(frets);
-  for (const f of [3, 5, 7, 9, 12, 15]) {
+  for (const f of [3, 5, 7, 9, 12, 15, 17, 19]) {
     const x = (FX[f - 1] + FX[f]) / 2, rr = Math.min(0.34, (FX[f] - FX[f - 1]) * 0.3);
     for (const z of (f === 12 ? [-1.5, 1.5] : [0])) round(mesh(flat(new THREE.CircleGeometry(rr, 40)), M.abalone, x, 0.004, z));
   }
@@ -964,7 +1171,7 @@ const muteGlow = new THREE.Mesh(flat(new THREE.PlaneGeometry(1.25, 7.4)), new TH
 /* labels drawn in HTML and pinned to points on the guitar */
 const labels = [];
 function addLabel(text, cls, x, y, z) { const el = document.createElement('div'); el.className = 'lb ' + cls; el.textContent = text; $('labels').appendChild(el); const l = { el, p: new THREE.Vector3(x, y, z), text }; labels.push(l); return l; }
-for (const f of [1, 3, 5, 7, 9, 12, 15]) addLabel(String(f), '', (FX[f - 1] + FX[f]) / 2, 0, -4.0);
+for (const f of [1, 3, 5, 7, 9, 12, 15, 17, 19]) addLabel(String(f), '', (FX[f - 1] + FX[f]) / 2, 0, -4.0);
 const nameLb = NAMES.map((n, s) => addLabel(n, 's', 0.42, 0.3, zs(s) - 0.3));
 const muteLb = addLabel('PALM MUTE', 'z', 24.95, 0, -4.25);
 addLabel('STRUM', 'z', HOLE_X, 0, -3.95);
@@ -979,7 +1186,7 @@ function applyFlip() {
   roomRoot.position.set(sgn() * CX * KFULL, 0, GUITAR_H);
   $('flipX').classList.toggle('on', st.flipX); $('flipX').textContent = st.flipX ? 'Sound hole on left ✓' : 'Sound hole on left';
   $('flipZ').classList.toggle('on', st.flipZ); $('flipZ').textContent = st.flipZ ? 'Low E at bottom ✓' : 'Low E at bottom';
-  saveSettings();
+  drawOverlay(); saveSettings();
 }
 function applyRoom() {
   const living = st.bg === 'living'; studioG.visible = !living; livingG.visible = living;
@@ -1034,12 +1241,12 @@ function frame() {
     const amp = st.vis[s] * 0.2 * (st.mute ? 0.5 : 1), rb = ribbons[s];
     if (amp < 0.012) rb.visible = false;
     else {
-      rb.visible = true; const p = rb.geometry.attributes.position, x0 = fr > 0 ? FX[fr] : 0, z = zs(s);
+      rb.visible = true; const p = rb.geometry.attributes.position, x0 = fr > 0 || st.opt.capo ? fretX(absF(fr)) : 0, z = zs(s);
       for (let k = 0; k <= SEG; k++) { const u = k / SEG, hw = amp * Math.sin(Math.PI * u) + SR[s], x = lerp(x0, BRIDGE, u); p.setXYZ(k * 2, x, YS, z - hw); p.setXYZ(k * 2 + 1, x, YS, z + hw); }
       p.needsUpdate = true;
     }
-    const cs = chordSp[s]; cs.visible = st.base[s] > 0; if (cs.visible) { cs.position.set(dotX(st.base[s]), YS + 0.05, zs(s)); cs.scale.set(0.62 / view.k, 0.62, 1); cs.material.opacity = 0.85; }
-    const as = autoSp[s]; as.visible = !!au; if (au) { as.position.set(dotX(au.fret), YS + 0.07, zs(s)); as.scale.set(1.25 / view.k, 1.25, 1); as.material.opacity = clamp(1 - (now - au.t0) / (au.until - au.t0), 0, 1) * 0.95 + 0.05; }
+    const cs = chordSp[s]; cs.visible = st.base[s] > 0; if (cs.visible) { cs.position.set(dotX(absF(st.base[s])), YS + 0.05, zs(s)); cs.scale.set(0.62 / view.k, 0.62, 1); cs.material.opacity = 0.85; }
+    const as = autoSp[s]; as.visible = !!au; if (au) { as.position.set(dotX(absF(au.fret)), YS + 0.07, zs(s)); as.scale.set(1.25 / view.k, 1.25, 1); as.material.opacity = clamp(1 - (now - au.t0) / (au.until - au.t0), 0, 1) * 0.95 + 0.05; }
     const dead = st.fret[s] < 0 ? '✕' : NAMES[s]; if (nameLb[s].text !== dead) { nameLb[s].text = dead; nameLb[s].el.textContent = dead; }
   }
   fingerSp.forEach((sp, i) => { const f = st.fingers[i]; sp.visible = !!f; if (f) { sp.position.set(dotX(f.f), YS + 0.08, zs(f.s) + clamp(f.z - f.z0, -0.9, 0.9) * (f.bend > 0 ? 0.6 : 0)); sp.scale.set(1.15 / view.k, 1.15, 1); } });
@@ -1047,24 +1254,25 @@ function frame() {
   muteGlow.material.opacity += ((st.mute ? 0.3 : 0) - muteGlow.material.opacity) * 0.25; muteLb.el.classList.toggle('on', !!st.mute);
   const w = glc.clientWidth, h = glc.clientHeight;
   for (const l of labels) { pv.copy(l.p); root.localToWorld(pv); pv.project(cam); l.el.style.transform = `translate(-50%,-50%) translate(${((pv.x + 1) / 2 * w).toFixed(1)}px,${((1 - pv.y) / 2 * h).toFixed(1)}px)`; }
+  toolsFrame(now);
   renderer.render(scene, cam);
   updateTransport();
   requestAnimationFrame(frame);
 }
 
 /* ===================================== playing by hand ===================================== */
-function pluck(s, vel, pos, delay) { send({ type: 'pluck', s, vel, pos, delay: delay || 0 }); }
+function pluck(s, vel, pos, delay, auto) { send({ type: 'pluck', s, vel, pos, delay: delay || 0 }); if (!auto) userPlucked(s); }      // auto = sounded by the program, not the player
 // Works out which fret is in effect on a string (highest finger, or the latched chord) and tells the engine.
 function applyString(s, why) {
   const on = st.fingers.filter(f => f.s === s);
-  const eff = on.length ? Math.max(Math.max(st.base[s], 0), ...on.map(f => f.f)) : st.base[s];
+  const eff = on.length ? Math.max(Math.max(st.base[s], 0), ...on.map(f => Math.max(0, f.f - st.opt.capo))) : st.base[s];
   if (eff === st.fret[s] && why !== 'chord') return false;
   st.fret[s] = eff;
   send({ type: 'fret', s, fret: Math.max(0, eff), dead: eff < 0, why, tap: st.tap, release: on.length === 0 && st.base[s] <= 0, vel: 0.62, pos: st.lastPos });
   return true;
 }
-function setChord(i) {
-  st.chord = i; st.base = i === 0 ? [0, 0, 0, 0, 0, 0] : SHAPES[CHORDS[i]].slice();
+function setChord(i) {                   // the ten chord keys; which chord sits on each key is set in the chord library
+  const name = st.opt.slots[i] || 'Open'; st.chord = i; st.base = name === 'Open' ? [0, 0, 0, 0, 0, 0] : (shapeOf(name) || [0, 0, 0, 0, 0, 0]).slice();
   for (let s = 0; s < 6; s++) applyString(s, 'chord');
   [...$('chords').children].forEach((b, k) => b.classList.toggle('on', k === i));
 }
@@ -1084,9 +1292,11 @@ glc.addEventListener('pointerdown', e => {
     return;
   }
   if (g.x < FB_END) {
+    if (st.opt.harm && tryHarmonic(g)) return;
+    if (st.opt.slide) { slideStart(e.pointerId, g); return; }
     const s = stringAt(g.z), fg = { s, f: fretAt(g.x), z0: g.z, z: g.z, bend: 0 };
     st.fingers.push(fg); ptrs.set(e.pointerId, { zone: 'fret', fg });
-    if (!applyString(s, 'down') && st.tap) pluck(s, 0.62, st.lastPos, 0);
+    if (applyString(s, 'down')) { if (st.tap) userPlucked(s); } else if (st.tap) pluck(s, 0.62, st.lastPos, 0);
   } else if (g.x < MUTE_X) {
     ptrs.set(e.pointerId, { zone: 'strum', z: g.z, t: e.timeStamp });
     st.lastPos = pickPos(g.x);
@@ -1106,7 +1316,7 @@ glc.addEventListener('pointermove', e => {
   const list = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
   for (const ev of (list.length ? list : [e])) {
     const g = gpos(ev); if (!g) continue;
-    if (p.zone === 'fret') {
+    if (p.zone === 'slide') slideMove(g); else if (p.zone === 'fret') {
       const fg = p.fg, f = fretAt(Math.min(g.x, FB_END - 0.01)); fg.z = g.z;
       if (f !== fg.f) { fg.f = f; fg.z0 = g.z; fg.bend = 0; applyString(fg.s, 'slide'); }
       else {
@@ -1126,6 +1336,7 @@ glc.addEventListener('pointermove', e => {
 function pointerEnd(e) {
   const p = ptrs.get(e.pointerId); if (!p) return; ptrs.delete(e.pointerId);
   if (p.zone === 'cam') { pinch = null; return; }
+  if (p.zone === 'slide') { slideEnd(); return; }
   if (p.zone === 'fret') { st.fingers.splice(st.fingers.indexOf(p.fg), 1); if (!applyString(p.fg.s, 'up') && p.fg.bend > 0) send({ type: 'bend', s: p.fg.s, semis: 0 }); }
   else if (p.zone === 'mute') { st.muteHeld = Math.max(0, st.muteHeld - 1); updateMute(); }
 }
@@ -1143,13 +1354,15 @@ addEventListener('keydown', e => {
   if (k === ' ' || k === 'arrowdown') { e.preventDefault(); strum(1); }
   else if (k === 'arrowup') { e.preventDefault(); strum(-1); }
   else if (k === 'enter') { e.preventDefault(); togglePlay(); }
-  else if (k === 'escape') { closePops(); $('lib').classList.remove('open'); }
+  else if (k === 'escape') { closePops(); $('lib').classList.remove('open'); $('chordLib').classList.remove('open'); $('banner').classList.add('hidden'); }
+  else if (k === 'w') wah.target = 1;
+  else if (k === 'p') setPattern(!pat.on);
   else if (k === '-' || k === '_') setZoom(view.zT + 0.25);
   else if (k === '=' || k === '+') setZoom(view.zT - 0.25);
   else if (k.length === 1 && k >= '0' && k <= '9') setChord(k === '0' ? 9 : +k - 1);
   else if (pick >= 0 && k.length === 1) pluck(pick, 0.7, st.lastPos, 0);
 });
-addEventListener('keyup', e => { if (e.key === 'Shift') { st.shift = false; updateMute(); } });
+addEventListener('keyup', e => { if (e.key === 'Shift') { st.shift = false; updateMute(); } else if (e.key === 'w' || e.key === 'W') wah.target = 0; });
 addEventListener('blur', () => { st.shift = false; st.muteHeld = 0; updateMute(); });
 
 /* ===================================== song library ===================================== */
@@ -1246,7 +1459,7 @@ function buildEvents(song) {
   if (song.ev) return { ev: song.ev.map(([b, s, fret, d, vel]) => ({ b, s, fret, d, vel, pos: s < 3 ? 0.2 : 0.15, off: 0 })), total: song.total };   // already fingered (from a full score)
   const u = song.u || 1, bar = song.bar, pk = song.pk || 0, one = [], rnd = mulberry32(song.t.length * 977 + 5), EPS = 1e-6;
   const mel = parseVoice(song.m, u), bass = song.b ? parseVoice(song.b, u) : { notes: [], len: 0 }, len = Math.max(mel.len, bass.len), melSeg = [];
-  for (const n of mel.notes) { const p = pickString(n.midi); if (!p) continue; melSeg.push({ b: n.b, s: p.s }); one.push({ b: n.b, d: n.d, s: p.s, fret: p.fret, vel: 0.84, pos: 0.15 }); }
+  for (const n of mel.notes) { const p = pickString(n.midi); if (!p) continue; melSeg.push({ b: n.b, s: p.s }); one.push({ b: n.b, d: n.d, s: p.s, fret: p.fret, vel: 0.84, pos: 0.15, mel: true }); }
   const melStrAt = b => { let s = 6; for (const m of melSeg) { if (m.b <= b + EPS) s = m.s; else break; } return s; };
   for (const n of bass.notes) { const p = pickString(n.midi, new Set([melStrAt(n.b)])); if (p) one.push({ b: n.b, d: n.d, s: p.s, fret: p.fret, vel: 0.7, pos: 0.2 }); }
   if (song.c && song.st !== 'none') {
@@ -1284,7 +1497,7 @@ function seekIdx() { player.idx = player.ev.findIndex(e => e.b >= player.anchorB
 function loadSong(i) {
   stopSong(); const s = SONGS[i]; if (!s || s.locked) return;
   const built = buildEvents(s); Object.assign(player, { i, song: s, ev: built.ev, total: built.total, anchorB: 0, idx: 0 });
-  $('nTitle').textContent = s.t; $('nSub').textContent = `${s.by} · ${s.yl} · ${s.lvl}`; loadLyrics();
+  $('nTitle').textContent = s.t; $('nSub').textContent = `${s.by} · ${s.yl} · ${s.lvl}`; loadLyrics(); prepareSong();
   [...$('songs').children].forEach(el => el.classList.toggle('cur', +el.dataset.i === i));
 }
 function tick() {
@@ -1292,17 +1505,28 @@ function tick() {
   const now = actx.currentTime, s = spb(), horizon = player.anchorB + (now + 0.22 - player.anchorT) / s;
   while (player.idx < player.ev.length && player.ev[player.idx].b <= horizon) {
     const e = player.ev[player.idx++], t = Math.max(now, player.anchorT + (e.b - player.anchorB) * s + e.off);
+    if (e.mel && prac.mode === 'game') continue;                      // in the game the melody is left for the player
     send({ type: 'note', s: e.s, fret: e.fret, vel: e.vel, pos: e.pos, delay: t - now }); vq.push({ t, s: e.s, fret: e.fret, dur: e.d * s });
   }
-  if (player.idx >= player.ev.length && curBeat() >= player.total) { if (player.loop) { player.anchorB = 0; player.anchorT = now + 0.05; player.idx = 0; } else stopSong(); }
+  if (st.opt.metro) {                                                 // metronome clicks on the song's own beats
+    const pk = player.song.pk || 0, bar = player.song.bar >= 2 ? player.song.bar : 4;
+    while (player.clickB <= horizon) { const t = player.anchorT + (player.clickB - player.anchorB) * s; if (t >= now - 0.005) clickAt(Math.max(t, now), Math.abs((((player.clickB - pk) % bar) + bar) % bar) < 1e-6); player.clickB += 1; }
+  }
+  if (player.loopB != null && curBeat() >= player.loopB) { seekTo(player.loopA || 0); return; }
+  if (player.idx >= player.ev.length && curBeat() >= player.total) { if (player.loop) { seekTo(0); } else finishSong(); }
 }
 function playSong() {
   if (!player.song || !actx) return; if (actx.state !== 'running') actx.resume();
+  if (pat.on) setPattern(false);
+  if (prac.mode === 'learn') { startLearn(); return; }
   if (player.anchorB >= player.total - 1e-6) player.anchorB = 0;
-  setChord(0); seekIdx(); player.anchorT = actx.currentTime + 0.1; player.playing = true; clearInterval(player.timer); player.timer = setInterval(tick, 25); tick(); $('play').textContent = '❚❚';
+  let lead = 0.1; const beat = spb();
+  if (st.opt.countIn && player.anchorB < 1e-6) { const n = player.song.bar === 3 ? 3 : 4, t0 = actx.currentTime + 0.1; for (let i = 0; i < n; i++) clickAt(t0 + i * beat, i === 0); lead += n * beat; }      // one bar of clicks first
+  if (prac.mode === 'game' && player.anchorB < 1e-6) resetScore();
+  setChord(0); seekIdx(); player.clickB = Math.ceil(player.anchorB - (player.song.pk || 0) - 1e-6) + (player.song.pk || 0); player.anchorT = actx.currentTime + lead; player.playing = true; clockRun(true); clearInterval(player.timer); player.timer = setInterval(tick, 25); tick(); $('play').textContent = '❚❚';
 }
-function pauseSong() { if (!player.playing) return; player.anchorB = curBeat(); player.playing = false; clearInterval(player.timer); vq.length = 0; send({ type: 'flush' }); resyncFrets(); $('play').textContent = '▶'; }
-function stopSong() { const was = player.playing; player.playing = false; clearInterval(player.timer); player.anchorB = 0; player.idx = 0; vq.length = 0; if (was) { send({ type: 'stop' }); resyncFrets(); } $('play').textContent = '▶'; }
+function pauseSong() { if (!player.playing) return; player.anchorB = curBeat(); player.playing = false; clearInterval(player.timer); vq.length = 0; send({ type: 'flush' }); resyncFrets(); $('play').textContent = '▶'; clockRun(true); }
+function stopSong() { prac.active = false; lyr.rec = null; const was = player.playing; player.playing = false; clearInterval(player.timer); player.anchorB = 0; player.idx = 0; vq.length = 0; if (was) { send({ type: 'stop' }); resyncFrets(); } $('play').textContent = '▶'; }
 function togglePlay() { if (!player.song) { $('lib').classList.add('open'); return; } player.playing ? pauseSong() : playSong(); }
 function updateTransport() { $('prog').firstElementChild.style.width = (player.song ? clamp(curBeat() / player.total, 0, 1) * 100 : 0) + '%'; syncLyrics(); }
 
@@ -1323,24 +1547,29 @@ const LYR_PAGE = `<!doctype html><html><head><meta charset="utf-8"><title>Lyrics
   button{all:unset;cursor:pointer;padding:7px 14px;border-radius:999px;border:1px solid rgba(214,178,110,.35);color:#e6dac6;font:12.5px "Segoe UI",sans-serif}
   button:hover{border-color:#d6b26e;color:#f3dfae} button.gold{background:linear-gradient(180deg,#f0d9a4,#c99a4c);color:#20160c;font-weight:600;border-color:transparent} .sp{flex:1} .hide{display:none!important}
 </style></head><body><header><h1 id="t"></h1><div id="by"></div></header><div id="body"></div><textarea id="ed" class="hide" placeholder="Paste or type the words here, one line per sung line. Leave a blank line between verses."></textarea>
-<footer><button id="edit">Edit words</button><button id="save" class="gold hide">Save</button><button id="cancel" class="hide">Cancel</button><span class="sp"></span><span>Text size</span><button id="smaller">A−</button><button id="bigger">A+</button><button id="close" class="hide">Close</button></footer></body></html>`;
+<footer><button id="edit">Edit words</button><button id="time" title="Mark when each line starts, so the words follow the song exactly">Set timing</button><button id="save" class="gold hide">Save</button><button id="cancel" class="hide">Cancel</button><span class="sp"></span><span>Text size</span><button id="smaller">A−</button><button id="bigger">A+</button><button id="close" class="hide">Close</button></footer></body></html>`;
 function lyricsKey(t) { return 'lyrics:' + t; }
 function setLyricsText(title, text) {
   if (title !== lyr.title) return;
-  lyr.text = text || ''; lyr.lines = []; lyr.stanzas = []; lyr.cur = -1;
+  let raw = text || ''; lyr.timing = null;                   // an optional first line holds the beat at which each line starts
+  const tm = /^\[timing ([\d. ]+)\]\r?\n?/.exec(raw); if (tm) { lyr.timing = tm[1].trim().split(/\s+/).map(Number); raw = raw.slice(tm[0].length); }
+  lyr.text = raw; lyr.lines = []; lyr.stanzas = []; lyr.cur = -1;
   let stanza = [];
   for (const raw of lyr.text.split(/\r?\n/)) { const line = raw.trim(); if (line) { stanza.push(lyr.lines.length); lyr.lines.push(line); } else if (stanza.length) { lyr.stanzas.push(stanza); stanza = []; } }
   if (stanza.length) lyr.stanzas.push(stanza);
-  renderLyrics();
+  if (lyr.timing && lyr.timing.length !== lyr.lines.length) lyr.timing = null;
+  renderLyrics(); paintKaraoke();
 }
 function loadLyrics() {
-  lyr.title = player.song ? player.song.t : ''; lyr.text = ''; lyr.lines = []; lyr.stanzas = []; lyr.cur = -1; renderLyrics();
+  lyr.title = player.song ? player.song.t : ''; lyr.text = ''; lyr.lines = []; lyr.stanzas = []; lyr.cur = -1; lyr.timing = null; renderLyrics(); paintKaraoke();
   if (!lyr.title) return;
   if (hostApp) hostApp.postMessage('getLyrics:' + lyr.title);
   else { let t = ''; try { t = localStorage.getItem(lyricsKey(lyr.title)) || ''; } catch (_) {} setLyricsText(lyr.title, t); }
 }
-function saveLyrics(text) {
+function saveLyrics(text, timing) {
   if (!lyr.title) return;
+  const count = text.split(/\r?\n/).filter(l => l.trim()).length, keep = timing || (lyr.timing && lyr.timing.length === count ? lyr.timing : null);
+  if (keep && text.trim()) text = `[timing ${keep.map(v => +v.toFixed(2)).join(' ')}]\n` + text;
   if (hostApp) hostApp.postMessage('saveLyrics:' + JSON.stringify({ title: lyr.title, text })); else { try { localStorage.setItem(lyricsKey(lyr.title), text); } catch (_) {} }
   setLyricsText(lyr.title, text);
 }
@@ -1368,22 +1597,309 @@ function openLyrics() {
   g('edit').onclick = () => { g('ed').value = lyr.text; editing(true); g('ed').focus(); };
   g('cancel').onclick = () => editing(false);
   g('save').onclick = () => { saveLyrics(g('ed').value); editing(false); };
+  // exact timing: the song plays and the player clicks once as each line begins
+  const timeBtn = g('time'), mark = () => { lyr.rec.push(Math.max(0, curBeat())); if (lyr.rec.length >= lyr.lines.length) { const t = lyr.rec; lyr.rec = null; timeBtn.classList.remove('gold'); timeBtn.textContent = 'Set timing'; saveLyrics(lyr.text, t); } else timeBtn.textContent = `Click as line ${lyr.rec.length + 1} of ${lyr.lines.length} starts`; };
+  timeBtn.onclick = () => { if (lyr.rec) { mark(); return; } if (!lyr.lines.length || !player.song) return; setMode('listen'); stopSong(); playSong(); lyr.rec = []; lyr.cur = -2; timeBtn.classList.add('gold'); timeBtn.textContent = `Click as line 1 of ${lyr.lines.length} starts`; };
   if (lyr.frame) { g('close').classList.remove('hide'); g('close').onclick = closePanel; }
   g('smaller').onclick = () => { fs = Math.max(14, fs - 3); size(); }; g('bigger').onclick = () => { fs = Math.min(72, fs + 3); size(); };
   if (!lyr.title && player.song) loadLyrics(); else renderLyrics();
 }
 // Which line is being sung: verses are spread evenly over each pass of the arrangement.
 function syncLyrics() {
-  const w = lyr.win; if (!w || w.closed || !lyr.lines.length || !player.song) return;
-  const passes = player.song.rep || 1, len = (player.total - 2) / passes, beat = Math.min(curBeat(), player.total - 2 - 1e-6);
   let cur = -1;
-  if (beat > 0 || player.playing) {
-    const pass = Math.min(passes - 1, Math.floor(beat / len)), frac = clamp((beat - pass * len) / len, 0, 0.9999);
-    if (passes > 1 && lyr.stanzas.length > 1) { const st = lyr.stanzas[Math.min(pass, lyr.stanzas.length - 1)]; cur = st[Math.floor(frac * st.length)]; }
-    else cur = Math.floor(clamp(beat / (player.total - 2), 0, 0.9999) * lyr.lines.length);
+  if (lyr.lines.length && player.song) {
+    const passes = player.song.rep || 1, len = (player.total - 2) / passes, beat = Math.min(curBeat(), player.total - 2 - 1e-6);
+    if (lyr.rec) cur = lyr.rec.length - 1;                                             // while timing is being marked, follow the marks
+    else if (lyr.timing) { for (let i = 0; i < lyr.timing.length && lyr.timing[i] <= beat + 1e-6; i++) cur = i; }
+    else if (beat > 0 || player.playing) {
+      const pass = Math.min(passes - 1, Math.floor(beat / len)), frac = clamp((beat - pass * len) / len, 0, 0.9999);
+      if (passes > 1 && lyr.stanzas.length > 1) { const st = lyr.stanzas[Math.min(pass, lyr.stanzas.length - 1)]; cur = st[Math.floor(frac * st.length)]; }
+      else cur = Math.floor(clamp(beat / (player.total - 2), 0, 0.9999) * lyr.lines.length);
+    }
   }
   if (cur === lyr.cur) return; lyr.cur = cur;
-  for (const p of w.document.querySelectorAll('#body p[data-i]')) { const i = +p.dataset.i; p.className = i === cur ? 'on' : i < cur ? 'done' : ''; if (i === cur) p.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+  const w = lyr.win; if (w && !w.closed) for (const p of w.document.querySelectorAll('#body p[data-i]')) { const i = +p.dataset.i; p.className = i === cur ? 'on' : i < cur ? 'done' : ''; if (i === cur) p.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+  paintKaraoke();
+}
+
+/* ===================================== practice and tools =====================================
+   Capo, slide and harmonics; chord library; scale and note-name guide; metronome, count-in and patterns;
+   tuner; learn mode, the falling-notes game and the tab strip; karaoke; wah pedal; presets; recording. */
+const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const pitchAt = (s, absFret) => OPENM[s] + (curInstrument().p.shift || 0) + absFret;          // sounding MIDI note at a place on the neck
+const toggleBtn = (id, on, label) => { $(id).classList.toggle('on', !!on); if (label) $(id).textContent = label; };
+
+/* ---------- fretboard guide: scale notes, note names and harmonic marks, painted on one transparent layer ---------- */
+const SCALES = { off: ['Off', null], major: ['Major', [0, 2, 4, 5, 7, 9, 11]], minor: ['Minor', [0, 2, 3, 5, 7, 8, 10]], majPent: ['Major pentatonic', [0, 2, 4, 7, 9]], minPent: ['Minor pentatonic', [0, 3, 5, 7, 10]],
+  blues: ['Blues', [0, 3, 5, 6, 7, 10]], dorian: ['Dorian', [0, 2, 3, 5, 7, 9, 10]], mixo: ['Mixolydian', [0, 2, 4, 5, 7, 9, 10]], harmMin: ['Harmonic minor', [0, 2, 3, 5, 7, 8, 11]] };
+const OV_X0 = -1.0, OV_X1 = FB_END, OV_Z = 3.45, ovCv = document.createElement('canvas'); ovCv.width = 2048; ovCv.height = 512;
+const ovTex = new THREE.CanvasTexture(ovCv); ovTex.colorSpace = THREE.SRGBColorSpace; ovTex.anisotropy = 8;
+const ovMesh = new THREE.Mesh(flat(new THREE.PlaneGeometry(OV_X1 - OV_X0, OV_Z * 2)), new THREE.MeshBasicMaterial({ map: ovTex, transparent: true, depthWrite: false }));
+ovMesh.position.set((OV_X0 + OV_X1) / 2, 0.012, 0); ovMesh.renderOrder = 2; ovMesh.visible = false; root.add(ovMesh);
+function drawOverlay() {
+  const c = ovCv.getContext('2d'), W = ovCv.width, H = ovCv.height, o = st.opt, sc = SCALES[o.scale] ? SCALES[o.scale][1] : null;
+  c.clearRect(0, 0, W, H); ovMesh.visible = !!(sc || o.names || o.harm); ovTex.needsUpdate = true; if (!ovMesh.visible) return;
+  const kx = W / (OV_X1 - OV_X0), kz = H / (OV_Z * 2), px = x => (x - OV_X0) * kx, pz = z => (z + OV_Z) * kz;
+  const text = (str, x, y, size, color) => { c.save(); c.translate(x, y); c.scale(kx / kz * (st.flipX ? -1 : 1), st.flipZ ? -1 : 1); c.font = `600 ${size}px "Segoe UI", sans-serif`; c.fillStyle = color; c.fillText(str, 0, 1); c.restore(); };   // un-mirror text when the guitar is flipped
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  for (let s = 0; s < 6; s++) for (let f = o.capo; f <= NF; f++) {
+    const pc = ((pitchAt(s, f) % 12) + 12) % 12, deg = sc ? sc.indexOf(((pc - o.scaleRoot) % 12 + 12) % 12) : -1; if (sc && deg < 0 && !o.names) continue;
+    const x = px(f === 0 ? -0.5 : dotX(f)), y = pz(zs(s)), r = 0.29;
+    if (sc && deg >= 0) { c.fillStyle = deg === 0 ? 'rgba(236,118,44,0.96)' : 'rgba(92,170,204,0.92)'; c.beginPath(); c.ellipse(x, y, r * kx, r * kz, 0, 0, 6.3); c.fill(); text(NOTE_NAMES[pc], x, y, 21, '#10151a'); }
+    else if (o.names) text(NOTE_NAMES[pc], x, y - 0.27 * kz, 17, 'rgba(243,223,174,0.78)');
+  }
+  if (o.harm) for (const f of [5, 7, 12, 19]) for (let s = 0; s < 6; s++) { const x = px(fretX(f + o.capo)), y = pz(zs(s)), rx = 0.16 * kx, ry = 0.2 * kz; if (f + o.capo > NF) continue;
+    c.fillStyle = 'rgba(255,255,255,0.9)'; c.beginPath(); c.moveTo(x, y - ry); c.lineTo(x + rx, y); c.lineTo(x, y + ry); c.lineTo(x - rx, y); c.fill(); }
+}
+
+/* ---------- capo, bottleneck slide, natural harmonics ---------- */
+const capoBar = new THREE.Group();
+{ const pad = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.3, 7.3), new THREE.MeshStandardMaterial({ color: 0x1b1b1d, roughness: 0.6 })); pad.position.y = 0.2; pad.castShadow = true;
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.12, 7.7), M.gold); bar.position.y = 0.41; capoBar.add(pad, bar); capoBar.visible = false; root.add(capoBar); }
+const slideBar = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 6.4, 18).rotateX(Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0xd9dde2, metalness: 1, roughness: 0.12 }));
+slideBar.position.y = 0.37; slideBar.visible = false; slideBar.castShadow = true; root.add(slideBar);
+function setCapo(n) {
+  st.opt.capo = clamp(n | 0, 0, 11); $('capo').value = st.opt.capo; capoBar.visible = st.opt.capo > 0; capoBar.position.x = fretX(st.opt.capo) - 0.3;
+  applyInstrument(false); for (let s = 0; s < 6; s++) { st.fret[s] = -99; applyString(s, 'chord'); } drawOverlay(); saveSettings();
+}
+const slideF = x => clamp(12 * Math.log2(SCALE / (SCALE - clamp(x, 0, 22))) - st.opt.capo, 0, 24);      // where the slide is, as a (fractional) fret
+let slide0 = 0;
+function slideStart(id, g) {                             // the bottleneck lies across all six strings
+  ptrs.set(id, { zone: 'slide' }); slide0 = slideF(g.x); slideBar.visible = true; slideBar.position.x = clamp(g.x, 0, 22);
+  for (let s = 0; s < 6; s++) { st.fret[s] = slide0; send({ type: 'fret', s, fret: slide0, dead: false, why: 'chord' }); }
+  if (st.tap) for (let s = 0; s < 6; s++) pluck(s, 0.6, st.lastPos, 0.08 + s * 0.012, true);
+}
+function slideMove(g) { const f = slideF(g.x); slideBar.position.x = clamp(g.x, 0, 22); for (let s = 0; s < 6; s++) { st.fret[s] = f; send({ type: 'bend', s, semis: f - slide0 }); } }
+function slideEnd() { slideBar.visible = false; for (let s = 0; s < 6; s++) { st.fret[s] = -99; applyString(s, 'chord'); } }
+function tryHarmonic(g) {                                // a light touch right over the 5th, 7th, 12th or 19th fret wire
+  for (const [f, semis] of [[5, 24], [7, 19], [12, 12], [19, 19]]) if (Math.abs(g.x - fretX(f + st.opt.capo)) < 0.38) {
+    const s = stringAt(g.z), now = performance.now(); send({ type: 'note', s, fret: semis, vel: 0.75, pos: 0.12, delay: 0, harm: true }); st.auto[s] = { fret: f, t0: now, until: now + 600 }; return true; }
+  return false;
+}
+
+/* ---------- chord library and the ten chord keys ---------- */
+const ROOTS = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+const QUALS = [['', 'major'], ['m', 'minor'], ['7', '7'], ['m7', 'm7'], ['maj7', 'maj7'], ['sus4', 'sus4'], ['sus2', 'sus2'], ['6', '6'], ['9', '9'], ['dim', 'dim'], ['aug', 'aug']];
+const DEFAULT_SLOTS = ['Open', 'G', 'C', 'D', 'Em', 'Am', 'E', 'A', 'Dm', 'F'], cl = { root: 'C', q: '' };
+function renderChordRow() {
+  const host = $('chords'); host.textContent = '';
+  st.opt.slots.forEach((name, i) => { const b = document.createElement('button'), k = document.createElement('kbd'); b.textContent = name; k.textContent = (i + 1) % 10; b.appendChild(k); b.onclick = () => setChord(i); if (i === st.chord) b.classList.add('on'); host.appendChild(b); });
+}
+function setChordByName(name) { const sh = shapeOf(name); if (!sh) return; st.chord = -1; st.base = sh.slice(); for (let s = 0; s < 6; s++) applyString(s, 'chord'); renderChordRow(); }
+function renderChordLib() {
+  const mk = (host, list, cur, pick, ok) => { host.textContent = ''; for (const [val, label] of list) { const b = document.createElement('button'); b.className = 'chip' + (val === cur ? ' on' : ''); b.textContent = label; if (ok && !ok(val)) { b.style.opacity = 0.3; } else b.onclick = () => pick(val); host.appendChild(b); } };
+  mk($('clRoots'), ROOTS.map(r => [r, r]), cl.root, v => { cl.root = v; if (!shapeOf(cl.root + cl.q)) cl.q = ''; renderChordLib(); setChordByName(cl.root + cl.q); });
+  mk($('clQuals'), QUALS, cl.q, v => { cl.q = v; renderChordLib(); setChordByName(cl.root + cl.q); }, v => !!shapeOf(cl.root + v));
+  const name = cl.root + cl.q, sh = shapeOf(name) || []; $('clName').textContent = name; $('clShape').textContent = 'Frets, low string first:  ' + sh.map(v => v < 0 ? 'x' : v).join('  ');
+  const slots = $('clSlots'); slots.textContent = '';
+  st.opt.slots.forEach((n, i) => { if (!i) return; const b = document.createElement('button'); b.className = 'chip'; b.textContent = `${(i + 1) % 10}: ${n}`; b.title = `Put ${name} on key ${(i + 1) % 10}`; b.onclick = () => { st.opt.slots[i] = name; renderChordRow(); renderChordLib(); saveSettings(); }; slots.appendChild(b); });
+}
+
+/* ---------- metronome, count-in and auto-strum / picking patterns ---------- */
+function clickAt(t, accent) {
+  const o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = accent ? 1760 : 1175;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(accent ? 0.45 : 0.28, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06); o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + 0.08);
+}
+// B = bass string, A = alternate bass, D = full down-strum, d = light down-strum, u = light up-strum, 1-3 = treble strings; one step is half a beat
+const PATTERNS = { off: ['Off', null], down4: ['Down strums', ['D', 0, 'D', 0, 'D', 0, 'D', 0]], downUp: ['Down-up strums', ['D', 'u', 'D', 'u', 'D', 'u', 'D', 'u']], folk: ['Folk strum', ['D', 0, 'D', 'u', 0, 'u', 'D', 'u']],
+  boom: ['Boom-chick', ['B', 0, 'd', 0, 'A', 0, 'd', 0]], waltz: ['Waltz (in 3)', ['B', 0, 'd', 0, 'd', 0]], travis: ['Travis picking', ['B', 2, 'A', 1, 'B', 3, 'A', 2]], arp: ['Arpeggio', ['B', 1, 2, 3, 2, 1, 2, 3]], arp3: ['Arpeggio (in 3)', ['B', 1, 2, 3, 2, 1]] };
+const pat = { on: false }, clock = { t0: 0, n: 0, step: 0, timer: 0 };
+function patStep(a, delay) {
+  if (!a) return; const live = []; for (let s = 0; s < 6; s++) if (st.fret[s] >= 0) live.push(s); if (!live.length) return;
+  const P = (s, v, d) => send({ type: 'pluck', s, vel: v, pos: st.lastPos, delay: delay + d });
+  if (a === 'D') live.forEach((s, k) => P(s, 0.8 - k * 0.03, k * 0.012));
+  else if (a === 'd') live.slice(-4).forEach((s, k) => P(s, 0.55, k * 0.011));
+  else if (a === 'u') live.slice(-4).reverse().forEach((s, k) => P(s, 0.5, k * 0.01));
+  else if (a === 'B') P(live[0], 0.75, 0); else if (a === 'A') P(live[Math.min(1, live.length - 1)], 0.65, 0);
+  else P(live[Math.max(0, live.length - 4 + a)], 0.6, 0);
+}
+function clockTick() {
+  if (!actx) return; const now = actx.currentTime, beat = 60 / st.opt.bpm, steps = pat.on ? PATTERNS[st.opt.pattern][1] : null, per = steps && steps.length === 6 ? 3 : 4;
+  if (st.opt.metro && !player.playing) while (clock.t0 + clock.n * beat < now + 0.12) { const t = clock.t0 + clock.n * beat; if (t >= now - 0.01) clickAt(Math.max(t, now), clock.n % per === 0); clock.n++; }
+  else clock.n = Math.max(clock.n, Math.ceil((now - clock.t0) / beat));
+  if (steps) while (clock.t0 + clock.step * beat / 2 < now + 0.12) { const t = clock.t0 + clock.step * beat / 2; if (t >= now - 0.01) patStep(steps[clock.step % steps.length], Math.max(0, t - now)); clock.step++; }
+}
+function clockRun(restart) {
+  const need = !!actx && ((st.opt.metro && !player.playing) || pat.on);
+  if (clock.timer && (!need || restart)) { clearInterval(clock.timer); clock.timer = 0; }
+  if (need && !clock.timer) { clock.t0 = actx.currentTime + 0.08; clock.n = 0; clock.step = 0; clock.timer = setInterval(clockTick, 25); }
+}
+function setPattern(on) {
+  if (on && st.opt.pattern === 'off') { st.opt.pattern = 'folk'; $('pattern').value = 'folk'; }
+  pat.on = !!on && !!actx; if (pat.on && player.playing) pauseSong(); if (pat.on && actx.state !== 'running') actx.resume();
+  toggleBtn('patBtn', pat.on, pat.on ? 'Stop pattern (P)' : 'Start pattern (P)'); clockRun(true);
+}
+
+/* ---------- tuner: listens through the microphone ---------- */
+const tuner = { on: false, stream: null, an: null, buf: null, n: 0 };
+async function setTuner(on) {
+  if (!on) { if (tuner.stream) tuner.stream.getTracks().forEach(t => t.stop()); tuner.on = false; tuner.stream = null; $('tunerBox').classList.add('hidden'); return; }
+  $('tunerBox').classList.remove('hidden'); $('tuNote').textContent = '–'; $('tuCents').textContent = 'Asking for the microphone…';
+  try {
+    tuner.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+    const src = actx.createMediaStreamSource(tuner.stream); tuner.an = actx.createAnalyser(); tuner.an.fftSize = 4096; src.connect(tuner.an); tuner.buf = new Float32Array(4096); tuner.on = true; $('tuCents').textContent = 'Play one string';
+  } catch (e) { $('tuCents').textContent = 'The microphone is not available here.'; }
+}
+function detectPitch(buf, sr) {                          // autocorrelation with a normalised difference function (YIN)
+  let rms = 0; for (let i = 0; i < buf.length; i++) rms += buf[i] * buf[i]; if (Math.sqrt(rms / buf.length) < 0.01) return 0;
+  const N = 2048, minLag = Math.floor(sr / 1100), maxLag = Math.floor(sr / 58), d = new Float32Array(maxLag + 2); let run = 0, lag = 0;
+  for (let l = 1; l <= maxLag + 1; l++) { let s = 0; for (let i = 0; i < N; i++) { const x = buf[i] - buf[i + l]; s += x * x; } run += s; d[l] = s * l / (run || 1); }
+  for (let l = minLag; l <= maxLag; l++) if (d[l] < 0.12 && d[l] <= d[l + 1]) { lag = l; break; }
+  if (!lag) return 0; const a = d[lag - 1], b = d[lag], c = d[lag + 1], shift = (a - c) / (2 * (a - 2 * b + c) || 1); return sr / (lag + (isFinite(shift) ? shift : 0));
+}
+function tunerFrame() {
+  if (!tuner.on || (tuner.n++ % 3)) return; tuner.an.getFloatTimeDomainData(tuner.buf); const f = detectPitch(tuner.buf, actx.sampleRate); if (!f) return;
+  const m = 69 + 12 * Math.log2(f / 440), near = Math.round(m), cents = Math.round((m - near) * 100);
+  $('tuNote').textContent = NOTE_NAMES[((near % 12) + 12) % 12] + (Math.floor(near / 12) - 1);
+  $('tuCents').textContent = Math.abs(cents) <= 4 ? 'In tune' : cents > 0 ? `${cents} cents sharp — loosen` : `${-cents} cents flat — tighten`;
+  const bar = $('tuBar').firstElementChild; bar.style.left = clamp(50 + cents, 2, 98) + '%'; bar.style.background = Math.abs(cents) <= 4 ? '#7fd88a' : '#f0b34c';
+}
+
+/* ---------- learn mode, the falling-notes game, tab strip, section loop ---------- */
+const prac = { mode: 'listen', active: false, i: 0, mi: 0, score: 0, streak: 0, best: 0, perfect: 0, good: 0, miss: 0, word: '', wordT: 0 };
+const melody = () => player.mel || [];
+const ringTex = canvasTex(128, 128, (c) => { c.strokeStyle = '#fff'; c.lineWidth = 9; c.beginPath(); c.arc(64, 64, 52, 0, 6.3); c.stroke(); });
+const targetSp = sprites(2, 0xffd27a, true), ringSp = []; for (let i = 0; i < 8; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: ringTex, color: 0xffe2a0, transparent: true, depthTest: false })); sp.visible = false; sp.renderOrder = 6; root.add(sp); ringSp.push(sp); }
+function prepareSong() {                                 // called when a song is loaded: find the melody and how wide to draw the tab
+  const ev = player.ev; if (!ev.some(e => e.mel)) for (let i = 0; i < ev.length;) { let j = i, top = i; while (j < ev.length && ev[j].b - ev[i].b < 0.02) { if (OPENM[ev[j].s] + ev[j].fret > OPENM[ev[top].s] + ev[top].fret) top = j; j++; } ev[top].mel = true; i = j; }
+  player.mel = ev.filter(e => e.mel); const gaps = []; for (let i = 1; i < ev.length; i++) { const g = ev[i].b - ev[i - 1].b; if (g > 0.02) gaps.push(g); } gaps.sort((a, b) => a - b);
+  player.pxb = clamp(26 / (gaps[Math.floor(gaps.length * 0.12)] || 1), 36, 230); player.loopA = null; player.loopB = null; paintLoopMarks(); prac.active = false; resetScore(); tabBeat = 0;
+}
+function resetScore() { Object.assign(prac, { score: 0, streak: 0, best: 0, perfect: 0, good: 0, miss: 0, word: '' }); for (const e of melody()) e.judged = null; prac.mi = Math.max(0, melody().findIndex(e => e.b >= player.anchorB - 1e-6)); }
+function setMode(m) {
+  if (player.playing) pauseSong(); prac.active = false; prac.mode = m; for (const [id, v] of [['mListen', 'listen'], ['mLearn', 'learn'], ['mGame', 'game']]) toggleBtn(id, v === m);
+  $('modeHelp').textContent = m === 'learn' ? 'Press play. The next note of the tune glows; play it and the guitar adds the harmony and waits for the next one. There is no clock.'
+    : m === 'game' ? 'Press play. The guitar plays the backing; rings close in on each melody note. Pluck the note as its ring reaches the dot. Slow the tempo to make it easier.' : 'The guitar plays the whole song by itself.';
+  $('play').textContent = '▶';
+}
+function startLearn() {
+  const m = melody(); if (!m.length) return; if (prac.active) { prac.active = false; $('play').textContent = '▶'; return; }
+  let i = m.findIndex(e => e.b >= player.anchorB - 1e-6); if (i < 0 || player.anchorB >= player.total - 2.01) { i = 0; player.anchorB = 0; }
+  prac.i = i; prac.active = true; setChord(0); $('play').textContent = '❚❚';
+}
+function learnHit() {
+  const m = melody(), tgt = m[prac.i], now = performance.now();
+  for (const e of player.ev) { if (e.b > tgt.b + 0.02) break; if (e.b >= tgt.b - 0.02 && !e.mel) { send({ type: 'note', s: e.s, fret: e.fret, vel: e.vel, pos: e.pos, delay: 0.012 }); st.auto[e.s] = { fret: e.fret, t0: now, until: now + 420 }; } }
+  prac.i++; player.anchorB = tgt.b;
+  if (player.loopB != null && prac.i < m.length && m[prac.i].b >= player.loopB) prac.i = Math.max(0, m.findIndex(e => e.b >= (player.loopA || 0) - 1e-6));
+  if (prac.i >= m.length) { prac.active = false; $('play').textContent = '▶'; player.anchorB = 0; showBanner('Well played', '', `You played all ${m.length} notes of ${player.song.t}.`); }
+}
+function userPlucked(s) {                                // every note the player sounds by hand passes through here
+  if (!player.song || !actx || prac.mode === 'listen') return; const have = Math.max(0, st.fret[s]);
+  if (prac.mode === 'learn') { if (!prac.active) return; const tgt = melody()[prac.i]; if (tgt && tgt.s === s && Math.abs(have - tgt.fret) < 0.01) learnHit(); return; }
+  if (!player.playing) return; const now = actx.currentTime, sb = spb(); let best = null, bd = 1e9;
+  for (const e of melody()) { const t = player.anchorT + (e.b - player.anchorB) * sb; if (t < now - 0.3) continue; if (t > now + 0.3) break; if (e.judged || e.s !== s || Math.abs(have - e.fret) > 0.01) continue; const d = Math.abs(t - now); if (d < bd) { bd = d; best = e; } }
+  if (!best || bd > 0.24) return; const perfect = bd <= 0.09; best.judged = 'hit'; prac.streak++; prac.best = Math.max(prac.best, prac.streak); prac[perfect ? 'perfect' : 'good']++;
+  prac.score += Math.round((perfect ? 100 : 50) * (1 + Math.min(prac.streak, 20) / 10)); prac.word = perfect ? 'Perfect' : 'Good'; prac.wordT = performance.now();
+}
+function finishSong() {
+  if (prac.mode === 'game') { const hit = prac.perfect + prac.good, tot = hit + prac.miss, acc = tot ? hit / tot : 0, stars = acc >= 0.95 ? 3 : acc >= 0.8 ? 2 : acc >= 0.6 ? 1 : 0;
+    showBanner(player.song.t, '★'.repeat(stars) + '☆'.repeat(3 - stars), `Score ${prac.score.toLocaleString('en-US')} · ${Math.round(acc * 100)}% of notes hit · ${prac.perfect} perfect, ${prac.good} good, ${prac.miss} missed · best streak ${prac.best}`); }
+  stopSong();
+}
+function showBanner(title, stars, text) { $('banTitle').textContent = title; $('banStars').textContent = stars; $('banText').textContent = text; $('banner').classList.remove('hidden'); }
+function seekTo(b) { player.anchorB = clamp(b, 0, player.total); seekIdx(); player.clickB = Math.ceil(player.anchorB - (player.song.pk || 0) - 1e-6) + (player.song.pk || 0); if (player.playing) { player.anchorT = actx.currentTime + 0.05; vq.length = 0; send({ type: 'flush' }); } if (prac.mode === 'game') resetScore(); }
+function paintLoopMarks() { for (const [id, b] of [['mkA', player.loopA], ['mkB', player.loopB]]) { const el = $(id); el.classList.toggle('hidden', b == null || !player.song); if (b != null && player.song) el.style.left = clamp(b / player.total, 0, 1) * 100 + '%'; }
+  $('loopInfo').textContent = player.loopA != null && player.loopB != null ? 'This section repeats until you clear it.' : player.loopA != null ? 'Start is set. Move to the end of the section and click End here.' : 'Move to where the section starts and click Start here, then to where it ends and click End here. Slow it down with Tempo.'; }
+const tabCv = $('tab'), tabC = tabCv.getContext('2d'); let tabBeat = 0;
+function drawTab() {
+  const show = st.opt.tabStrip && !!player.song; tabCv.classList.toggle('hidden', !show); if (!show) return;
+  const w = tabCv.clientWidth, h = tabCv.clientHeight, dpr = Math.min(devicePixelRatio || 1, 2); if (tabCv.width !== Math.round(w * dpr) || tabCv.height !== Math.round(h * dpr)) { tabCv.width = Math.round(w * dpr); tabCv.height = Math.round(h * dpr); }
+  const c = tabC, learning = prac.mode === 'learn' && prac.active, tgt = learning ? melody()[prac.i] : null, goal = tgt ? tgt.b : curBeat(); tabBeat += (goal - tabBeat) * (learning ? 0.18 : 1);
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h); const playX = w * 0.2, pxb = player.pxb || 60, rowY = s => 15 + (st.flipZ ? 5 - s : s) * (h - 30) / 5, ev = player.ev;
+  c.strokeStyle = 'rgba(214,178,110,0.28)'; c.lineWidth = 1; for (let s = 0; s < 6; s++) { c.beginPath(); c.moveTo(8, rowY(s)); c.lineTo(w - 8, rowY(s)); c.stroke(); }
+  c.strokeStyle = 'rgba(243,223,174,0.8)'; c.lineWidth = 2; c.beginPath(); c.moveTo(playX, 6); c.lineTo(playX, h - 6); c.stroke();
+  let lo = 0, hi = ev.length; const from = tabBeat - (playX + 20) / pxb; while (lo < hi) { const mid = (lo + hi) >> 1; if (ev[mid].b < from) lo = mid + 1; else hi = mid; }
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  for (let i = lo; i < ev.length; i++) { const e = ev[i], x = playX + (e.b - tabBeat) * pxb; if (x > w + 20) break; const y = rowY(e.s), past = e.b < tabBeat - 1e-3, txt = String(e.fret);
+    c.font = (e.mel ? '700 14px' : '500 12px') + ' "Segoe UI", sans-serif'; const tw = c.measureText(txt).width + 6; c.fillStyle = 'rgba(14,10,8,0.95)'; c.fillRect(x - tw / 2, y - 8, tw, 16);
+    c.fillStyle = e.judged === 'hit' ? '#7fd88a' : e.judged === 'miss' ? '#e0705a' : past ? 'rgba(160,150,135,0.45)' : e.mel ? '#ffe2a0' : 'rgba(205,195,180,0.7)'; c.fillText(txt, x, y + 0.5);
+    if (e === tgt) { c.strokeStyle = '#ffb347'; c.lineWidth = 2; c.beginPath(); c.arc(x, y, 12, 0, 6.3); c.stroke(); } }
+}
+
+/* ---------- karaoke view ---------- */
+function paintKaraoke() {
+  const on = st.opt.karaoke && !!player.song; $('karaoke').classList.toggle('hidden', !on); if (!on) return;
+  if (!lyr.lines.length) { $('karNow').textContent = ''; $('karNext').textContent = 'No words are saved for this song. Click Lyrics, then Edit words, to add them.'; return; }
+  $('karNow').textContent = lyr.cur >= 0 ? lyr.lines[lyr.cur] : ''; $('karNext').textContent = lyr.lines[lyr.cur + 1] || '';
+}
+
+/* ---------- wah pedal: an on-screen pedal, the W key, or tilting a tablet ---------- */
+const wah = { pos: 0, target: 0, sent: -1, tilt: false };
+async function enableTilt() {
+  try { if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) { if (await DeviceOrientationEvent.requestPermission() !== 'granted') throw new Error('denied'); }
+    if (!wah.tilt) addEventListener('deviceorientation', e => { if (e.beta == null) return; const landscape = innerWidth > innerHeight, a = Math.abs(landscape ? e.gamma : e.beta); wah.target = clamp((a - 12) / 45, 0, 1); });
+    wah.tilt = true; toggleBtn('fxTilt', true, 'Tilt is on'); } catch (_) { toggleBtn('fxTilt', false, 'Tilt is not available'); }
+}
+function wahFrame() {
+  const on = st.fx && st.fx.wah > 0.01 && st.fx.wahMode === 'pedal'; $('wahPedal').classList.toggle('hidden', !on); if (!on || !graph) return;
+  wah.pos += (wah.target - wah.pos) * 0.25; if (Math.abs(wah.pos - wah.sent) > 0.004) { graph.fx.wah(wah.pos); wah.sent = wah.pos; $('wahPos').value = wah.pos; }
+}
+
+/* ---------- presets and recording ---------- */
+function renderPresets() { const sel = $('presetSel'); sel.textContent = ''; for (const n of ['', ...Object.keys(st.opt.presets).sort()]) { const o = document.createElement('option'); o.value = n; o.textContent = n || '— choose —'; sel.appendChild(o); } }
+function savePreset() { const n = $('presetName').value.trim().slice(0, 40); if (!n) return; const snd = {}; for (const id of ['vol', 'tone', 'body', 'room', 'sep']) snd[id] = +$(id).value;
+  st.opt.presets[n] = { inst: st.inst, fx: Object.assign({}, st.fx), snd, pickup: st.opt.pickup, gtrTone: st.opt.gtrTone }; renderPresets(); $('presetSel').value = n; $('presetName').value = ''; saveSettings(); }
+function loadPreset(n) { const p = st.opt.presets[n]; if (!p) return; st.inst = p.inst; st.fx = Object.assign({}, FX_OFF, p.fx); st.opt.pickup = p.pickup || 'preset'; st.opt.gtrTone = p.gtrTone == null ? 1 : p.gtrTone;
+  for (const id in p.snd) if ($(id)) $(id).value = p.snd[id]; send({ type: 'tone', value: +$('tone').value }); applyInstrument(false); applyMix(); saveSettings(); }
+const rec = { on: false, chunks: [], frames: 0, t0: 0 };
+function setRecording(on) {
+  if (!graph || !graph.tap) return; if (on === rec.on) return; rec.on = on;
+  if (on) { rec.chunks = []; rec.frames = 0; rec.t0 = performance.now(); graph.tap.port.onmessage = e => { rec.chunks.push(e.data); rec.frames += e.data.length / 2; if (rec.frames > actx.sampleRate * 600) setRecording(false); }; graph.tap.port.postMessage('start'); toggleBtn('recBtn', true, 'Stop and save'); return; }
+  graph.tap.port.postMessage('stop'); toggleBtn('recBtn', false, 'Start recording'); const n = rec.frames; if (!n) return;
+  const buf = new ArrayBuffer(44 + n * 4), v = new DataView(buf), sr = actx.sampleRate, str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };       // 16-bit stereo WAV
+  str(0, 'RIFF'); v.setUint32(4, 36 + n * 4, true); str(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true); v.setUint32(24, sr, true); v.setUint32(28, sr * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, n * 4, true);
+  let o = 44; for (const ch of rec.chunks) { const m = ch.length / 2; for (let i = 0; i < m; i++) { v.setInt16(o, clamp(ch[i], -1, 1) * 32767, true); v.setInt16(o + 2, clamp(ch[m + i], -1, 1) * 32767, true); o += 4; } }
+  const d = new Date(), stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}.${String(d.getMinutes()).padStart(2, '0')}.${String(d.getSeconds()).padStart(2, '0')}`;
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' })); a.download = `Concert Acoustic ${stamp}.wav`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+  rec.chunks = []; $('recInfo').textContent = `Saved ${Math.round(n / sr)} seconds as "${a.download}".`;
+}
+
+/* ---------- runs every frame ---------- */
+let hudText = '';
+function toolsFrame(now) {
+  const k = view.k || 1, m = melody(), learning = prac.mode === 'learn' && prac.active, gaming = prac.mode === 'game' && player.playing;
+  for (let i = 0; i < 2; i++) { const sp = targetSp[i], t = learning ? m[prac.i + i] : null; sp.visible = !!t; if (t) { const sc = i ? 0.75 : 1.5 + 0.28 * Math.sin(now / 130); sp.position.set(dotX(absF(t.fret)), YS + 0.1, zs(t.s)); sp.scale.set(sc / k, sc, 1); sp.material.opacity = i ? 0.35 : 1; } }
+  let used = 0;
+  if (gaming) {
+    const t0 = actx.currentTime, sb = spb();
+    while (prac.mi < m.length) { const e = m[prac.mi], t = player.anchorT + (e.b - player.anchorB) * sb; if (t > t0 - 0.24) break; if (!e.judged) { e.judged = 'miss'; prac.miss++; prac.streak = 0; prac.word = 'Missed'; prac.wordT = now; } prac.mi++; }
+    for (let i = prac.mi; i < m.length && used < ringSp.length; i++) { const e = m[i], dt = player.anchorT + (e.b - player.anchorB) * sb - t0; if (dt > 2) break; if (e.judged) continue;
+      const sp = ringSp[used++], sc = 0.95 + 3.4 * Math.max(0, dt) / 2; sp.visible = true; sp.position.set(dotX(absF(e.fret)), YS + 0.1, zs(e.s)); sp.scale.set(sc / k, sc, 1); sp.material.opacity = clamp(1.15 - dt / 2, 0.15, 1); sp.material.color.setHex(dt < 0.1 ? 0x9cf0a8 : 0xffe2a0); }
+  }
+  for (let i = used; i < ringSp.length; i++) ringSp[i].visible = false;
+  let hud = '';
+  if (learning) hud = `Note ${Math.min(prac.i + 1, m.length)} of ${m.length} · play the glowing note`;
+  else if (prac.mode === 'game' && player.song && (player.playing || prac.score)) hud = `Score ${prac.score.toLocaleString('en-US')} · streak ${prac.streak}` + (now - prac.wordT < 700 && prac.word ? ` · ${prac.word}` : '');
+  if (hud !== hudText) { hudText = hud; $('hud').textContent = hud; $('hud').classList.toggle('hidden', !hud); }
+  drawTab(); wahFrame(); tunerFrame();
+}
+
+/* ---------- wiring for the Tools, Practice and chord-library controls ---------- */
+function initTools() {
+  const o = st.opt, fill = (id, list) => { const sel = $(id); sel.textContent = ''; for (const [v, label] of list) { const op = document.createElement('option'); op.value = v; op.textContent = label; sel.appendChild(op); } };
+  fill('capo', [...Array(12)].map((_, i) => [i, i ? `Fret ${i}` : 'None'])); fill('scType', Object.entries(SCALES).map(([k, v]) => [k, v[0]])); fill('scRoot', NOTE_NAMES.map((n, i) => [i, n])); fill('pattern', Object.entries(PATTERNS).map(([k, v]) => [k, v[0]]));
+  $('capo').value = o.capo; $('scType').value = o.scale; $('scRoot').value = o.scaleRoot; $('pattern').value = o.pattern; $('bpm').value = o.bpm; $('fxPickup').value = o.pickup; $('fxGtrTone').value = o.gtrTone; $('fxWahMode').value = (st.fx && st.fx.wahMode) || 'auto';
+  const sync = () => { toggleBtn('slideBtn', o.slide); toggleBtn('harmBtn', o.harm); toggleBtn('namesBtn', o.names); toggleBtn('metroBtn', o.metro); toggleBtn('countBtn', o.countIn); toggleBtn('tabBtn', o.tabStrip); toggleBtn('karBtn', o.karaoke); $('bpmV').textContent = `${o.bpm} beats a minute, for the metronome and patterns when no song is playing.`; };
+  const flip = (id, key, after) => { $(id).onclick = () => { o[key] = !o[key]; if (key === 'slide' && o.slide) o.harm = false; if (key === 'harm' && o.harm) o.slide = false; sync(); if (after) after(); saveSettings(); }; };
+  flip('slideBtn', 'slide', drawOverlay); flip('harmBtn', 'harm', drawOverlay); flip('namesBtn', 'names', drawOverlay); flip('metroBtn', 'metro', () => clockRun(true)); flip('countBtn', 'countIn'); flip('tabBtn', 'tabStrip'); flip('karBtn', 'karaoke', paintKaraoke);
+  $('capo').onchange = () => { setCapo(+$('capo').value); $('capo').blur(); };
+  $('scType').onchange = () => { o.scale = $('scType').value; drawOverlay(); saveSettings(); $('scType').blur(); }; $('scRoot').onchange = () => { o.scaleRoot = +$('scRoot').value; drawOverlay(); saveSettings(); $('scRoot').blur(); };
+  $('bpm').oninput = () => { o.bpm = +$('bpm').value; sync(); }; $('bpm').onchange = () => { clockRun(true); saveSettings(); };
+  $('pattern').onchange = () => { o.pattern = $('pattern').value; if (o.pattern === 'off') setPattern(false); else clockRun(true); saveSettings(); $('pattern').blur(); };
+  $('patBtn').onclick = () => setPattern(!pat.on); $('tunerBtn').onclick = () => { closePops(); setTuner(true); }; $('tuClose').onclick = () => setTuner(false);
+  $('mListen').onclick = () => setMode('listen'); $('mLearn').onclick = () => setMode('learn'); $('mGame').onclick = () => setMode('game'); setMode('listen');
+  $('loopA').onclick = () => { if (!player.song) return; player.loopA = curBeat(); if (player.loopB != null && player.loopB <= player.loopA + 0.5) player.loopB = null; paintLoopMarks(); };
+  $('loopB').onclick = () => { if (!player.song) return; const b = curBeat(); if (b > (player.loopA || 0) + 0.5) { player.loopB = b; if (player.loopA == null) player.loopA = 0; } paintLoopMarks(); };
+  $('loopClr').onclick = () => { player.loopA = null; player.loopB = null; paintLoopMarks(); };
+  $('recBtn').onclick = () => setRecording(!rec.on); $('banOk').onclick = () => $('banner').classList.add('hidden');
+  $('chordLibBtn').onclick = () => { closePops(); $('chordLib').classList.add('open'); renderChordLib(); setChordByName(cl.root + cl.q); }; $('clClose').onclick = () => $('chordLib').classList.remove('open');
+  $('clReset').onclick = () => { o.slots = DEFAULT_SLOTS.slice(); renderChordRow(); renderChordLib(); saveSettings(); };
+  $('fxPickup').onchange = () => { o.pickup = $('fxPickup').value; applyInstrument(false); saveSettings(); $('fxPickup').blur(); }; $('fxGtrTone').oninput = () => { o.gtrTone = +$('fxGtrTone').value; applyTone(); }; $('fxGtrTone').onchange = saveSettings;
+  $('fxWahMode').onchange = () => { st.fx.wahMode = $('fxWahMode').value; applyFx(); saveSettings(); $('fxWahMode').blur(); }; $('fxTilt').onclick = enableTilt;
+  $('wahPos').oninput = () => { wah.target = wah.pos = +$('wahPos').value; };
+  $('presetSave').onclick = savePreset; $('presetSel').onchange = () => { loadPreset($('presetSel').value); $('presetSel').blur(); }; $('presetDel').onclick = () => { const n = $('presetSel').value; if (n) { delete st.opt.presets[n]; renderPresets(); saveSettings(); } };
+  capoBar.visible = o.capo > 0; capoBar.position.x = fretX(o.capo) - 0.3; sync(); renderChordRow(); renderPresets(); drawOverlay(); paintLoopMarks(); paintKaraoke();
 }
 
 /* ===================================== interface wiring ===================================== */
@@ -1393,10 +1909,11 @@ for (const h of $('mbody').querySelectorAll('h2')) { const a = document.createEl
 function showManual(on) { closePops(); $('lib').classList.remove('open'); $('manual').classList.toggle('hidden', !on); if (on) $('mbody').scrollTop = 0; }
 $('bManual').onclick = () => showManual(true); $('mClose').onclick = () => showManual(false);
 $('mbody').addEventListener('scroll', () => { let cur = null; for (const h of $('mbody').querySelectorAll('h2')) if (h.offsetTop - $('mbody').scrollTop < 140) cur = h.id; for (const a of $('mnav').children) a.classList.toggle('on', a.dataset.for === cur); });
-CHORDS.forEach((name, i) => { const b = document.createElement('button'); b.innerHTML = `${name}<kbd>${(i + 1) % 10}</kbd>`; b.onclick = () => setChord(i); if (i === 0) b.classList.add('on'); $('chords').appendChild(b); });
+initTools();
 $('tap').classList.toggle('on', st.tap);
 $('tap').onclick = () => { st.tap = !st.tap; $('tap').classList.toggle('on', st.tap); saveSettings(); };
-function closePops() { $('pView').classList.add('hidden'); $('pSound').classList.add('hidden'); $('pFx').classList.add('hidden'); }
+function closePops() { for (const id of ['pView', 'pSound', 'pFx', 'pTools', 'pPlay']) $(id).classList.add('hidden'); }
+for (const [btn, pop] of [['bTools', 'pTools'], ['bPlay', 'pPlay']]) $(btn).onclick = e => { e.stopPropagation(); const o = $(pop).classList.contains('hidden'); closePops(); $(pop).classList.toggle('hidden', !o); };
 $('bFx').onclick = e => { e.stopPropagation(); const o = $('pFx').classList.contains('hidden'); closePops(); $('pFx').classList.toggle('hidden', !o); };
 // effects controls
 const FX_SLIDERS = { fxTone: 'ampTone', fxDrive: 'drive', fxComp: 'comp', fxWah: 'wah', fxChorus: 'chorus', fxTrem: 'trem', fxEcho: 'echo', fxEchoTime: 'echoTime' };
@@ -1431,7 +1948,7 @@ $('loop').onclick = () => { player.loop = !player.loop; $('loop').classList.togg
 $('tempo').oninput = () => { const v = +$('tempo').value; if (player.playing) { player.anchorB = curBeat(); player.anchorT = actx.currentTime; } player.tempo = v; $('tempoV').textContent = Math.round(v * 100) + '%'; $('tempoReset').classList.toggle('show', Math.abs(v - 1) > 0.004); };
 $('tempoReset').onclick = () => { $('tempo').value = 1; $('tempo').oninput(); };
 $('tempo').ondblclick = $('tempoReset').onclick;
-$('prog').onclick = e => { if (!player.song) return; const r = $('prog').getBoundingClientRect(); player.anchorB = clamp((e.clientX - r.left) / r.width, 0, 1) * player.total; seekIdx(); if (player.playing) { player.anchorT = actx.currentTime + 0.05; vq.length = 0; send({ type: 'flush' }); } };
+$('prog').onclick = e => { if (!player.song) return; const r = $('prog').getBoundingClientRect(); seekTo(clamp((e.clientX - r.left) / r.width, 0, 1) * player.total); };
 
 const filt = { g: 'All', e: 'All' };
 function renderLib() {
@@ -1482,7 +1999,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && ac
 if ('serviceWorker' in navigator && !hostApp && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
 
 applyFlip(); applyRoom(); renderLib(); new ResizeObserver(fit).observe($('stage')); fit(); requestAnimationFrame(frame);
-window.__guitar = { st, player, SONGS, buildEvents, engineModule, loadSong, playSong, stopSong, gpos, cam, root, THREE, FX, view, setZoom, applyRoom, lyr, openLyrics, saveLyrics, syncLyrics, getGraph: () => graph, INSTRUMENTS, applyInstrument, buildGraph, makeBodyIR, makeReverbIR, FX_OFF };
+window.__guitar = { st, player, SONGS, buildEvents, engineModule, loadSong, playSong, stopSong, gpos, cam, root, THREE, FX, view, setZoom, applyRoom, lyr, openLyrics, saveLyrics, syncLyrics, getGraph: () => graph, prac, setMode, setCapo, melody, shapeOf, userPlucked, setRecording, rec, setPattern, pat, seekTo, toolsFrame, drawOverlay, detectPitch, INSTRUMENTS, applyInstrument, buildGraph, makeBodyIR, makeReverbIR, FX_OFF };
 </script>
 </body>
 </html>
