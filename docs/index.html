@@ -268,7 +268,7 @@
 
 <div id="tp">
   <div class="ctl"><button class="round" id="play" title="Play / pause (Enter)">▶</button><button class="round sm" id="stop" title="Stop">■</button><button class="round sm" id="loop" title="Loop">⟲</button></div>
-  <div><button class="btn" id="lyr" title="Open the lyrics in their own window (drag it to another screen)">Lyrics</button></div>
+  <div><button class="btn" id="lyr" title="Open the lyrics in their own window (drag it to another screen)">Lyrics</button> <button class="btn" id="karQuick" title="Show or hide the words in large letters over the guitar">Words</button></div>
   <div id="now"><b id="nTitle">Choose a song from the library</b><span id="nSub">or play the guitar yourself</span><div id="prog"><i></i><span class="mk hidden" id="mkA"></span><span class="mk hidden" id="mkB"></span></div></div>
   <div id="tempoBox"><span>Tempo</span><input type="range" id="tempo" min="0.25" max="1.5" step="0.01" value="1"><span id="tempoV">100%</span><button id="tempoReset" title="Back to 100%">100%</button></div>
 </div>
@@ -458,7 +458,7 @@
       <h3>Exact timing</h3>
       <p>Normally the words are spread evenly across the song. For exact timing, click <b>Set timing</b> in the lyrics window: the song plays from the start, and you click the same button (or press the space bar) once as each line begins. When the last line is marked the timing is saved with the words. To redo it, click <b>Set timing</b> again. Editing the words without changing how many lines there are keeps the timing.</p>
       <h3>Karaoke</h3>
-      <p><b>Practice → Karaoke</b> shows the current line in large letters over the guitar, with the next line underneath. It uses the same words as the lyrics window.</p>
+      <p><b>Practice → Karaoke</b>, or the <b>Words</b> button beside Lyrics in the player bar, shows the current line in large letters over the guitar, with the next line underneath. Click either one again to hide the words. It uses the same words as the lyrics window, and shows nothing for a song with no saved words.</p>
 
       <h2 id="m-view">View</h2>
       <ul>
@@ -583,7 +583,12 @@
       <p class="small">Song scores are credited in the library and in lib/SOURCES.txt. The 3D graphics use three.js (MIT licence).</p>
 
       <h2 id="m-versions">Version history</h2>
-      <p>This is version 7.8. Every version and what it added, newest first.</p>
+      <p>This is version 7.9. Every version and what it added, newest first.</p>
+      <h3>Version 7.9</h3>
+      <ul>
+        <li><b>Words button</b> in the player bar turns the large on-screen lyrics on and off (the same switch as Practice → Karaoke).</li>
+        <li>A song with no saved words no longer shows a "No words are saved" message over the guitar.</li>
+      </ul>
       <h3>Version 7.8</h3>
       <ul>
         <li><b>Christmas (photo) backdrop:</b> a lifelike picture of a living room decorated for Christmas, made with Google Gemini. The fire and candles flicker, about 400 lights on the tree, garland and bookshelf twinkle, and snow falls in the windows. Lights pulse to music works here too.</li>
@@ -2172,7 +2177,7 @@ function drawTab() {
 /* ---------- karaoke view ---------- */
 function paintKaraoke() {
   const on = st.opt.karaoke && !!player.song; $('karaoke').classList.toggle('hidden', !on); if (!on) return;
-  if (!lyr.lines.length) { $('karNow').textContent = ''; $('karNext').textContent = 'No words are saved for this song. Click Lyrics, then Edit words, to add them.'; return; }
+  if (!lyr.lines.length) { $('karaoke').classList.add('hidden'); return; }      // a song without saved words shows nothing on screen
   $('karNow').textContent = lyr.cur >= 0 ? lyr.lines[lyr.cur] : ''; $('karNext').textContent = lyr.lines[lyr.cur + 1] || '';
 }
 
@@ -2233,9 +2238,9 @@ function initTools() {
   const o = st.opt, fill = (id, list) => { const sel = $(id); sel.textContent = ''; for (const [v, label] of list) { const op = document.createElement('option'); op.value = v; op.textContent = label; sel.appendChild(op); } };
   fill('capo', [...Array(12)].map((_, i) => [i, i ? `Fret ${i}` : 'None'])); fill('scType', Object.entries(SCALES).map(([k, v]) => [k, v[0]])); fill('scRoot', NOTE_NAMES.map((n, i) => [i, n])); fill('pattern', Object.entries(PATTERNS).map(([k, v]) => [k, v[0]]));
   $('capo').value = o.capo; $('scType').value = o.scale; $('scRoot').value = o.scaleRoot; $('pattern').value = o.pattern; $('bpm').value = o.bpm; $('fxPickup').value = o.pickup; $('fxGtrTone').value = o.gtrTone; $('fxWahMode').value = (st.fx && st.fx.wahMode) || 'auto';
-  const sync = () => { toggleBtn('slideBtn', o.slide); toggleBtn('harmBtn', o.harm); toggleBtn('namesBtn', o.names); toggleBtn('metroBtn', o.metro); toggleBtn('countBtn', o.countIn); toggleBtn('tabBtn', o.tabStrip); toggleBtn('karBtn', o.karaoke); $('bpmV').textContent = `${o.bpm} beats a minute, for the metronome and patterns when no song is playing.`; };
+  const sync = () => { toggleBtn('slideBtn', o.slide); toggleBtn('harmBtn', o.harm); toggleBtn('namesBtn', o.names); toggleBtn('metroBtn', o.metro); toggleBtn('countBtn', o.countIn); toggleBtn('tabBtn', o.tabStrip); toggleBtn('karBtn', o.karaoke); toggleBtn('karQuick', o.karaoke); $('bpmV').textContent = `${o.bpm} beats a minute, for the metronome and patterns when no song is playing.`; };
   const flip = (id, key, after) => { $(id).onclick = () => { o[key] = !o[key]; if (key === 'slide' && o.slide) o.harm = false; if (key === 'harm' && o.harm) o.slide = false; sync(); if (after) after(); saveSettings(); }; };
-  flip('slideBtn', 'slide', drawOverlay); flip('harmBtn', 'harm', drawOverlay); flip('namesBtn', 'names', drawOverlay); flip('metroBtn', 'metro', () => clockRun(true)); flip('countBtn', 'countIn'); flip('tabBtn', 'tabStrip'); flip('karBtn', 'karaoke', paintKaraoke);
+  flip('slideBtn', 'slide', drawOverlay); flip('harmBtn', 'harm', drawOverlay); flip('namesBtn', 'names', drawOverlay); flip('metroBtn', 'metro', () => clockRun(true)); flip('countBtn', 'countIn'); flip('tabBtn', 'tabStrip'); flip('karBtn', 'karaoke', paintKaraoke); flip('karQuick', 'karaoke', paintKaraoke);
   $('capo').onchange = () => { setCapo(+$('capo').value); $('capo').blur(); };
   $('scType').onchange = () => { o.scale = $('scType').value; drawOverlay(); saveSettings(); $('scType').blur(); }; $('scRoot').onchange = () => { o.scaleRoot = +$('scRoot').value; drawOverlay(); saveSettings(); $('scRoot').blur(); };
   $('bpm').oninput = () => { o.bpm = +$('bpm').value; sync(); }; $('bpm').onchange = () => { clockRun(true); saveSettings(); };
