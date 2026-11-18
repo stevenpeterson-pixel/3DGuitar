@@ -140,7 +140,7 @@
     header { gap: 8px; padding: 0 14px; } .btn { padding: 8px 11px; font-size: 12px; } }
   @media (max-width: 1440px) { .brand > div { display: none; } .seg button { padding: 6px 6px; font-size: 11.5px; min-width: 16px; } .btn { padding: 7px 9px; font-size: 11.5px; } header { gap: 6px; } }
   @media (max-width: 900px) { .brand b { display: none; } }
-  body.stage header, body.stage #tp, body.stage .pop, body.stage #tab, body.stage #lib, body.stage #chordLib { display: none !important; }
+  body.stage header, body.stage .pop, body.stage #chordLib, body.stage:not(.keepbar) #tp, body.stage:not(.keepbar) #tab, body.stage:not(.keepbar) #lib { display: none !important; }   /* .keepbar: stage mode that keeps the player bar */
   #stageExit { position: fixed; top: max(12px, env(safe-area-inset-top)); right: max(14px, env(safe-area-inset-right)); z-index: 5; opacity: 0.32; transition: opacity 0.2s; }
   #stageExit:hover, #stageExit:active { opacity: 1; }
   .song i.pg { display: block; font-style: normal; font-size: 11px; color: #f0c05a; margin-top: 3px; letter-spacing: 0.02em; }
@@ -179,6 +179,7 @@
   <div class="row"><button class="btn" id="xmasPulse" title="The Christmas lights swell with the music">Lights pulse to music</button><button class="btn" id="crackleBtn" title="A quiet crackle from the fire in the living room backdrops">Fire crackle</button></div>
   <h3 style="margin-top:16px">Stage mode</h3>
   <div class="row"><button class="btn" id="stageBtn" title="Only the guitar, full screen">Stage mode (Tab)</button></div>
+  <div class="row"><button class="btn" id="stageBarBtn" title="Full screen without the menus, keeping the player bar">Stage mode with player bar (Shift+Tab)</button></div>
   <h3 style="margin-top:16px">Default view</h3>
   <div class="row"><button class="btn gold" id="homeSet" title="Open with the current zoom, position, backdrop and flip next time">Set as default</button><button class="btn" id="homeGo" title="Return to the saved default view">Go to it</button><button class="btn" id="homeClear" title="Forget the saved view and use the playing view">Reset</button></div>
   <p>Scroll the mouse wheel over the guitar to zoom: in for a close look, out to see the whole instrument and the room. You can play at any zoom level.</p>
@@ -469,6 +470,7 @@
         <li><b>Backdrop:</b> <b>Dark studio</b>, a <b>Living room</b> with a fireplace, or <b>Christmas</b>: the living room decorated, with a twinkling tree, presents, a garland and stockings on the mantel, wreaths, poinsettias, lights on the bookshelf, a paper star and snow falling outside the window. A shake of sleigh bells plays as it switches on. <b>Christmas (photo)</b> is a lifelike picture of a decorated room instead, with live flames and rising embers in the fireplace, firelight flickering on the guitar, the lights twinkling and snow falling in the windows; it stays still when you zoom. <b>Fire crackle</b> adds a quiet crackling fire sound to either fireplace. <b>Lights pulse to music</b> makes the Christmas lights swell with the guitar in either one.</li>
         <li>You can play at any zoom level. These choices are remembered.</li>
         <li><b>Stage mode</b> (<kbd>Tab</kbd>): hides the menus and the player bar so only the guitar is on screen, and fills the whole screen where the device allows. Click <b>Show menus</b> in the top-right corner, or press <kbd>Tab</kbd> or <kbd>Esc</kbd>, to bring everything back. You can keep playing, and songs keep playing, in stage mode.</li>
+        <li><b>Stage mode with player bar</b> (<kbd>Shift</kbd>+<kbd>Tab</kbd>): the same, but the player bar stays at the bottom, so you can start, stop and choose songs (play with no song loaded opens the song library) without leaving stage mode.</li>
         <li><b>Default view:</b> arrange the view the way you like it (zoom, position, backdrop, flip), then click <b>Set as default</b>. The app opens in that view from then on. <b>Go to it</b> returns to the saved view at any time, and <b>Reset</b> goes back to opening in the playing view.</li>
       </ul>
 
@@ -543,6 +545,7 @@
         <tr><td>Hold <kbd>W</kbd></td><td>Rock the wah pedal forward (when Wah type is Pedal)</td></tr>
         <tr><td><kbd>J</kbd></td><td>Start or stop jamming with the computer</td></tr>
         <tr><td><kbd>Tab</kbd></td><td>Stage mode on or off</td></tr>
+        <tr><td><kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>Stage mode with the player bar kept</td></tr>
         <tr><td><kbd>F1</kbd></td><td>Open this manual</td></tr>
         <tr><td><kbd>Esc</kbd></td><td>Close menus, the library or this manual</td></tr>
       </table>
@@ -583,7 +586,11 @@
       <p class="small">Song scores are credited in the library and in lib/SOURCES.txt. The 3D graphics use three.js (MIT licence).</p>
 
       <h2 id="m-versions">Version history</h2>
-      <p>This is version 7.10. Every version and what it added, newest first.</p>
+      <p>This is version 7.11. Every version and what it added, newest first.</p>
+      <h3>Version 7.11</h3>
+      <ul>
+        <li><b>Stage mode with player bar</b> (View → Stage mode, or <kbd>Shift</kbd>+<kbd>Tab</kbd>): hides the menus at the top but keeps the player bar at the bottom. The original stage mode, which hides both, is still there.</li>
+      </ul>
       <h3>Version 7.10</h3>
       <ul>
         <li><b>A living fire in the Christmas photo:</b> the picture's still flames are replaced by moving ones that sway and rise over the logs, with embers drifting up and the firelight flickering on the guitar.</li>
@@ -1735,7 +1742,7 @@ addEventListener('keydown', e => {
   else if (k === 'w') wah.target = 1;
   else if (k === 'p') setPattern(!pat.on);
   else if (k === 'j') setJam(!jam.on);
-  else if (k === 'tab') { e.preventDefault(); setStage(!stage.on); }
+  else if (k === 'tab') { e.preventDefault(); setStage(!stage.on, e.shiftKey); }   // Shift+Tab keeps the player bar
   else if (k === '-' || k === '_') setZoom(view.zT + 0.25);
   else if (k === '=' || k === '+') setZoom(view.zT - 0.25);
   else if (k.length === 1 && k >= '0' && k <= '9') setChord(k === '0' ? 9 : +k - 1);
@@ -2435,9 +2442,9 @@ function renderProgress() {
 }
 
 /* ---------- stage mode ---------- */
-const stage = { on: false, fs: false };
-function setStage(on) {
-  stage.on = !!on; document.body.classList.toggle('stage', stage.on); $('stageExit').classList.toggle('hidden', !stage.on); closePops(); $('lib').classList.remove('open'); $('chordLib').classList.remove('open');
+const stage = { on: false, fs: false, bar: false };
+function setStage(on, keepBar) {
+  stage.on = !!on; stage.bar = stage.on && !!keepBar; document.body.classList.toggle('stage', stage.on); document.body.classList.toggle('keepbar', stage.bar); $('stageExit').classList.toggle('hidden', !stage.on); closePops(); $('lib').classList.remove('open'); $('chordLib').classList.remove('open');
   const el = document.documentElement, fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
   try {
     if (stage.on && !fsEl()) { const go = el.requestFullscreen || el.webkitRequestFullscreen; if (go) { const r = go.call(el); stage.fs = true; if (r && r.catch) r.catch(() => { stage.fs = false; }); } }
@@ -2527,7 +2534,7 @@ function initV7() {
   $('tuning').onchange = () => { setTuning($('tuning').value); $('tuning').blur(); };
   pick('bandMode', 'band', () => { if (o.band === 'off') bandFlush(true); }); pick('drumStyle', 'drums'); pick('jamStyle', 'jamStyle'); pick('jamSound', 'jamSound', applyLead);
   for (const [id, key] of [['bandLvl', 'bandLvl'], ['jamLvl', 'jamLvl']]) { $(id).oninput = () => { o[key] = +$(id).value; applyBandMix(); }; $(id).onchange = saveSettings; }
-  $('jamBtn').onclick = () => setJam(!jam.on); $('stageBtn').onclick = () => setStage(true); $('stageExit').onclick = () => setStage(false);
+  $('jamBtn').onclick = () => setJam(!jam.on); $('stageBtn').onclick = () => setStage(true); $('stageBarBtn').onclick = () => setStage(true, true); $('stageExit').onclick = () => setStage(false);
   for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, () => { if (stage.on && stage.fs && !(document.fullscreenElement || document.webkitFullscreenElement)) { stage.fs = false; setStage(false); } });
   $('progReset').onclick = () => { const b = $('progReset'); if (b.dataset.arm) { o.progress = {}; saveSettings(); renderProgress(); renderLib(); delete b.dataset.arm; b.textContent = 'Reset progress'; }
     else { b.dataset.arm = '1'; b.textContent = 'Click again to clear it all'; setTimeout(() => { delete b.dataset.arm; b.textContent = 'Reset progress'; }, 3000); } };
