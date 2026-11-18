@@ -20,6 +20,7 @@ sealed class MainForm : Form
 {
     const string Title = "Concert Acoustic";
     readonly WebView2 web = new() { Dock = DockStyle.Fill };
+    Form? lyricsForm;   // the lyrics pop-out window while it is open
 
     public MainForm()
     {
@@ -145,6 +146,16 @@ sealed class MainForm : Form
                             if (text.Trim().Length == 0) { if (File.Exists(path)) File.Delete(path); } else File.WriteAllText(path, text);
                         }
                     }
+                    else if (msg == "showLyrics")
+                    {
+                        // the Lyrics button was clicked while its window is open: bring that window back in front
+                        if (lyricsForm is { IsDisposed: false } f)
+                        {
+                            if (f.WindowState == FormWindowState.Minimized) f.WindowState = FormWindowState.Normal;
+                            f.Show(); f.BringToFront(); f.Activate();
+                        }
+                        else web.CoreWebView2.PostWebMessageAsJson("{\"type\":\"lyricsClosed\"}");
+                    }
                     else Text = $"{Title}  ·  {msg}";
                 }
                 catch { /* ignore malformed messages */ }
@@ -163,7 +174,14 @@ sealed class MainForm : Form
                     };
                     var pop = new WebView2 { Dock = DockStyle.Fill, DefaultBackgroundColor = BackColor };
                     form.Controls.Add(pop);
-                    form.Show();
+                    // owned by the guitar window, so clicking the guitar never hides the words behind it
+                    form.Show(this);
+                    lyricsForm = form;
+                    form.FormClosed += (_, _) =>
+                    {
+                        if (lyricsForm == form) lyricsForm = null;
+                        try { web.CoreWebView2.PostWebMessageAsJson("{\"type\":\"lyricsClosed\"}"); } catch { }
+                    };
                     await pop.EnsureCoreWebView2Async(env);
                     pop.CoreWebView2.Settings.IsStatusBarEnabled = false;
                     pop.CoreWebView2.Settings.IsZoomControlEnabled = false;

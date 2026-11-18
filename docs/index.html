@@ -454,7 +454,7 @@
       </ul>
 
       <h3>Exact timing</h3>
-      <p>Normally the words are spread evenly across the song. For exact timing, click <b>Set timing</b> in the lyrics window: the song plays from the start, and you click the same button once as each line begins. When the last line is marked the timing is saved with the words.</p>
+      <p>Normally the words are spread evenly across the song. For exact timing, click <b>Set timing</b> in the lyrics window: the song plays from the start, and you click the same button (or press the space bar) once as each line begins. When the last line is marked the timing is saved with the words. To redo it, click <b>Set timing</b> again. Editing the words without changing how many lines there are keeps the timing.</p>
       <h3>Karaoke</h3>
       <p><b>Practice → Karaoke</b> shows the current line in large letters over the guitar, with the next line underneath. It uses the same words as the lyrics window.</p>
 
@@ -581,7 +581,12 @@
       <p class="small">Song scores are credited in the library and in lib/SOURCES.txt. The 3D graphics use three.js (MIT licence).</p>
 
       <h2 id="m-versions">Version history</h2>
-      <p>This is version 7.4. Every version and what it added, newest first.</p>
+      <p>This is version 7.5. Every version and what it added, newest first.</p>
+      <h3>Version 7.5</h3>
+      <ul>
+        <li><b>Lyrics button fixed in the Windows app:</b> clicking it while the lyrics window is open now brings that window to the front, and after closing it, it opens again. The lyrics window also stays in front of the guitar window.</li>
+        <li><b>Setting lyric timing:</b> the space bar or Enter marks each line, as well as clicking the button.</li>
+      </ul>
       <h3>Version 7.4</h3>
       <ul>
         <li><b>Two pieces from Tchaikovsky's Nutcracker:</b> Dance of the Sugar Plum Fairy and the March, arranged for guitar from a 1922 piano edition. There are now 29 songs under the Holiday filter.</li>
@@ -1709,7 +1714,8 @@ function saveLyrics(text, timing) {
   if (hostApp) hostApp.postMessage('saveLyrics:' + JSON.stringify({ title: lyr.title, text })); else { try { localStorage.setItem(lyricsKey(lyr.title), text); } catch (_) {} }
   setLyricsText(lyr.title, text);
 }
-if (hostApp) hostApp.addEventListener('message', e => { const d = e.data; if (d && d.type === 'lyrics') setLyricsText(d.title, d.text); });
+if (hostApp) hostApp.addEventListener('message', e => { const d = e.data; if (d && d.type === 'lyrics') setLyricsText(d.title, d.text);
+  if (d && d.type === 'lyricsClosed') { lyr.win = null; lyr.rec = null; } });   // the app's lyrics window was closed, so the next click opens a new one
 function renderLyrics() {
   const w = lyr.win; if (!w || w.closed) return; const d = w.document, s = player.song;
   d.getElementById('t').textContent = s ? s.t : 'Lyrics'; d.getElementById('by').textContent = s ? `${s.by} · ${s.yl}` : 'Choose a song from the library';
@@ -1721,7 +1727,7 @@ function renderLyrics() {
 function openLyrics() {
   const closePanel = () => { if (lyr.frame) { lyr.frame.remove(); lyr.frame = null; lyr.win = null; } };
   if (lyr.frame) { closePanel(); return; }
-  if (lyr.win && !lyr.win.closed) { lyr.win.focus(); return; }
+  if (lyr.win && !lyr.win.closed) { if (hostApp) hostApp.postMessage('showLyrics'); try { lyr.win.focus(); } catch (_) {} return; }
   // A separate window where the system allows one; otherwise (iPad, installed web app, blocked pop-ups) a panel on the right.
   const touchOnly = navigator.standalone || matchMedia('(display-mode: standalone)').matches || (navigator.maxTouchPoints > 1 && matchMedia('(pointer: coarse)').matches);
   let w = touchOnly ? null : window.open('', 'guitarLyrics', 'width=620,height=860');
@@ -1735,6 +1741,8 @@ function openLyrics() {
   g('save').onclick = () => { saveLyrics(g('ed').value); editing(false); };
   // exact timing: the song plays and the player clicks once as each line begins
   const timeBtn = g('time'), mark = () => { lyr.rec.push(Math.max(0, curBeat())); if (lyr.rec.length >= lyr.lines.length) { const t = lyr.rec; lyr.rec = null; timeBtn.classList.remove('gold'); timeBtn.textContent = 'Set timing'; saveLyrics(lyr.text, t); } else timeBtn.textContent = `Click as line ${lyr.rec.length + 1} of ${lyr.lines.length} starts`; };
+  // while marking, the space bar or Enter in the lyrics window works the same as clicking the button
+  d.addEventListener('keydown', e => { if (lyr.rec && (e.key === ' ' || e.key === 'Enter') && e.target.id !== 'ed') { e.preventDefault(); mark(); } });
   timeBtn.onclick = () => { if (lyr.rec) { mark(); return; } if (!lyr.lines.length || !player.song) return; setMode('listen'); stopSong(); playSong(); lyr.rec = []; lyr.cur = -2; timeBtn.classList.add('gold'); timeBtn.textContent = `Click as line 1 of ${lyr.lines.length} starts`; };
   if (lyr.frame) { g('close').classList.remove('hide'); g('close').onclick = closePanel; }
   g('smaller').onclick = () => { fs = Math.max(14, fs - 3); size(); }; g('bigger').onclick = () => { fs = Math.min(72, fs + 3); size(); };
