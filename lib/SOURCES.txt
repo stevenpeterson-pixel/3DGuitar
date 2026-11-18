@@ -76,6 +76,13 @@ Christmas songs (version 7.2)
     Away in a Manger (the Mueller tune by James R. Murray), O Little Town of Bethlehem (Lewis
     Redner's St. Louis tune).
 
+Nutcracker pieces (version 7.4)
+  Dance of the Sugar Plum Fairy and March, from Tchaikovsky's Nutcracker Suite, Op. 71a: arranged
+  for guitar for this program from the piano edition published by G. Schirmer, New York, 1922
+  (public domain; scan at https://archive.org/details/nutcrackersuiteo00tcha). Each arrangement
+  plays the piece's main themes rather than the whole movement. The Sugar Plum Fairy is set an
+  octave below the celesta part.
+
 The other arrangements in the library were written for this program.
 
 three.module.min.js is three.js (MIT licence); see three.LICENSE.txt.

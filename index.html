@@ -343,11 +343,12 @@
         <li><b>Filters:</b> the buttons at the top of the library narrow the list by style (Classical, Folk, and so on) and by era.</li>
         <li><b>Labels:</b> each song says how much of it is arranged: <i>Full piece</i> (the whole published score, with its repeats where marked), <i>Full tune</i>, <i>Full chorus</i>, or a number of verses.</li>
         <li><b>Songs with verses</b> play the tune once for each verse, the way a singer would perform them, and the accompaniment changes between verses (picking in one, strumming in another) so the repeats don't sound the same. If you add the words in the lyrics window, separate the verses with a blank line and each verse follows its own pass of the tune.</li>
-        <li><b>Christmas songs:</b> click the <b>Holiday</b> filter to see the 27 Christmas and New Year songs together. Most are carols with three verses: the first is usually picked, and one verse is strummed or played in a bass-and-chord rhythm for variety. Some are different:
+        <li><b>Christmas songs:</b> click the <b>Holiday</b> filter to see the 29 Christmas and New Year songs together. Most are carols with three verses: the first is usually picked, and one verse is strummed or played in a bass-and-chord rhythm for variety. Some are different:
           <ul>
             <li><b>O Holy Night</b> is a complete guitar setting of Adam's song with its piano accompaniment.</li>
             <li><b>Pastoral Symphony</b> is the instrumental piece from Handel's Messiah.</li>
             <li><b>The Twelve Days of Christmas</b> plays all twelve verses, each one longer than the last.</li>
+            <li><b>Dance of the Sugar Plum Fairy</b> and the <b>March</b> from Tchaikovsky's Nutcracker are guitar arrangements of each piece's main themes, about a minute each. The Sugar Plum Fairy includes the harp-like run in the middle.</li>
             <li><b>Auld Lang Syne</b> is there for New Year's Eve.</li>
           </ul>
           Turn on the backing band in the Practice menu to play along with a bass and drums, or switch on Jam mode and strum the chords while the computer adds a lead part.</li>
@@ -580,7 +581,11 @@
       <p class="small">Song scores are credited in the library and in lib/SOURCES.txt. The 3D graphics use three.js (MIT licence).</p>
 
       <h2 id="m-versions">Version history</h2>
-      <p>This is version 7.3. Every version and what it added, newest first.</p>
+      <p>This is version 7.4. Every version and what it added, newest first.</p>
+      <h3>Version 7.4</h3>
+      <ul>
+        <li><b>Two pieces from Tchaikovsky's Nutcracker:</b> Dance of the Sugar Plum Fairy and the March, arranged for guitar from a 1922 piano edition. There are now 29 songs under the Holiday filter.</li>
+      </ul>
       <h3>Version 7.3</h3>
       <ul>
         <li><b>The song library closes by itself</b> when you click or touch anywhere outside it, as well as with its Close button, the Song library button or <kbd>Esc</kbd>.</li>
@@ -1557,7 +1562,8 @@ const SONGS = [
     ['Good King Wenceslas', 'Piae Cantiones, words by J. M. Neale', 1853, '1582 / 1853'], ['O Come, O Come, Emmanuel', 'Traditional plainchant', 1851, '15th c. / 1851'], ['Coventry Carol', 'Traditional English', 1591, '16th century'],
     ['Up on the Housetop', 'Benjamin Hanby', 1864, '1864'], ['Jolly Old St. Nicholas', 'attributed to James R. Murray', 1874, '1870s'], ['Here We Come A-Wassailing', 'Traditional English', 1850, '19th century'],
     ['Auld Lang Syne', 'Traditional Scottish, words by Robert Burns', 1788, '1788'], ['Away in a Manger', 'James R. Murray', 1887, '1887'], ['O Little Town of Bethlehem', 'Lewis Redner', 1868, '1868'],
-    ['The Twelve Days of Christmas', 'Traditional English', 1909, '1780 / 1909'], ['Pastoral Symphony (Messiah)', 'G. F. Handel', 1742, '1742']].map(([t, by, y, yl]) => ({ t, by, g: 'Holiday', y, yl, locked: true })),
+    ['The Twelve Days of Christmas', 'Traditional English', 1909, '1780 / 1909'], ['Pastoral Symphony (Messiah)', 'G. F. Handel', 1742, '1742'],
+    ['Dance of the Sugar Plum Fairy', 'P. I. Tchaikovsky', 1892, '1892'], ['March (The Nutcracker)', 'P. I. Tchaikovsky', 1892, '1892']].map(([t, by, y, yl]) => ({ t, by, g: 'Holiday', y, yl, locked: true })),
   // listed in the library but not yet arranged: these need a score to be transcribed accurately
   ...[['Lágrima', 'Francisco Tárrega', 'Classical', 1891], ['Adelita', 'Francisco Tárrega', 'Classical', 1899], ['Recuerdos de la Alhambra', 'Francisco Tárrega', 'Classical', 1896], ['Study in B minor', 'Fernando Sor', 'Classical', 1828],
     ['Wayfaring Stranger', 'Traditional American', 'Folk', 1858], ['Red River Valley', 'Traditional American', 'Folk', 1879], ['Wildwood Flower', 'J. P. Webster', 'Folk', 1860], ['Man of Constant Sorrow', 'Traditional American', 'Folk', 1913],
