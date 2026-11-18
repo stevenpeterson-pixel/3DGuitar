@@ -27,6 +27,7 @@
     <EmbeddedResource Include="..\index.html" LogicalName="index.html" />
     <EmbeddedResource Include="..\lib\three.module.min.js" LogicalName="lib/three.module.min.js" />
     <EmbeddedResource Include="..\lib\scores.js" LogicalName="lib/scores.js" />
+    <EmbeddedResource Include="..\lib\xmas-photo.jpg" LogicalName="lib/xmas-photo.jpg" />
   </ItemGroup>
 
 </Project>

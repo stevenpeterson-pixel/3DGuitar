@@ -5,7 +5,7 @@ $src = $PSScriptRoot; $out = Join-Path $src 'docs'
 New-Item -ItemType Directory -Force $out | Out-Null; Set-Content (Join-Path $out '.nojekyll') '' -NoNewline
 New-Item -ItemType Directory -Force (Join-Path $out 'lib'), (Join-Path $out 'icons') | Out-Null
 Copy-Item (Join-Path $src 'index.html') $out -Force
-foreach ($f in 'three.module.min.js', 'scores.js', 'SOURCES.txt', 'three.LICENSE.txt') { Copy-Item (Join-Path $src "lib\$f") (Join-Path $out 'lib') -Force }
+foreach ($f in 'three.module.min.js', 'scores.js', 'SOURCES.txt', 'three.LICENSE.txt', 'xmas-photo.jpg') { Copy-Item (Join-Path $src "lib\$f") (Join-Path $out 'lib') -Force }
 
 # icons (drawn here so there is nothing to download)
 Add-Type -AssemblyName System.Drawing
@@ -45,7 +45,7 @@ New-Icon 180 (Join-Path $out 'icons\apple-touch-icon.png') $true      # iOS want
 '@ | Set-Content (Join-Path $out 'manifest.webmanifest') -Encoding utf8
 
 # offline cache: the version changes whenever any file changes, so an update replaces the old cache
-$files = 'index.html', 'lib/three.module.min.js', 'lib/scores.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'
+$files = 'index.html', 'lib/three.module.min.js', 'lib/scores.js', 'lib/xmas-photo.jpg', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'
 $hash = ($files | ForEach-Object { (Get-FileHash (Join-Path $out $_) -Algorithm SHA1).Hash }) -join ''
 $sha = [System.Security.Cryptography.SHA1]::Create(); $version = ([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::ASCII.GetBytes($hash))) -replace '-', '').Substring(0, 10).ToLower()
 $list = ($files | ForEach-Object { "'./$_'" }) -join ', '

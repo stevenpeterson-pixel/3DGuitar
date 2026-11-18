@@ -83,6 +83,9 @@ Nutcracker pieces (version 7.4)
   plays the piece's main themes rather than the whole movement. The Sugar Plum Fairy is set an
   octave below the celesta part.
 
+Christmas (photo) backdrop (version 7.8): lib/xmas-photo.jpg is an image generated with Google Gemini
+for this project. The twinkling lights, fire glow and snow are drawn over it by the program.
+
 The other arrangements in the library were written for this program.
 
 three.module.min.js is three.js (MIT licence); see three.LICENSE.txt.

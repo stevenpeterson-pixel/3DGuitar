@@ -78,7 +78,7 @@ sealed class MainForm : Form
             // and rewriting them under it made pages fail with "access denied".
             foreach (string name in asm.GetManifestResourceNames())
             {
-                if (!name.EndsWith(".html") && !name.EndsWith(".js")) continue;
+                if (!name.EndsWith(".html") && !name.EndsWith(".js") && !name.EndsWith(".jpg")) continue;
                 string target = Path.Combine(site, name.Replace('/', Path.DirectorySeparatorChar));
                 Directory.CreateDirectory(Path.GetDirectoryName(target)!);
                 using Stream res = asm.GetManifestResourceStream(name)!;
