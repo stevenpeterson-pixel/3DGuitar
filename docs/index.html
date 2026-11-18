@@ -338,7 +338,7 @@
       </ul>
 
       <h2 id="m-songs">Song library and player</h2>
-      <p>Click <b>Song library</b> to open the list. Click a song to load it and start playing. The guitar plays itself: glowing dots show each note on the fretboard and the strings shimmer as they ring.</p>
+      <p>Click <b>Song library</b> to open the list. Click a song to load it and start playing. The guitar plays itself: glowing dots show each note on the fretboard and the strings shimmer as they ring. Click anywhere outside the list to close it.</p>
       <ul>
         <li><b>Filters:</b> the buttons at the top of the library narrow the list by style (Classical, Folk, and so on) and by era.</li>
         <li><b>Labels:</b> each song says how much of it is arranged: <i>Full piece</i> (the whole published score, with its repeats where marked), <i>Full tune</i>, <i>Full chorus</i>, or a number of verses.</li>
@@ -580,7 +580,11 @@
       <p class="small">Song scores are credited in the library and in lib/SOURCES.txt. The 3D graphics use three.js (MIT licence).</p>
 
       <h2 id="m-versions">Version history</h2>
-      <p>This is version 7.2. Every version and what it added, newest first.</p>
+      <p>This is version 7.3. Every version and what it added, newest first.</p>
+      <h3>Version 7.3</h3>
+      <ul>
+        <li><b>The song library closes by itself</b> when you click or touch anywhere outside it, as well as with its Close button, the Song library button or <kbd>Esc</kbd>.</li>
+      </ul>
       <h3>Version 7.2</h3>
       <ul>
         <li><b>23 more Christmas songs</b> (27 in all, under the Holiday filter):
@@ -2289,6 +2293,8 @@ $('bView').onclick = e => { e.stopPropagation(); const o = $('pView').classList.
 $('bSound').onclick = e => { e.stopPropagation(); const o = $('pSound').classList.contains('hidden'); closePops(); $('pSound').classList.toggle('hidden', !o); };
 $('bLib').onclick = () => { closePops(); $('lib').classList.toggle('open'); };
 $('libClose').onclick = () => $('lib').classList.remove('open');
+// clicking or touching anywhere outside the library closes it (the Song library button toggles it itself)
+addEventListener('pointerdown', e => { const lib = $('lib'); if (lib.classList.contains('open') && !lib.contains(e.target) && !$('bLib').contains(e.target)) lib.classList.remove('open'); }, true);
 $('flipX').onclick = () => { st.flipX = !st.flipX; applyFlip(); };
 $('flipZ').onclick = () => { st.flipZ = !st.flipZ; applyFlip(); };
 $('zIn').onclick = () => setZoom(view.zT - 0.3); $('zOut').onclick = () => setZoom(view.zT + 0.3); $('zPlay').onclick = () => setZoom(0); $('zFull').onclick = () => setZoom(1);
