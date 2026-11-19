@@ -143,6 +143,9 @@
   body.stage header, body.stage .pop, body.stage #chordLib, body.stage:not(.keepbar) #tp, body.stage:not(.keepbar) #tab, body.stage:not(.keepbar) #lib { display: none !important; }   /* .keepbar: stage mode that keeps the player bar */
   #stageExit { position: fixed; top: max(12px, env(safe-area-inset-top)); right: max(14px, env(safe-area-inset-right)); z-index: 5; opacity: 0.32; transition: opacity 0.2s; }
   #stageExit:hover, #stageExit:active { opacity: 1; }
+  /* which version, and which build (web page, Home Screen app or Windows app), in the bottom-left corner */
+  #ver { position: fixed; left: max(14px, env(safe-area-inset-left)); bottom: 3px; z-index: 3; font-size: 10.5px; letter-spacing: 0.08em; color: var(--mute); opacity: 0.85; pointer-events: none; font-variant-numeric: tabular-nums; }
+  body.stage #ver { display: none; }
   .song i.pg { display: block; font-style: normal; font-size: 11px; color: #f0c05a; margin-top: 3px; letter-spacing: 0.02em; }
 </style>
 </head>
@@ -274,7 +277,8 @@
   <div id="tempoBox"><span>Tempo</span><input type="range" id="tempo" min="0.25" max="1.5" step="0.01" value="1"><span id="tempoV">100%</span><button id="tempoReset" title="Back to 100%">100%</button></div>
 </div>
 
-<div id="start"><b>Concert Acoustic</b><span id="startMsg">Click or tap to begin</span></div>
+<div id="ver"></div>
+<div id="start"><b>Concert Acoustic</b><span id="startMsg">Click or tap to begin</span><span id="startVer" style="font-size:11px;letter-spacing:0.1em;opacity:0.7"></span></div>
 <div id="rotate">Turn the screen sideways to play</div>
 <button class="btn hidden" id="stageExit" title="Leave stage mode (Tab or Esc)">Show menus</button>
 <canvas id="tab" class="hidden"></canvas>
@@ -586,7 +590,11 @@
       <p class="small">Song scores are credited in the library and in lib/SOURCES.txt. The 3D graphics use three.js (MIT licence).</p>
 
       <h2 id="m-versions">Version history</h2>
-      <p>This is version 7.11. Every version and what it added, newest first.</p>
+      <p>This is version <span id="mVer">7.12</span>. Every version and what it added, newest first.</p>
+      <h3>Version 7.12</h3>
+      <ul>
+        <li><b>Version shown on screen:</b> the bottom-left corner shows the version number and which build you are using: the web page, the Home Screen app (iPad) or the Windows app. The start screen shows it too, and the Windows app shows the version in its title bar. On an iPad, if the number is older than expected, close the app fully and open it again: it fetches an update on one visit and uses it on the next. Stage mode hides the label.</li>
+      </ul>
       <h3>Version 7.11</h3>
       <ul>
         <li><b>Stage mode with player bar</b> (View → Stage mode, or <kbd>Shift</kbd>+<kbd>Tab</kbd>): hides the menus at the top but keeps the player bar at the bottom. The original stage mode, which hides both, is still there.</li>
@@ -880,6 +888,9 @@ function engineModule() {
 
 /* ===================================== helpers ===================================== */
 const $ = id => document.getElementById(id);
+// The version shown on screen, in the manual and in the Windows title bar. Change it with each release (and add to the Version history).
+const APP_VERSION = '7.12';
+const BUILD_KIND = window.chrome && window.chrome.webview ? 'Windows app' : (navigator.standalone || matchMedia('(display-mode: standalone)').matches) ? 'Home Screen app' : 'Web';
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -2647,6 +2658,8 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && ac
 if ('serviceWorker' in navigator && !hostApp && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
 
 applyFlip(); applyRoom(); renderLib(); new ResizeObserver(fit).observe($('stage')); fit(); requestAnimationFrame(frame);
+$('ver').textContent = `v${APP_VERSION} · ${BUILD_KIND}`; $('startVer').textContent = `Version ${APP_VERSION} · ${BUILD_KIND}`; $('mVer').textContent = APP_VERSION;
+if (hostApp) hostApp.postMessage('version:' + APP_VERSION);          // the Windows app puts it in the title bar
 window.__guitar = { st, player, SONGS, buildEvents, engineModule, loadSong, playSong, stopSong, gpos, cam, root, THREE, FX, view, setZoom, applyRoom, lyr, openLyrics, saveLyrics, syncLyrics, getGraph: () => graph, prac, setMode, setCapo, melody, shapeOf, userPlucked, setRecording, rec, setPattern, pat, seekTo, toolsFrame, drawOverlay, detectPitch, INSTRUMENTS, applyInstrument, buildGraph, makeBodyIR, makeReverbIR, FX_OFF, band, jam, setJam, setTuning, setStage, stage, TUNINGS, OPENM, chartAt, songChart, bandStep, detectChord, updateKey, recordProgress, renderLib, renderProgress };
 </script>
 </body>

@@ -20,6 +20,8 @@ sealed class MainForm : Form
 {
     const string Title = "Concert Acoustic";
     readonly WebView2 web = new() { Dock = DockStyle.Fill };
+    string version = "";                                     // sent by the page, so the title bar always matches the page inside
+    string Caption => version.Length > 0 ? $"{Title} {version}" : Title;
     Form? lyricsForm;   // the lyrics pop-out window while it is open
 
     public MainForm()
@@ -156,7 +158,12 @@ sealed class MainForm : Form
                         }
                         else web.CoreWebView2.PostWebMessageAsJson("{\"type\":\"lyricsClosed\"}");
                     }
-                    else Text = $"{Title}  ·  {msg}";
+                    else if (msg.StartsWith("version:"))
+                    {
+                        string v = msg[8..].Trim();
+                        if (v.Length is > 0 and < 24) { version = v; Text = Caption; }
+                    }
+                    else Text = $"{Caption}  ·  {msg}";
                 }
                 catch { /* ignore malformed messages */ }
             };

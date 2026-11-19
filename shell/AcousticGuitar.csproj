@@ -7,6 +7,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>AcousticGuitar</AssemblyName>
+    <!-- shown in the .exe's file properties; keep in step with APP_VERSION in index.html (that is what the app shows) -->
+    <Version>7.12</Version>
     <RootNamespace>AcousticGuitar</RootNamespace>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
